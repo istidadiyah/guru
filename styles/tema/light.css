@@ -26,7 +26,7 @@ body {
 }
 
 .grid-item i {
-    color: #333;
+    color: #000000;
 }
 
 h2 {
@@ -47,3 +47,4 @@ h2 {
     background-color: rgba(255, 255, 255, 0.2) !important;
     margin: 5% !important;
 }
+

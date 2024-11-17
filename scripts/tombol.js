@@ -62,9 +62,43 @@ function moveHtmlContentFromJS(sourceId, targetDivId) {
 
 
 function home() {
+    Sembunyikan("cardTabel")
     Sembunyikan("cardSetting", () => {
         Tampilkan("cardIcon");
         Tampilkan("cardKelompok")
+    });
+}
+
+function KelasButton() {
+    
+    Sembunyikan("cardIcon");
+
+    Tampilkan("cardKelompok");
+}
+
+function AbsensiButton() {
+    
+    Sembunyikan("cardIcon");
+    Sembunyikan("cardKelompok", () => {
+        Tampilkan("cardTabel");
+        Sembunyikan("cardGuru");
+        Sembunyikan("cardPelajaran")
+    });   
+}
+
+function BiodataButton() {
+    
+    Sembunyikan("cardIcon");
+    Sembunyikan("cardKelompok", () => {
+        DataTabel("Santri", globalJsonData.Santri, "Nama, KelMD");
+        AddColumnWithButton("Santri", "Edit", editRow);
+
+        Tampilkan("cardTabel");
+        Sembunyikan("cardGuru");
+        Sembunyikan("cardPelajaran");
+        
+        moveHtmlContent("halaman/form.html", "FormData", "cardEdit")
+        isiSelect("Kelas", globalJsonData.SemuaData.Kelompok, "ID") 
     });
 }
 
@@ -74,6 +108,8 @@ function SettingButton() {
         Tampilkan("cardSetting");
     });
 }
+
+
 
 function Tampilkan(id) {
     const elem = document.getElementById(id);
@@ -104,42 +140,30 @@ function Sembunyikan(id, callback) {
 
 
 
-  
 
 
-// ---------------------------- Modal Form -------------------------
-// Definisikan konten HTML dalam JavaScript sebagai obyek
-const htmlTemplates = {
-  'FormData': `
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                  <form id="editForm">
-                      <div class="mb-3">
-                          <label for="Nama" class="form-label">Nama</label>
-                          <input type="text" class="form-control" id="Nama" name="Nama">
-                      </div>
-                      <div class="mb-3">
-                          <label for="KelMD" class="form-label">Kelas</label>
-                          <input type="text" class="form-control" id="KelMD" name="KelMD">
-                      </div>
-                      <div class="mb-3">
-                          <label for="Kelas" class="form-label">Kelas</label>
-                          <select class="form-select" id="Kelas" name="Kelas">
-                              <option value="10A">10A</option>
-                              <option value="11B">11B</option>
-                              <option value="12C">12C</option>
-                          </select>
-                      </div>
-                      <button type="submit" class="btn btn-primary">Save Changes</button>
-                  </form>
-              </div>
-          </div>
-      </div>
-  `,
-  // Tambahkan lebih banyak template jika diperlukan
+// Fungsi untuk menambahkan state ke riwayat browser
+function pushState() {
+    window.history.pushState({page: "newState"}, "", window.location.href);
+}
+
+// Tambahkan state awal ke riwayat saat halaman pertama kali dimuat
+window.onload = () => {
+    pushState();
 };
+
+// Event listener untuk mendeteksi tombol "kembali"
+window.onpopstate = () => {
+    const cardIconElem = document.getElementById('cardIcon');
+
+    // Cek apakah elemen 'cardIcon' sedang disembunyikan
+    if (cardIconElem && cardIconElem.style.display === 'none') {
+        // Panggil fungsi home() untuk menampilkan kembali cardIcon
+        home();
+        // Kembalikan state ke riwayat agar fungsi tetap bisa mendeteksi "back"
+        pushState();
+    }
+};
+
+
+  

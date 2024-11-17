@@ -229,6 +229,51 @@ function addChangeColorListener(selectAbsensi) {
 
 
 
+function isiSelect(idSelect, json, header) {
+    // Parsing JSON string menjadi objek JavaScript
+    let data;
+    try {
+        data = JSON.parse(json);
+    } catch (e) {
+        console.error("JSON tidak valid:", e);
+        return;
+    }
+
+    // Cek apakah elemen select ada di halaman
+    const selectElement = document.getElementById(idSelect);
+    if (!selectElement) {
+        console.error(`Elemen <select> dengan ID "${idSelect}" tidak ditemukan.`);
+        return;
+    }
+
+    // Cek apakah data dalam JSON adalah array
+    if (!Array.isArray(data)) {
+        console.error("Data JSON harus berupa array.");
+        return;
+    }
+
+    // Hapus semua opsi sebelumnya dari <select>
+    selectElement.innerHTML = "";
+
+    // Tambahkan opsi default (opsional)
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Pilih " + header;
+    selectElement.appendChild(defaultOption);
+
+    // Iterasi melalui array data JSON dan tambahkan opsi sesuai header
+    data.forEach(item => {
+        if (item[header]) {
+            const option = document.createElement("option");
+            option.value = item[header];
+            option.textContent = item[header];
+            selectElement.appendChild(option);
+        }
+    });
+}
+
+
+
 // --------------------------- Tombol ---------------------
 
 // Toggle the form when the toggle button is clicked

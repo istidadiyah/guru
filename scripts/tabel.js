@@ -335,6 +335,8 @@ function AddColumnWithButton(tableId, columnName, buttonFunction) {
         const th = document.createElement('th');
         th.textContent = columnName;
         th.setAttribute('data-column', columnName);
+        th.style.width = '1%'; // Menetapkan lebar minimum pada header untuk tombol
+        th.style.whiteSpace = 'nowrap'; // Mencegah pembungkusan teks header
         thead.appendChild(th);
     }
 
@@ -347,12 +349,17 @@ function AddColumnWithButton(tableId, columnName, buttonFunction) {
             const button = document.createElement('button');
             button.textContent = "Edit";
             button.className = "btn btn-primary btn-sm"; // Tambahkan kelas Bootstrap
+            button.style.width = '100%'; // Menyesuaikan tombol dengan lebar td, tetapi tetap ramping
+            button.style.whiteSpace = 'nowrap'; // Mencegah pembungkusan teks tombol
             button.onclick = () => buttonFunction(row); // Menambahkan fungsi tombol
             td.appendChild(button);
+            td.style.width = '1%'; // Menetapkan lebar minimum pada kolom tombol
+            td.style.textAlign = 'center'; // Mengatur tombol di tengah kolom
             row.appendChild(td);
         });
     }
 }
+
 
 // Fungsi untuk mengedit baris, membuka modal, dan mengisi input
 function editRow(row) {
