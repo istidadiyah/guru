@@ -53,71 +53,73 @@
     </header>
     <div class="container">
 
-        <div id="cardIcon" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <div class="container text-center mt-5">
-                <div class="row">
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/kelas.html">
-                            <i class="fas fa-chalkboard-teacher fa-2x"></i>
-                            <div>Kelas</div>
-                        </a>
-                    </div>
-
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/absensi.html">
-                            <i class="fas fa-calendar-check fa-2x"></i>
-                            <div>Absensi</div>
-                        </a>
-                    </div>
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/Kuartar.html">
-                            <i class="fas fa-pencil-alt fa-2x"></i>
-                            <div>Kuartal</div>
-                        </a>
-                    </div>
-                    
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="javascript:void(0)" onclick="moveHtmlContent('halaman/form.html', 'FormData', 'cardEdit')">
-                            <i class="fas fa-id-card fa-2x"></i>
-                            <div>Biodata</div>
-                        </a>
-                    </div>
-                    
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/pelajaran.html">
-                            <i class="fas fa-book-open fa-2x"></i>
-                            <div>Pelajaran</div>
-                        </a>
-                    </div>
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/syahriyah.html">
-                            <i class="fas fa-money-bill-wave fa-2x"></i>
-                            <div>Syahriyah</div>
-                        </a>
-                    </div>
-                    
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="javascript:void(0)" onclick="AddColumnWithButton('Santri', 'Edit', editRow)">
-                            <i class="fas fa-user fa-2x"></i>
-                            <div>Tombol</div>
-                        </a>
-                    </div>
-                    
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="javascript:void(0)" onclick="fetchDataFromAppScript()">
-                            <i class="fas fa-clock fa-2x"></i>
-                            <div>Jadwal</div>
-                        </a>
-                    </div>
-                    <div class="col-4 col-md-3 col-lg-2 col-xl-1 mb-4 grid-item">
-                        <a href="halaman/setting.html">
-                            <i class="fas fa-cog fa-2x"></i>
-                            <div>Setting</div>
-                        </a>
-                    </div>
+        <div id="cardIcon" class="card shadow-sm mt-4">
+            <div class="container-flex mt-5">
+                <div class="grid-item">
+                    <a href="halaman/kelas.html">
+                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                        <div>Kelas</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="halaman/absensi.html">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                        <div>Absensi</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="halaman/Kuartar.html">
+                        <i class="fas fa-pencil-alt fa-2x"></i>
+                        <div>Kuartal</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="javascript:void(0)" onclick="moveHtmlContent('halaman/form.html', 'FormData', 'cardEdit')">
+                        <i class="fas fa-id-card fa-2x"></i>
+                        <div>Biodata</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="halaman/pelajaran.html">
+                        <i class="fas fa-book-open fa-2x"></i>
+                        <div>Pelajaran</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="halaman/syahriyah.html">
+                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                        <div>Syahriyah</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="javascript:void(0)" onclick="AddColumnWithButton('Santri', 'Edit', editRow)">
+                        <i class="fas fa-user fa-2x"></i>
+                        <div>Tombol</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="javascript:void(0)" onclick="fetchDataFromAppScript()">
+                        <i class="fas fa-clock fa-2x"></i>
+                        <div>Jadwal</div>
+                    </a>
+                </div>
+    
+                <div class="grid-item">
+                    <a href="halaman/setting.html">
+                        <i class="fas fa-cog fa-2x"></i>
+                        <div>Setting</div>
+                    </a>
                 </div>
             </div>
         </div>
+        
 
         <!-- Modal Edit -->
         <div class="modal fade" id="cardEdit" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">

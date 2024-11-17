@@ -151,6 +151,10 @@
 
 
 
+
+
+
+
 /* Additional Styling for Form Inputs */
 .form-filter select,
 .form-filter input {
@@ -171,6 +175,38 @@
 }
 
 
+
+
+
+
+
+#cardIcon {
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 5%;
+}
+
+.container-flex {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Memberikan jarak antar elemen */
+    justify-content: center; /* Membuat elemen-elemen terpusat */
+}
+
+.grid-item {
+    flex: 1 1 150px; /* Elemen mengambil ruang minimum 150px dan dapat meluas */
+    max-width: 200px; /* Membatasi lebar maksimum setiap elemen */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.grid-item i {
+    color: #333;
+}
+
+.grid-item a {
+    text-decoration: none;
+    color: inherit;
+}
 
 
 
