@@ -29,6 +29,10 @@ h1 {
     font-size: 200%;
 }
 
+#iconHome {
+  color: #ffffff;
+}
+
 .sub-title {
   font-size: 80%;
   padding:12px;

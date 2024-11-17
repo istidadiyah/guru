@@ -62,17 +62,18 @@ function moveHtmlContentFromJS(sourceId, targetDivId) {
 
 
 function home() {
-    Sembunyikan("cardTabel")
+    Sembunyikan("cardTabel");
+    Sembunyikan("tombolHome");
     Sembunyikan("cardSetting", () => {
+        
         Tampilkan("cardIcon");
         Tampilkan("cardKelompok")
     });
 }
 
 function KelasButton() {
-    
+    Tampilkan("tombolHome");
     Sembunyikan("cardIcon");
-
     Tampilkan("cardKelompok");
 }
 
@@ -93,6 +94,7 @@ function BiodataButton() {
 
         DataTabel("Santri", globalJsonData.Santri, "Nama, KelMD");
 
+        Tampilkan("tombolHome");
         Tampilkan("cardTabel");
         Sembunyikan("cardGuru");
         Sembunyikan("cardPelajaran");
@@ -104,6 +106,7 @@ function BiodataButton() {
 }
 
 function SettingButton() {
+    Tampilkan("tombolHome");
     Sembunyikan("cardKelompok");
     Sembunyikan("cardIcon", () => {
         Tampilkan("cardSetting");
