@@ -90,16 +90,17 @@ function BiodataButton() {
     
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
+
         DataTabel("Santri", globalJsonData.Santri, "Nama, KelMD");
-        AddColumnWithButton("Santri", "Edit", editRow);
 
         Tampilkan("cardTabel");
         Sembunyikan("cardGuru");
         Sembunyikan("cardPelajaran");
-        
-        moveHtmlContent("halaman/form.html", "FormData", "cardEdit")
-        isiSelect("Kelas", globalJsonData.SemuaData.Kelompok, "ID") 
     });
+
+    moveHtmlContent("halaman/form.html", "FormData", "cardEdit")
+    isiSelect("Kelas", globalJsonData.SemuaData.Kelompok, "ID") 
+    
 }
 
 function SettingButton() {

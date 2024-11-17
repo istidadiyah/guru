@@ -275,47 +275,13 @@ function DataTabel(tableId, jsonData, visibleColumns) {
         searching: true, // Menghilangkan fitur pencarian, jika tidak diperlukan
         info: false, // Menghilangkan informasi "Showing x to y of z entries"
         initComplete: function () {
-            // Setelah DataTables selesai diinisialisasi, panggil ShowColumns
-            ShowColumns(tableId, visibleColumns);
+        // Setelah DataTables selesai diinisialisasi, panggil ShowColumns
+        ShowColumns(tableId, visibleColumns);
         }
     });
 }
 
-// --------- Menampilkan kolom tertentu
-function ShowColumns(tableId, visibleColumns) {
-    const table = $(`#${tableId}`).DataTable();
-
-    // Ambil teks header kolom secara eksplisit
-    const allHeaders = table.columns().header().toArray().map(header => $(header).text().trim());
-    console.log("Kolom yang ditemukan di tabel:", allHeaders);
-
-    // Tentukan indeks kolom yang akan ditampilkan
-    const visibleIndices = visibleColumns
-        .split(",")
-        .map(col => col.trim())
-        .map(col => allHeaders.indexOf(col))
-        .filter(index => index !== -1);
-
-    console.log("Indeks kolom yang akan ditampilkan:", visibleIndices);
-
-    if (visibleIndices.length === 0) {
-        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
-        return;
-    }
-
-    // Tampilkan atau sembunyikan kolom berdasarkan indeks
-    table.columns().every(function (index) {
-        const visible = visibleIndices.includes(index);
-        table.column(index).visible(visible);
-    });
-}
-
-
-
-
-//------------------- Menambah colom buton
-// Fungsi untuk menambahkan kolom dengan tombol "Edit"
-function AddColumnWithButton(tableId, columnName, buttonFunction) {
+function DataTabel(tableId, jsonData, visibleColumns) {
     // Cek elemen tabel
     const table = document.getElementById(tableId);
     if (!table) {
@@ -323,62 +289,203 @@ function AddColumnWithButton(tableId, columnName, buttonFunction) {
         return;
     }
 
-    // Cek apakah kolom sudah ada
-    if (table.querySelector(`th[data-column="${columnName}"]`)) {
-        console.log(`Kolom dengan nama "${columnName}" sudah ada.`);
+    // Hapus konten lama (jika ada)
+    table.innerHTML = '';
+
+    // Validasi data JSON
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+        console.error("Data JSON kosong atau tidak valid.");
         return;
     }
 
-    // Menambahkan kolom di header
-    const thead = table.querySelector('thead tr');
-    if (thead) {
+    // Mendapatkan header dari data JSON berdasarkan kolom yang terlihat
+    const visibleHeaders = visibleColumns.split(",").map(col => col.trim());
+    if (visibleHeaders.length === 0) {
+        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
+        return;
+    }
+
+    // Membuat header tabel dengan <th>
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    visibleHeaders.forEach(header => {
         const th = document.createElement('th');
-        th.textContent = columnName;
-        th.setAttribute('data-column', columnName);
-        th.style.width = '1%'; // Menetapkan lebar minimum pada header untuk tombol
-        th.style.whiteSpace = 'nowrap'; // Mencegah pembungkusan teks header
-        thead.appendChild(th);
-    }
-
-    // Menambahkan tombol di setiap baris di body
-    const tbody = table.querySelector('tbody');
-    if (tbody) {
-        const rows = tbody.querySelectorAll('tr');
-        rows.forEach(row => {
-            const td = document.createElement('td');
-            const button = document.createElement('button');
-            button.textContent = "Edit";
-            button.className = "btn btn-primary btn-sm"; // Tambahkan kelas Bootstrap
-            button.style.width = '100%'; // Menyesuaikan tombol dengan lebar td, tetapi tetap ramping
-            button.style.whiteSpace = 'nowrap'; // Mencegah pembungkusan teks tombol
-            button.onclick = () => buttonFunction(row); // Menambahkan fungsi tombol
-            td.appendChild(button);
-            td.style.width = '1%'; // Menetapkan lebar minimum pada kolom tombol
-            td.style.textAlign = 'center'; // Mengatur tombol di tengah kolom
-            row.appendChild(td);
-        });
-    }
-}
-
-
-// Fungsi untuk mengedit baris, membuka modal, dan mengisi input
-function editRow(row) {
-    // Dapatkan modal dan elemen-elemen input di dalam modal
-    const modal = new bootstrap.Modal(document.getElementById('cardEdit'), {});
-    const inputs = document.querySelectorAll('#cardEdit input, #cardEdit select, #cardEdit textarea');
-
-    // Dapatkan data dari sel dalam baris yang dipilih
-    const cells = row.querySelectorAll('td');
-
-    // Iterasi melalui elemen input dan sel-sel baris
-    inputs.forEach((input, index) => {
-        if (cells[index]) {
-            input.value = cells[index].textContent.trim(); // Mengisi input dengan isi sel baris
-        }
+        th.textContent = header;
+        headerRow.appendChild(th);
     });
 
-    // Buka modal
-    modal.show();
+    // Tambahkan kolom untuk tombol edit
+    const editTh = document.createElement('th');
+    editTh.textContent = 'Edit';
+    editTh.style.width = '1%'; // Lebar kecil untuk menyesuaikan tombol
+    headerRow.appendChild(editTh);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Membuat body tabel
+    const tbody = document.createElement('tbody');
+    jsonData.forEach(row => {
+        const tr = document.createElement('tr');
+
+        visibleHeaders.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] !== undefined ? row[header] : '';
+            tr.appendChild(td);
+        });
+
+        // Tambahkan kolom untuk tombol edit
+        const editTd = document.createElement('td');
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.className = 'btn btn-primary btn-sm';
+        
+        // Menyimpan ID atau IDS ke dalam tombol edit jika tersedia
+        const rowId = row['ID'] || row['IDS'];
+        if (rowId !== undefined) {
+            editButton.id = `edit-${rowId}`;
+            editButton.dataset.rowId = rowId;
+        }
+        
+        editButton.onclick = function () {
+            // Ketika tombol edit diklik, tampilkan modal dan isi dengan data yang sesuai
+            console.log(`Edit button clicked for ID: ${rowId}`);
+            const dataToEdit = jsonData.find(r => r['ID'] == rowId || r['IDS'] == rowId);
+            if (!dataToEdit) {
+                console.error(`Data dengan ID ${rowId} tidak ditemukan.`);
+                return;
+            }
+
+            // Tampilkan modal edit menggunakan Bootstrap 5 API
+            const editModal = new bootstrap.Modal(document.getElementById('cardEdit'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            editModal.show();
+
+            // Mengisi setiap input/select dalam modal sesuai dengan data JSON
+            for (const key in dataToEdit) {
+                if (dataToEdit.hasOwnProperty(key)) {
+                    const inputElement = document.getElementById(key);
+                    if (inputElement) {
+                        if (inputElement.tagName.toLowerCase() === 'input' || inputElement.tagName.toLowerCase() === 'textarea') {
+                            inputElement.value = dataToEdit[key];
+                        } else if (inputElement.tagName.toLowerCase() === 'select') {
+                            inputElement.value = dataToEdit[key];
+                        }
+                    }
+                }
+            }
+        };
+
+        editTd.appendChild(editButton);
+        tr.appendChild(editTd);
+        
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Inisialisasi ulang DataTables untuk memastikan fitur sorting berfungsi
+    if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+        $(`#${tableId}`).DataTable().destroy();
+    }
+
+    // Inisialisasi DataTables
+    $(`#${tableId}`).DataTable({
+        responsive: true,
+        order: [],
+        lengthChange: true, // Aktifkan opsi tampilan jumlah entri
+        paging: true, // Aktifkan fitur pagination
+        searching: true, // Aktifkan fitur pencarian
+        info: false, // Menghilangkan informasi "Showing x to y of z entries"
+    });
 }
+
+// Fungsi untuk tombol Edit
+function EditData(jsonData) {
+    // Tambahkan event listener untuk semua tombol edit
+    document.querySelectorAll('[id^="edit-"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const rowId = this.dataset.rowId;
+            if (!rowId) {
+                console.error('ID tidak ditemukan pada tombol edit.');
+                return;
+            }
+
+            // Cari data dalam JSON berdasarkan ID
+            const dataToEdit = jsonData.find(row => row['ID'] == rowId || row['IDS'] == rowId);
+            if (!dataToEdit) {
+                console.error(`Data dengan ID ${rowId} tidak ditemukan.`);
+                return;
+            }
+
+            // Tampilkan modal edit
+            const editModal = new bootstrap.Modal(document.getElementById('cardEdit'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            editModal.show();
+
+            // Mengisi setiap input/select dalam modal sesuai dengan data JSON
+            for (const key in dataToEdit) {
+                if (dataToEdit.hasOwnProperty(key)) {
+                    const inputElement = document.getElementById(key);
+                    if (inputElement) {
+                        if (inputElement.tagName.toLowerCase() === 'input' || inputElement.tagName.toLowerCase() === 'textarea') {
+                            inputElement.value = dataToEdit[key];
+                        } else if (inputElement.tagName.toLowerCase() === 'select') {
+                            inputElement.value = dataToEdit[key];
+                        }
+                    }
+                }
+            }
+        });
+    });
+}
+
+
+
+// Fungsi untuk tombol Edit
+function EditData(jsonData) {
+    // Tambahkan event listener untuk semua tombol edit
+    document.querySelectorAll('[id^="edit-"]').forEach(button => {
+        button.addEventListener('click', function () {
+            const rowId = this.dataset.rowId;
+            if (!rowId) {
+                console.error('ID tidak ditemukan pada tombol edit.');
+                return;
+            }
+
+            // Cari data dalam JSON berdasarkan ID
+            const dataToEdit = jsonData.find(row => row['ID'] == rowId || row['IDS'] == rowId);
+            if (!dataToEdit) {
+                console.error(`Data dengan ID ${rowId} tidak ditemukan.`);
+                return;
+            }
+
+            // Tampilkan modal edit menggunakan Bootstrap 5 API
+            const editModal = new bootstrap.Modal(document.getElementById('cardEdit'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            editModal.show();
+
+            // Mengisi setiap input/select dalam modal sesuai dengan data JSON
+            for (const key in dataToEdit) {
+                if (dataToEdit.hasOwnProperty(key)) {
+                    const inputElement = document.getElementById(key);
+                    if (inputElement) {
+                        if (inputElement.tagName.toLowerCase() === 'input' || inputElement.tagName.toLowerCase() === 'textarea') {
+                            inputElement.value = dataToEdit[key];
+                        } else if (inputElement.tagName.toLowerCase() === 'select') {
+                            inputElement.value = dataToEdit[key];
+                        }
+                    }
+                }
+            }
+        });
+    });
+}
+
 
 

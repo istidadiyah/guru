@@ -229,7 +229,11 @@ function addChangeColorListener(selectAbsensi) {
 
 
 
-function isiSelect(idSelect, json, header) {
+function isiSelect(idSelect, json, header, event) {
+    if (event) {
+        event.preventDefault(); // Mencegah form untuk dikirim dan halaman direfresh
+    }
+
     // Parsing JSON string menjadi objek JavaScript
     let data;
     try {
@@ -271,6 +275,7 @@ function isiSelect(idSelect, json, header) {
         }
     });
 }
+
 
 
 

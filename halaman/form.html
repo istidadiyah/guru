@@ -1,28 +1,135 @@
 <!-- Modal Edit -->
-<div id="FormData" class="modal-dialog">
+<div id="FormData" class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-        <form id="editForm">
-            <div class="mb-3">
-            <label for="Nama" class="form-label">Nama</label>
-            <input type="text" class="form-control" id="Nama" name="Nama">
-            </div>
-            <div class="mb-3">
-            <label for="KelMD" class="form-label">Kelas</label>
-            <input type="text" class="form-control" id="KelMD" name="KelMD">
-            </div>
-            <div class="mb-3">
-            <label for="Kelas" class="form-label">Kelas</label>
-            <select class="form-select" id="Kelas" name="Kelas">
-            </select>
-            <button type="submit" class="btn btn-primary" onclick="isiSelect('Kelas', globalJsonData.SemuaData.Kelompok, 'ID')">Masukkan Kelas</button>
-            </div>
-            <button type="submit" class="btn btn-primary">Simpan</button>
-        </form>
+            <form id="editForm">
+                
+                <!-- Biodata Anak -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Biodata Santri</h5>
+                        <div class="mb-3">
+                            <label for="IDS" class="form-label">IDS</label>
+                            <input type="text" class="form-control" id="IDS" name="IDS" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Nama" class="form-label">Nama</label>
+                            <input type="text" class="form-control" id="Nama" name="Nama">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NIK" class="form-label">Nomor NIK</label>
+                            <input type="text" class="form-control" id="NIK" name="NIK">
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-6">
+                                <label for="TempatLahir" class="form-label">Tempat Lahir</label>
+                                <input type="text" class="form-control" id="TempatLahir" name="TempatLahir">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="TanggalLahir" class="form-label">Tanggal Lahir</label>
+                                <input type="date" class="form-control" id="TanggalLahir" name="TanggalLahir" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="KelMD" class="form-label">Kelas</label>
+                            <input type="text" class="form-control" id="KelMD" name="KelMD">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Kelas" class="form-label">Kelas</label>
+                            <select class="form-select" id="Kelas" name="Kelas">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biodata Ayah -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Biodata Ayah</h5>
+                        <div class="mb-3">
+                            <label for="Ayah" class="form-label">Nama Ayah</label>
+                            <input type="text" class="form-control" id="Ayah" name="Ayah">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NIKAyah" class="form-label">Nomor NIK Ayah</label>
+                            <input type="text" class="form-control" id="NIKAyah" name="NIKAyah">
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-6">
+                                <label for="TempatLahirAyah" class="form-label">Tempat Lahir Ayah</label>
+                                <input type="text" class="form-control" id="TempatLahirAyah" name="TempatLahirAyah">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="TanggalLahirAyah" class="form-label">Tanggal Lahir Ayah</label>
+                                <input type="date" class="form-control" id="TanggalLahirAyah" name="TanggalLahirAyah" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="PendidikanAyah" class="form-label">Pendidikan Ayah</label>
+                            <input type="text" class="form-control" id="PendidikanAyah" name="PendidikanAyah">
+                        </div>
+                        <div class="mb-3">
+                            <label for="PekerjaanAyah" class="form-label">Pekerjaan Ayah</label>
+                            <input type="text" class="form-control" id="PekerjaanAyah" name="PekerjaanAyah">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NoAyah" class="form-label">Nomor Telepon Ayah</label>
+                            <input type="text" class="form-control" id="NoAyah" name="NoAyah">
+                        </div>
+                        <div class="mb-3">
+                            <label for="PenghasilanAyah" class="form-label">Penghasilan Ayah</label>
+                            <input type="text" class="form-control" id="PenghasilanAyah" name="PenghasilanAyah">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Biodata Ibu -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Biodata Ibu</h5>
+                        <div class="mb-3">
+                            <label for="Ibu" class="form-label">Nama Ibu</label>
+                            <input type="text" class="form-control" id="Ibu" name="Ibu">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NIKIbu" class="form-label">Nomor NIK Ibu</label>
+                            <input type="text" class="form-control" id="NIKIbu" name="NIKIbu">
+                        </div>
+                        <div class="mb-3 row">
+                            <div class="col-md-6">
+                                <label for="TempatLahirIbu" class="form-label">Tempat Lahir Ibu</label>
+                                <input type="text" class="form-control" id="TempatLahirIbu" name="TempatLahirIbu">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="TanggalLahirIbu" class="form-label">Tanggal Lahir Ibu</label>
+                                <input type="date" class="form-control" id="TanggalLahirIbu" name="TanggalLahirIbu" style="width: 150px;">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="PendidikanIbu" class="form-label">Pendidikan Ibu</label>
+                            <input type="text" class="form-control" id="PendidikanIbu" name="PendidikanIbu">
+                        </div>
+                        <div class="mb-3">
+                            <label for="PekerjaanIbu" class="form-label">Pekerjaan Ibu</label>
+                            <input type="text" class="form-control" id="PekerjaanIbu" name="PekerjaanIbu">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NoIbu" class="form-label">Nomor Telepon Ibu</label>
+                            <input type="text" class="form-control" id="NoIbu" name="NoIbu">
+                        </div>
+                        <div class="mb-3">
+                            <label for="PenghasilanIbu" class="form-label">Penghasilan Ibu</label>
+                            <input type="text" class="form-control" id="PenghasilanIbu" name="PenghasilanIbu">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Simpan</button>
+            </form>
         </div>
     </div>
 </div>
