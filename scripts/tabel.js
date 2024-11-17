@@ -216,13 +216,8 @@ function insertDataToDynamicTable(sheet2Data) {
 
 
 
-
-
-
-
-
-// ------------------------- Fungsi terbaru memasukkan data -------------
-function InputData(tableId, jsonData) {
+// Fungsi terbaru memasukkan data ke dalam tabel
+function DataTabel(tableId, jsonData, visibleColumns) {
     // Cek elemen tabel
     const table = document.getElementById(tableId);
     if (!table) {
@@ -270,14 +265,23 @@ function InputData(tableId, jsonData) {
     if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
         $(`#${tableId}`).DataTable().destroy();
     }
-    $(`#${tableId}`).DataTable({
+
+    // Inisialisasi DataTables
+    const dataTableInstance = $(`#${tableId}`).DataTable({
         responsive: true,
         order: [],
+        lengthChange: false, // Menghilangkan opsi tampilan jumlah entri
+        paging: false, // Menghilangkan fitur pagination
+        searching: true, // Menghilangkan fitur pencarian, jika tidak diperlukan
+        info: false, // Menghilangkan informasi "Showing x to y of z entries"
+        initComplete: function () {
+            // Setelah DataTables selesai diinisialisasi, panggil ShowColumns
+            ShowColumns(tableId, visibleColumns);
+        }
     });
 }
 
-
-// --------- Menampilkan colom tertentu
+// --------- Menampilkan kolom tertentu
 function ShowColumns(tableId, visibleColumns) {
     const table = $(`#${tableId}`).DataTable();
 
@@ -300,12 +304,13 @@ function ShowColumns(tableId, visibleColumns) {
     }
 
     // Tampilkan atau sembunyikan kolom berdasarkan indeks
-    table.columns().every(function(index) {
+    table.columns().every(function (index) {
         const visible = visibleIndices.includes(index);
         table.column(index).visible(visible);
     });
-
 }
+
+
 
 
 //------------------- Menambah colom buton

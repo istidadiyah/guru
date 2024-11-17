@@ -193,20 +193,22 @@
 }
 
 .grid-item {
-    flex: 1 1 150px; /* Elemen mengambil ruang minimum 150px dan dapat meluas */
-    max-width: 200px; /* Membatasi lebar maksimum setiap elemen */
+    flex: 1 1 100px; /* Elemen mengambil ruang minimum 100px dan dapat meluas */
+    max-width: 120px; /* Membatasi lebar maksimum setiap elemen */
     text-align: center;
     margin-bottom: 20px;
 }
 
 .grid-item i {
     color: #333;
+    font-size: 1.5rem; /* Mengatur ukuran font lebih kecil untuk ikon */
 }
 
 .grid-item a {
     text-decoration: none;
     color: inherit;
 }
+
 
 
 

@@ -1,42 +1,50 @@
+// Variabel global untuk menyimpan data JSON dari Google Sheets
+let globalJsonData = {};
+
+// Fungsi untuk mengambil data dari Google Sheets dan menyimpan dalam variabel global
 function fetchDataFromAppScript() {
     const url = 'https://script.google.com/macros/s/AKfycbwjX0LlvlFL8J3adpszyIB-U8FLsYX8nnD7zIhoHbjDk7AvjT5ND2jHZLzcFIfFd4GKdg/exec';
 
+    // Tampilkan loading spinner saat proses pengambilan data dimulai
+    var loadingSpinner = document.getElementById("loadingSpinner");
+
+
     // Mengambil data dari API menggunakan fetch
     fetch(url)
-        .then(response => response.json())  // Mengonversi response menjadi JSON
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok " + response.statusText);
+            }
+            return response.json();  // Mengonversi response menjadi JSON
+        })
         .then(data => {
-            console.log("Data diterima:", data);  // Menambahkan log untuk melihat data
+            console.log("Data diterima:", data);
 
-            if (data && data.Santri) {
-                // Memanggil fungsi untuk menampilkan data di tabel pertama (static)
-                InputData("Santri", data.Santri);
-                let table = $('#Santri').DataTable();
-                ShowColumns("Santri", "Nama, KelMD");
-                
-                InputData("Absen", data.SemuaData.Absen);
-                ShowColumns("Absen", "Nama, Syahriyah");
+            if (data) {
+                // Simpan data ke variabel global
+                globalJsonData = data;
 
-                InputData("Kelompok", data.SemuaData.Kelompok);
-                ShowColumns("Kelompok", "ID, Wali Kelas");
-
-                InputData("Guru", data.SemuaData.Guru);
-                ShowColumns("Guru", "ID, Nama");
-
-                InputData("Pelajaran", data.SemuaData.Pelajaran);
-                ShowColumns("Pelajaran", "Pelajaran, Kitab, Kelas");
-                // Memanggil fungsi untuk menampilkan data di tabel kedua (dynamic)
-                //insertDataToDynamicTable(data.Absensi);
-
-                var loadingSpinner = document.getElementById("loadingSpinner");
-                loadingSpinner.style.display = "none";
+                // Hanya menampilkan data "Kelompok" di tabel
+                if (data.SemuaData && data.SemuaData.Kelompok) {
+                    DataTabel("Kelompok", data.SemuaData.Kelompok, "ID, Wali Kelas");
+                } else {
+                    console.error("Data Kelompok tidak ditemukan.");
+                }
             } else {
                 console.error("Data tidak lengkap atau tidak valid.");
             }
         })
         .catch(error => {
             console.error("Terjadi kesalahan saat mengambil data:", error);
+        })
+        .finally(() => {
+            // Sembunyikan loading spinner setelah data berhasil diambil dan diproses
+            if (loadingSpinner) {
+                loadingSpinner.style.display = "none";
+            }
         });
 }
+
 
 
 
