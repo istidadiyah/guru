@@ -5,7 +5,7 @@
     right: 10px;
     padding: 5px 8px; /* Adjusted padding to fit the smaller circle */
     background-color: #004702dc;
-    color: rgb(255, 255, 255);
+    color: #ffffff;
     font-size: 12px; /* Smaller font size */
     border-radius: 50%; /* Make the element circular */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -42,9 +42,6 @@
 }
 
 
-
-
-
 /* Flexbox untuk memastikan Tanggal dan Bulan tetap sejajar */
 .d-flex {
     display: flex;
@@ -65,9 +62,6 @@
 }
 
 
-
-
-
 /* Responsif: Mengatur agar flex tetap horizontal */
 @media (max-width: 576px) {
     .d-flex {
@@ -81,9 +75,6 @@
         min-width: 0; /* Menghindari elemen terlalu besar di layar kecil */
     }
 }
-
-
-
 
 #formfilter {
     max-width: 330px;
@@ -108,7 +99,6 @@
     z-index: 10000;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);   
 }
-
 
 .toggle-button i {
     font-size: 24px;
@@ -150,11 +140,6 @@
 }
 
 
-
-
-
-
-
 /* Additional Styling for Form Inputs */
 .form-filter select,
 .form-filter input {
@@ -174,18 +159,13 @@
     transform: scale(1.05); /* Slight scaling effect on focus */
 }
 
-
-
-
-
-
-
+/* #cardIcon sudah didefinisikan di light.css dan dark.css */
+/* Menghapus properti warna di sini */
 #cardIcon {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
     margin: 5%;
 }
 
+/* Flex container */
 .container-flex {
     display: flex;
     flex-wrap: wrap;
@@ -204,26 +184,17 @@
     font-size: 1.5rem; /* Mengatur ukuran font lebih kecil untuk ikon */
 }
 
-.grid-item a {
-    text-decoration: none;
-    color: inherit;
-}
+/* .grid-item a sudah didefinisikan di light.css dan dark.css */
+/* Menghapus text-decoration dan color dari sini */
 
-
-
-
-
-
-
-
-
+/* Loading Spinner */
 .loading-spinner {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 255, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.685);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -258,7 +229,6 @@
     to { transform: rotate(360deg); }
 }
 
-
 .absensi-button {
     border-radius: 50%;
     padding: 2px 2px;
@@ -274,3 +244,83 @@
 .active.A { background-color: red; }
 .active.S { background-color: blue; }
 .active.I { background-color: orange; }
+
+.settings-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+.settings-item {
+    border-radius: 10px;
+    margin-bottom: 15px;
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.3s;
+}
+
+.settings-icon {
+    font-size: 1.5rem;
+    color: #50c6d8;
+    margin-right: 15px;
+}
+.toggle-switch {
+    display: flex;
+    align-items: center;
+}
+.toggle-switch input {
+    margin-right: 10px;
+}
+/* Toggle Switch Styling */
+.form-check-input:checked {
+    background-color: #50c6d8;
+    border-color: #50c6d8;
+}
+.form-check-input:focus {
+    border-color: #50c6d8;
+    box-shadow: 0 0 0 0.25rem rgba(80, 198, 216, 0.25);
+}
+
+
+.hidden {
+    display: none; /* Hilangkan elemen dari tata letak */
+}
+
+.visible {
+    display: block; /* Tampilkan elemen di dalam tata letak */
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    animation: fadeInAnimation 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.fade-out {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    animation: fadeOutAnimation 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+        transform: translateY(20px) scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeOutAnimation {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.9);
+    }
+}

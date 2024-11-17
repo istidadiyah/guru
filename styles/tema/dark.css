@@ -1,44 +1,49 @@
-
 body {
-    background-color: #303030;
-    color: #ffffff;
+    background-color: #121212 !important; /* Warna latar belakang gelap */
+    color: #e0e0e0 !important; /* Warna teks terang */
 }
 
 #cardIcon {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    background-color: rgba(0, 0, 0, 0.6) !important; /* Transparansi hitam untuk latar belakang */
+    color: #e0e0e0 !important; /* Warna teks terang */
 }
 
 .grid-item a {
-    color: inherit;
-    text-decoration: none;
-    display: block;
+    color: inherit !important; /* Warna teks tetap sesuai parent */
+    text-decoration: none !important;
+    display: block !important;
 }
+
 .grid-item:hover {
-    background-color: #303030;
-    border-radius: 8px;
-    cursor: pointer;
+    background-color: #333333 !important; /* Warna hover lebih gelap */
+    border-radius: 8px !important;
+    cursor: pointer !important;
 }
-.card.shadow-sm.mt-4 {
-    background-color: #4d4d4d8a !important;
+
+.card.shadow-sm.mt-4.card-custom {
+    background-color: rgba(50, 50, 50, 0.8) !important; /* Warna card gelap dengan transparansi */
+    margin: 5% !important;
 }
 
 .grid-item i {
-    color: #ffffff;
+    color: #f0f0f0 !important; /* Warna ikon terang */
 }
 
 h2 {
-    color: #ffffff;
+    color: #ffffff !important; /* Warna judul putih */
 }
-
-
-
-
 
 .settings-item:hover {
-    background-color: #000000;
+    background-color: #444444 !important; /* Warna hover lebih gelap */
 }
+
 .settings-item {
-    background-color: rgb(27, 27, 27);
-    border: 1px solid #6d6d6d;
+    background-color: #1e1e1e !important; /* Warna latar belakang item gelap */
+    border: 1px solid #555555 !important; /* Warna border lebih gelap */
+    color: #f0f0f0;
+}
+
+.card-custom {
+    background-color: rgba(50, 50, 50, 0.8) !important; /* Sesuaikan dengan dark mode */
+    margin: 5% !important;
 }

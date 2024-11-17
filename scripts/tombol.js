@@ -61,6 +61,51 @@ function moveHtmlContentFromJS(sourceId, targetDivId) {
 }
 
 
+function home() {
+    Sembunyikan("cardSetting", () => {
+        Tampilkan("cardIcon");
+        Tampilkan("cardKelompok")
+    });
+}
+
+function SettingButton() {
+    Sembunyikan("cardKelompok");
+    Sembunyikan("cardIcon", () => {
+        Tampilkan("cardSetting");
+    });
+}
+
+function Tampilkan(id) {
+    const elem = document.getElementById(id);
+    if (elem) {
+        elem.classList.remove('fade-out');
+        elem.classList.add('fade-in');
+        elem.style.display = "block"; // Tampilkan elemen
+    } else {
+        console.error(`Elemen dengan id "${id}" tidak ditemukan.`);
+    }
+}
+
+function Sembunyikan(id, callback) {
+    const elem = document.getElementById(id);
+    if (elem) {
+        elem.classList.remove('fade-in');
+        elem.classList.add('fade-out');
+        setTimeout(() => {
+            elem.style.display = "none"; // Sembunyikan elemen sepenuhnya setelah animasi selesai
+            if (callback) {
+                callback(); // Panggil callback setelah selesai disembunyikan
+            }
+        }, 800); // Sesuaikan waktu sesuai durasi animasi (800ms)
+    } else {
+        console.error(`Elemen dengan id "${id}" tidak ditemukan.`);
+    }
+}
+
+
+
+  
+
 
 // ---------------------------- Modal Form -------------------------
 // Definisikan konten HTML dalam JavaScript sebagai obyek

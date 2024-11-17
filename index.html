@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 
     <!-- Custom CSS -->
@@ -18,7 +21,7 @@
 <body>
     <!-- SVG Container -->
     <div class="svg-container">
-        <svg viewbox="0 0 800 400" class="svg">
+        <svg viewBox="0 0 800 400" class="svg">
             <path id="curve" fill="#50c6d8" d="M 800 300 Q 400 350 0 300 L 0 0 L 800 0 L 800 300 Z"></path>
         </svg>
     </div>
@@ -34,6 +37,12 @@
 
         <!-- Main Navigation Cards -->
         <div id="cardIcon" class="card shadow-sm mt-4">
+            <div id="loadingSpinner" class="loading-spinner">
+                <div class="spinner-inner">
+                    <img src="logo.png" alt="Logo" class="logo">
+                </div>
+            </div>
+            
             <div class="container-flex mt-5">
                 <!-- Links Grid -->
                 <div class="grid-item">
@@ -85,7 +94,7 @@
                     </a>
                 </div>
                 <div class="grid-item">
-                    <a href="halaman/setting.html">
+                    <a href="javascript:void(0)" onclick="SettingButton()">
                         <i class="fas fa-cog fa-2x"></i>
                         <div>Setting</div>
                     </a>
@@ -94,53 +103,106 @@
         </div>
 
         <!-- Modal Edit -->
-        <div class="modal fade" id="cardEdit" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <!-- Konten dari form.html akan dipindahkan ke sini -->
+         <div id="cardTabel" style="display: none;">
+            <div class="modal fade" id="cardEdit" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <!-- Konten dari form.html akan dipindahkan ke sini -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Tables -->
+            <div id="cardSantri" class="card shadow-sm mt-4 card-custom">
+                
+                <div class="card-body">
+                    <h2>Isti'dadiyah</h2>
+                    <table id="Santri" class="table table-hover table-bordered"></table>
+                </div>
+            </div>
+
+            <div id="cardAbsen" class="card shadow-sm mt-4 card-custom">
+                <div class="card-body">
+                    <h2>Absensi</h2>
+                    <table id="Absen" class="table table-striped table-bordered"></table>
+                </div>
+            </div>
+
+            <div id="cardGuru" class="card shadow-sm mt-4 card-custom">
+                <div class="card-body">
+                    <h2>Asatidz & Asatidzah</h2>
+                    <table id="Guru" class="table table-striped table-bordered"></table>
+                </div>
+            </div>
+
+            <div id="cardPelajaran" class="card shadow-sm mt-4 card-custom">
+                <div class="card-body">
+                    <h2>Pelajaran</h2>
+                    <table id="Pelajaran" class="table table-striped table-bordered"></table>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Card Tables -->
-        <div id="cardSantri" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <!--<div id="loadingSpinner" class="loading-spinner">
-                <div class="spinner-inner">
-                    <img src="logo.png" alt="Logo" class="logo">
-                </div>
-            </div>-->
-            <div class="card-body">
-                <h2>Isti'dadiyah</h2>
-                <table id="Santri" class="table table-hover table-bordered"></table>
+    <div id="cardKelompok" class="card shadow-sm mt-4 card-custom">
+        <div class="card-body">
+            <h2>Kelas</h2>
+            <table id="Kelompok" class="table table-striped table-bordered"></table>
+        </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div id="cardSetting" class="card shadow-sm mt-4 card-custom" style="display: none;">
+        <div class="container-flex mt-5">
+            <div class="grid-item">
+                <a href="javascript:void(0)" onclick="home()">
+                    <i class="fas fa-home fa-2x"></i>
+                    <div>Home</div>
+                </a>
             </div>
         </div>
 
-        <div id="cardAbsen" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <div class="card-body">
-                <h2>Absensi</h2>
-                <table id="Absen" class="table table-striped table-bordered"></table>
-            </div>
-        </div>
-
-        <div id="cardKelompok" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <div class="card-body">
-                <h2>Kelas</h2>
-                <table id="Kelompok" class="table table-striped table-bordered"></table>
-            </div>
-        </div>
-
-        <div id="cardGuru" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <div class="card-body">
-                <h2>Asatidz & Asatidzah</h2>
-                <table id="Guru" class="table table-striped table-bordered"></table>
-            </div>
-        </div>
-
-        <div id="cardPelajaran" class="card shadow-sm mt-4" style="background-color: rgba(255, 255, 255, 0.2); margin:5%;">
-            <div class="card-body">
-                <h2>Pelajaran</h2>
-                <table id="Pelajaran" class="table table-striped table-bordered"></table>
-            </div>
+        <div class="container">
+            <ul class="settings-list">
+                <!-- Pengaturan Akun -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-user settings-icon"></i>
+                        <span>Pengaturan Akun</span>
+                    </div>
+                    <a href="akun.html" class="btn btn-outline-primary btn-sm">Kelola</a>
+                </li>
+                
+                <!-- Mode Gelap -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-moon settings-icon"></i>
+                        <span>Mode Gelap</span>
+                    </div>
+                    <div class="toggle-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeToggle" onclick="toggleTheme()">
+                        <label class="form-check-label" for="darkModeToggle"></label>
+                    </div>
+                </li>
+                
+                <!-- Tentang -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-info-circle settings-icon"></i>
+                        <span>Tentang</span>
+                    </div>
+                    <a href="about.html" class="btn btn-outline-primary btn-sm">Lihat</a>
+                </li>
+                
+                <!-- Panduan Penggunaan -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-book-reader settings-icon"></i>
+                        <span>Panduan Penggunaan</span>
+                    </div>
+                    <a href="panduan.html" class="btn btn-outline-primary btn-sm">Baca</a>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -151,13 +213,18 @@
     <script src="scripts/header.js"></script>
     <script src="scripts/tombol.js"></script>
 
+    <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
     <script>
         $(document).ready(function(){
-            //fetchDataFromAppScript();
+            fetchDataFromAppScript();
         });
     </script>
 </body>

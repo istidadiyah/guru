@@ -13,13 +13,16 @@ body {
     text-decoration: none;
     display: block;
 }
+
 .grid-item:hover {
     background-color: #f0f0f0;
     border-radius: 8px;
     cursor: pointer;
 }
-.card.shadow-sm.mt-4 {
-    background-color: #ffffff8a !important;
+
+.card.shadow-sm.mt-4.card-custom {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    margin: 5% !important;
 }
 
 .grid-item i {
@@ -30,9 +33,6 @@ h2 {
     color: #000000;
 }
 
-
-
-
 .settings-item:hover {
     background-color: #f0f0f0;
 }
@@ -40,4 +40,10 @@ h2 {
 .settings-item {
     background-color: white;
     border: 1px solid #dee2e6;
+    color: #000000;
+}
+
+.card-custom {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    margin: 5% !important;
 }
