@@ -2,74 +2,79 @@
 // custom-script.js
 
 /**
- * Mendapatkan indeks kolom "KelMD" pada tabel.
- * @returns {number} Indeks kolom "KelMD", atau -1 jika tidak ditemukan.
+ * Mendapatkan indeks kolom berdasarkan nama kolom (header).
+ * @param {string} columnName - Nama kolom yang ingin dicari.
+ * @returns {number} Indeks kolom atau -1 jika tidak ditemukan.
  */
-function getKelMDIndex() {
-    var kelmdIndex = -1;
+function getColumnIndexByName(columnName) {
+    var columnIndex = -1;
     $('#Santri thead th').each(function(index) {
-        if ($(this).text().trim().toLowerCase() === 'kelmd') {
-            kelmdIndex = index;
-            return false; // Keluar dari each loop
+        // Membandingkan nama kolom dengan teks header
+        if ($(this).text().trim().toLowerCase() === columnName.toLowerCase()) {
+            columnIndex = index;
+            return false; // Keluar dari loop setelah menemukan kolom yang cocok
         }
     });
-    return kelmdIndex;
+    return columnIndex;
 }
 
 /**
- * Mengisi elemen <select> dengan nilai unik dari kolom "KelMD".
+ * Mengisi elemen <select> dengan nilai unik dari kolom tertentu dalam tabel.
+ * @param {string} columnName - Nama kolom yang ingin diambil nilainya.
  */
+function populateColumnFilter(columnName) {
+    var uniqueValuesSet = new Set();
+    
+    // Mendapatkan indeks kolom berdasarkan nama kolom yang diberikan
+    var columnIndex = getColumnIndexByName(columnName);
 
-function populateKelMDFilter() {
-    var kelmdSet = new Set();
-    var kelmdIndex = getKelMDIndex();
-
-    if (kelmdIndex === -1) {
-        console.error('Kolom "KelMD" tidak ditemukan.');
+    // Jika kolom tidak ditemukan
+    if (columnIndex === -1) {
+        console.error(`Kolom "${columnName}" tidak ditemukan.`);
         return;
     }
 
-    // Kumpulkan nilai unik dari kolom "KelMD"
+    // Kumpulkan nilai unik dari kolom yang ditentukan
     $('#Santri tbody tr').each(function() {
-        var cellText = $(this).find('td').eq(kelmdIndex).text().trim();
+        var cellText = $(this).find('td').eq(columnIndex).text().trim();
         if (cellText) {
-            kelmdSet.add(cellText);
+            uniqueValuesSet.add(cellText);
         }
     });
 
     // Ubah set menjadi array dan urutkan A-Z
-    var kelmdArray = Array.from(kelmdSet).sort();
+    var uniqueValuesArray = Array.from(uniqueValuesSet).sort();
 
-    // Seleksi elemen select
+    // Seleksi elemen select untuk filter
     var $filter = $('#kelmdFilter');
 
-    // Hapus semua opsi kecuali "All"
+    // Hapus semua opsi kecuali opsi default (All)
     $filter.find('option').not('[value=""]').remove();
 
-    // Isi opsi select dengan nilai unik dari "KelMD"
-    kelmdArray.forEach(function(kelmd) {
-        var option = $('<option>').val(kelmd).text(kelmd);
+    // Isi opsi select dengan nilai unik dari kolom
+    uniqueValuesArray.forEach(function(value) {
+        var option = $('<option>').val(value).text(value);
         $filter.append(option);
     });
 }
 
-
 /**
- * Memfilter tabel berdasarkan nilai "KelMD" yang dipilih.
- * @param {string} selectedKelMD Nilai "KelMD" yang dipilih.
+ * Memfilter tabel berdasarkan nilai yang dipilih dari dropdown filter.
+ * @param {string} selectedValue Nilai yang dipilih dari dropdown filter.
+ * @param {string} columnName Nama kolom yang ingin difilter.
  */
-function filterTableByKelMD(selectedKelMD) {
-    var kelmdIndex = getKelMDIndex();
+function filterTableByColumn(selectedValue, columnName) {
+    var columnIndex = getColumnIndexByName(columnName);
 
-    if (kelmdIndex === -1) {
-        console.error('Kolom "KelMD" tidak ditemukan.');
+    if (columnIndex === -1) {
+        console.error(`Kolom "${columnName}" tidak ditemukan.`);
         return;
     }
 
     // Tampilkan atau sembunyikan baris berdasarkan filter
     $('#Santri tbody tr').each(function() {
-        var cellText = $(this).find('td').eq(kelmdIndex).text().trim();
-        if (selectedKelMD === "" || cellText === selectedKelMD) {
+        var cellText = $(this).find('td').eq(columnIndex).text().trim();
+        if (selectedValue === "" || cellText === selectedValue) {
             $(this).show();
         } else {
             $(this).hide();
@@ -78,17 +83,20 @@ function filterTableByKelMD(selectedKelMD) {
 }
 
 /**
- * Menginisialisasi filter "KelMD" dan mengatur event listener.
+ * Menginisialisasi filter dan mengatur event listener untuk perubahan pada dropdown filter.
+ * @param {string} columnName Nama kolom yang akan difilter.
  */
-function initializeKelMDFilter() {
-    populateKelMDFilter();
+function initializeFilter(columnName) {
+    populateColumnFilter(columnName);
 
     // Event listener untuk perubahan pada select
     $('#kelmdFilter').on('change', function() {
         var selectedValue = $(this).val();
-        filterTableByKelMD(selectedValue);
+        filterTableByColumn(selectedValue, columnName);
     });
 }
+
+
 
 
 

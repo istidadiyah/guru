@@ -109,9 +109,8 @@ function AbsensiButton() {
         Tampilkan("cardSantri");
         Tampilkan("cardFilter");
 
-        populateKelMDFilter();
-        initializeKelMDFilter();
-        IsiBulan("filterBulan")
+        initializeFilter("K");
+        IsiBulan("filterBulan");
         
     });
 
@@ -134,8 +133,7 @@ function BiodataButton() {
         Tampilkan("tombolHome");
         Tampilkan("cardSantri");
 
-        populateKelMDFilter();
-        initializeKelMDFilter();
+        initializeKelMDFilter("K");
 
     });
 
