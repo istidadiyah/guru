@@ -9,10 +9,12 @@ function toggleTheme() {
         themeStylesheet.setAttribute('href', 'styles/tema/dark.css');
         localStorage.setItem('theme', 'dark');
         console.log('Switched to dark mode'); // Debugging
+        document.body.classList.add('dark-mode');
     } else {
         themeStylesheet.setAttribute('href', 'styles/tema/light.css');
         localStorage.setItem('theme', 'light');
         console.log('Switched to light mode'); // Debugging
+        document.body.classList.remove('dark-mode');
     }
 
     // Memicu event 'themeChanged' untuk memberitahu halaman lain
@@ -60,4 +62,17 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         }
     });
+});
+
+
+// Inisialisasi tema berdasarkan localStorage saat halaman dimuat
+document.addEventListener('DOMContentLoaded', () => {
+    let currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        document.body.classList.add('bg-dark', 'text-white');
+        // Menambahkan kelas 'table-dark' ke semua tabel
+        document.querySelectorAll('table').forEach(table => {
+            table.classList.add('table-dark');
+        });
+    }
 });

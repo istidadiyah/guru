@@ -1,47 +1,39 @@
-<!-- Modal Edit -->
+<!-- Modal Edit Data -->
 <div id="FormData" class="modal-dialog modal-lg">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="editModalLabel">Edit Data</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
             <form id="editForm">
                 
-                <!-- Biodata Anak -->
+                <!-- Biodata Santri -->
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title">Biodata Santri</h5>
                         <div class="mb-3">
                             <label for="IDS" class="form-label">IDS</label>
-                            <input type="text" class="form-control" id="IDS" name="IDS" disabled>
+                            <input type="text" class="form-control" id="IDS" disabled>
                         </div>
                         <div class="mb-3">
                             <label for="Nama" class="form-label">Nama</label>
-                            <input type="text" class="form-control" id="Nama" name="Nama">
+                            <input type="text" class="form-control" id="Nama">
                         </div>
                         <div class="mb-3">
                             <label for="NIK" class="form-label">Nomor NIK</label>
-                            <input type="text" class="form-control" id="NIK" name="NIK">
+                            <input type="text" class="form-control" id="NIK">
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-6">
-                                <label for="TempatLahir" class="form-label">Tempat Lahir</label>
-                                <input type="text" class="form-control" id="TempatLahir" name="TempatLahir">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="TanggalLahir" class="form-label">Tanggal Lahir</label>
-                                <input type="date" class="form-control" id="TanggalLahir" name="TanggalLahir" style="width: 150px;">
+                            <label for="TempatLahir" class="form-label">Tempat Tanggal Lahir</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="TempatLahir" placeholder="Tempat Lahir">
+                                <input type="date" class="form-control" id="TanggalLahir" style="width: 150px;">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="KelMD" class="form-label">Kelas</label>
-                            <input type="text" class="form-control" id="KelMD" name="KelMD">
-                        </div>
-                        <div class="mb-3">
-                            <label for="Kelas" class="form-label">Kelas</label>
-                            <select class="form-select" id="Kelas" name="Kelas">
-                            </select>
+                            <input type="text" class="form-control" id="KelMD">
                         </div>
                     </div>
                 </div>
@@ -52,37 +44,34 @@
                         <h5 class="card-title">Biodata Ayah</h5>
                         <div class="mb-3">
                             <label for="Ayah" class="form-label">Nama Ayah</label>
-                            <input type="text" class="form-control" id="Ayah" name="Ayah">
+                            <input type="text" class="form-control" id="Ayah">
                         </div>
                         <div class="mb-3">
                             <label for="NIKAyah" class="form-label">Nomor NIK Ayah</label>
-                            <input type="text" class="form-control" id="NIKAyah" name="NIKAyah">
+                            <input type="text" class="form-control" id="NIKAyah">
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-6">
-                                <label for="TempatLahirAyah" class="form-label">Tempat Lahir Ayah</label>
-                                <input type="text" class="form-control" id="TempatLahirAyah" name="TempatLahirAyah">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="TanggalLahirAyah" class="form-label">Tanggal Lahir Ayah</label>
-                                <input type="date" class="form-control" id="TanggalLahirAyah" name="TanggalLahirAyah" style="width: 150px;">
+                            <label for="TempatLahirAyah" class="form-label">Tempat Tanggal Lahir Ayah</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="TempatLahirAyah" placeholder="Tempat Lahir">
+                                <input type="date" class="form-control" id="TanggalLahirAyah" style="width: 150px;">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="PendidikanAyah" class="form-label">Pendidikan Ayah</label>
-                            <input type="text" class="form-control" id="PendidikanAyah" name="PendidikanAyah">
+                            <input type="text" class="form-control" id="PendidikanAyah">
                         </div>
                         <div class="mb-3">
                             <label for="PekerjaanAyah" class="form-label">Pekerjaan Ayah</label>
-                            <input type="text" class="form-control" id="PekerjaanAyah" name="PekerjaanAyah">
+                            <input type="text" class="form-control" id="PekerjaanAyah">
                         </div>
                         <div class="mb-3">
                             <label for="NoAyah" class="form-label">Nomor Telepon Ayah</label>
-                            <input type="text" class="form-control" id="NoAyah" name="NoAyah">
+                            <input type="text" class="form-control" id="NoAyah">
                         </div>
                         <div class="mb-3">
                             <label for="PenghasilanAyah" class="form-label">Penghasilan Ayah</label>
-                            <input type="text" class="form-control" id="PenghasilanAyah" name="PenghasilanAyah">
+                            <input type="text" class="form-control" id="PenghasilanAyah">
                         </div>
                     </div>
                 </div>
@@ -93,43 +82,115 @@
                         <h5 class="card-title">Biodata Ibu</h5>
                         <div class="mb-3">
                             <label for="Ibu" class="form-label">Nama Ibu</label>
-                            <input type="text" class="form-control" id="Ibu" name="Ibu">
+                            <input type="text" class="form-control" id="Ibu">
                         </div>
                         <div class="mb-3">
                             <label for="NIKIbu" class="form-label">Nomor NIK Ibu</label>
-                            <input type="text" class="form-control" id="NIKIbu" name="NIKIbu">
+                            <input type="text" class="form-control" id="NIKIbu">
                         </div>
                         <div class="mb-3 row">
-                            <div class="col-md-6">
-                                <label for="TempatLahirIbu" class="form-label">Tempat Lahir Ibu</label>
-                                <input type="text" class="form-control" id="TempatLahirIbu" name="TempatLahirIbu">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="TanggalLahirIbu" class="form-label">Tanggal Lahir Ibu</label>
-                                <input type="date" class="form-control" id="TanggalLahirIbu" name="TanggalLahirIbu" style="width: 150px;">
+                            <label for="TempatLahirIbu" class="form-label">Tempat Tanggal Lahir Ibu</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="TempatLahirIbu" placeholder="Tempat Lahir">
+                                <input type="date" class="form-control" id="TanggalLahirIbu" style="width: 150px;">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="PendidikanIbu" class="form-label">Pendidikan Ibu</label>
-                            <input type="text" class="form-control" id="PendidikanIbu" name="PendidikanIbu">
+                            <input type="text" class="form-control" id="PendidikanIbu">
                         </div>
                         <div class="mb-3">
                             <label for="PekerjaanIbu" class="form-label">Pekerjaan Ibu</label>
-                            <input type="text" class="form-control" id="PekerjaanIbu" name="PekerjaanIbu">
+                            <input type="text" class="form-control" id="PekerjaanIbu">
                         </div>
                         <div class="mb-3">
                             <label for="NoIbu" class="form-label">Nomor Telepon Ibu</label>
-                            <input type="text" class="form-control" id="NoIbu" name="NoIbu">
+                            <input type="text" class="form-control" id="NoIbu">
                         </div>
                         <div class="mb-3">
                             <label for="PenghasilanIbu" class="form-label">Penghasilan Ibu</label>
-                            <input type="text" class="form-control" id="PenghasilanIbu" name="PenghasilanIbu">
+                            <input type="text" class="form-control" id="PenghasilanIbu">
                         </div>
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary">Simpan</button>
             </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Kelas -->
+<div id="FormKelas" class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Kelas</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+            <form id="editForm">
+                <!-- Biodata Santri -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Biodata Santri</h5>
+                        <div class="mb-3">
+                            <label for="ID" class="form-label">Kelas</label>
+                            <input type="text" class="form-control" id="ID" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="WaliKelas" class="form-label">Wali Kelas</label>
+                            <input type="text" class="form-control" id="WaliKelas">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Ket" class="form-label">Keterangan Banin/Banat</label>
+                            <select class="form-control" id="Ket">
+                                <option value="Banin">Banin</option>
+                                <option value="Banat">Banat</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edit Guru -->
+<div id="FormGuru" class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Data Guru</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="max-height: calc(100vh - 200px); overflow-y: auto;">
+            <form id="editForm">
+                <!-- Biodata Guru -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Biodata Guru</h5>
+                        <div class="mb-3">
+                            <label for="ID" class="form-label">Guru ID</label>
+                            <input type="text" class="form-control" id="ID" disabled>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Nama" class="form-label">Nama Guru</label>
+                            <input type="text" class="form-control" id="Nama">
+                        </div>
+                        <div class="mb-3">
+                            <label for="NIK" class="form-label">NIK</label>
+                            <input type="text" class="form-control" id="NIK">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Simpan</button>
         </div>
     </div>
 </div>

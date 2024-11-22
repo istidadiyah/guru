@@ -4,7 +4,7 @@
     top: 15px; /* Adjusted to place the counter below the header */
     right: 10px;
     padding: 5px 8px; /* Adjusted padding to fit the smaller circle */
-    background-color: #004702dc;
+    background-color: #c75a00dc;
     color: #ffffff;
     font-size: 12px; /* Smaller font size */
     border-radius: 50%; /* Make the element circular */
@@ -40,6 +40,41 @@
 #antrianCounter.queue-anim {
     animation: bounce 0.5s ease-out;
 }
+
+
+/* Styling for the queue counter */
+#antrianJson {
+    position: fixed;
+    top: 15px; /* Adjusted to place the counter below the header */
+    right: 50px;
+    padding: 5px 8px; /* Adjusted padding to fit the smaller circle */
+    background-color: #106100dc;
+    color: #ffffff;
+    font-size: 12px; /* Smaller font size */
+    border-radius: 50%; /* Make the element circular */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 9999; /* Ensure it's in front of all elements */
+    display: flex;
+    justify-content: center; /* Horizontally center text */
+    align-items: center; /* Vertically center text */
+    width: 30px;  /* Smaller circle width */
+    height: 30px; /* Smaller circle height */
+    text-align: center; /* Ensure the text is centered */
+}
+
+/* Ensure the counter animates when it changes */
+#antrianJson.queue-anim {
+    animation: bounce 0.5s ease-out;
+}
+
+
+
+
+
+
+
+
+
 
 
 /* Flexbox untuk memastikan Tanggal dan Bulan tetap sejajar */
@@ -245,11 +280,15 @@
 .active.S { background-color: blue; }
 .active.I { background-color: orange; }
 
+
+/* ---------------- Style Setting ------------------------------ */
+
 .settings-list {
     list-style: none;
     padding: 0;
     margin: 20px 0;
 }
+
 .settings-item {
     border-radius: 10px;
     margin-bottom: 15px;
@@ -257,7 +296,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #f9f9f9; /* Warna latar belakang default */
     transition: background-color 0.3s;
+}
+
+.settings-item:hover {
+    background-color: #eef9fa; /* Warna saat hover */
 }
 
 .settings-icon {
@@ -265,22 +309,65 @@
     color: #50c6d8;
     margin-right: 15px;
 }
+
 .toggle-switch {
     display: flex;
     align-items: center;
 }
+
 .toggle-switch input {
     margin-right: 10px;
 }
+
 /* Toggle Switch Styling */
 .form-check-input:checked {
     background-color: #50c6d8;
     border-color: #50c6d8;
 }
+
 .form-check-input:focus {
     border-color: #50c6d8;
     box-shadow: 0 0 0 0.25rem rgba(80, 198, 216, 0.25);
 }
+
+/* ---------------- Informasi Guru ----------------------------- */
+#IDGuru {
+    font-size: 14px;
+    color: #888; /* Warna abu-abu untuk teks ID */
+    margin: 0;
+}
+
+#NamaGuru {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333; /* Warna teks nama */
+    margin: 0;
+}
+
+.settings-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    transition: background-color 0.3s;
+}
+
+.settings-header:hover {
+    background-color: #eef9fa;
+}
+
+.settings-header .settings-icon {
+    font-size: 2rem;
+    color: #50c6d8;
+}
+
+
+
+
+
 
 
 .hidden {
@@ -290,6 +377,9 @@
 .visible {
     display: block; /* Tampilkan elemen di dalam tata letak */
 }
+
+
+/* ---------------- Animasi Transisi ------------------------------ */
 
 .fade-in {
     opacity: 0;
@@ -322,5 +412,32 @@
     100% {
         opacity: 0;
         transform: translateY(-20px) scale(0.9);
+    }
+}
+
+
+/* ---------------- Animasi header ------------------------------ */
+
+
+
+@keyframes slideOutLeft {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }

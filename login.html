@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles/login.css">
+</head>
+<body>
+    <div class="wrapper">
+        <div class="logo">
+            <img src="logo.png" alt="Isti'dadiyah Logo">
+        </div>
+        <div class="text-center mt-4 name">
+            Isti'dadiyah
+        </div>
+        <form class="p-3 mt-3" id="loginForm">
+            <div class="form-field d-flex align-items-center">
+                <span class="far fa-user"></span>
+                <input type="text" name="userName" id="userName" placeholder="Username" required>
+            </div>
+            <div class="form-field d-flex align-items-center">
+                <span class="fas fa-key"></span>
+                <input type="password" name="password" id="pwd" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn mt-3">Login</button>
+        </form>
+
+        <script>
+            // Menangani event ketika form login dikirim
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault(); // Mencegah form agar tidak mengarah ke halaman lain
+
+                // Mengambil nilai dari input username dan password
+                const userName = document.getElementById('userName').value;
+                const password = document.getElementById('pwd').value;
+
+                // Memuat file JSON yang berisi data login
+                fetch('login.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Mencari data yang cocok dengan ID dan password yang dimasukkan
+                        const user = data.JsonLogin.find(user => user.ID === userName && user.pw === password);
+
+                        if (user) {
+                            // Menyimpan data pengguna ke dalam localStorage
+                            localStorage.setItem('userID', user.ID);
+                            localStorage.setItem('userName', user.Nama);
+
+                            // Pindah ke halaman index.html
+                            window.location.href = 'index.html';
+                        } else {
+                            // Menampilkan pesan kesalahan jika login gagal
+                            alert('Username atau password salah');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error:', err);
+                        alert('Terjadi kesalahan saat memuat data login');
+                    });
+            });
+        </script>
+    </div>
+</body>
+</html>

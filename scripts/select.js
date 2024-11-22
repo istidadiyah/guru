@@ -1,3 +1,102 @@
+//---------------------- Fungsi select Filter ----------------------------
+// custom-script.js
+
+/**
+ * Mendapatkan indeks kolom "KelMD" pada tabel.
+ * @returns {number} Indeks kolom "KelMD", atau -1 jika tidak ditemukan.
+ */
+function getKelMDIndex() {
+    var kelmdIndex = -1;
+    $('#Santri thead th').each(function(index) {
+        if ($(this).text().trim().toLowerCase() === 'kelmd') {
+            kelmdIndex = index;
+            return false; // Keluar dari each loop
+        }
+    });
+    return kelmdIndex;
+}
+
+/**
+ * Mengisi elemen <select> dengan nilai unik dari kolom "KelMD".
+ */
+
+function populateKelMDFilter() {
+    var kelmdSet = new Set();
+    var kelmdIndex = getKelMDIndex();
+
+    if (kelmdIndex === -1) {
+        console.error('Kolom "KelMD" tidak ditemukan.');
+        return;
+    }
+
+    // Kumpulkan nilai unik dari kolom "KelMD"
+    $('#Santri tbody tr').each(function() {
+        var cellText = $(this).find('td').eq(kelmdIndex).text().trim();
+        if (cellText) {
+            kelmdSet.add(cellText);
+        }
+    });
+
+    // Ubah set menjadi array dan urutkan A-Z
+    var kelmdArray = Array.from(kelmdSet).sort();
+
+    // Seleksi elemen select
+    var $filter = $('#kelmdFilter');
+
+    // Hapus semua opsi kecuali "All"
+    $filter.find('option').not('[value=""]').remove();
+
+    // Isi opsi select dengan nilai unik dari "KelMD"
+    kelmdArray.forEach(function(kelmd) {
+        var option = $('<option>').val(kelmd).text(kelmd);
+        $filter.append(option);
+    });
+}
+
+
+/**
+ * Memfilter tabel berdasarkan nilai "KelMD" yang dipilih.
+ * @param {string} selectedKelMD Nilai "KelMD" yang dipilih.
+ */
+function filterTableByKelMD(selectedKelMD) {
+    var kelmdIndex = getKelMDIndex();
+
+    if (kelmdIndex === -1) {
+        console.error('Kolom "KelMD" tidak ditemukan.');
+        return;
+    }
+
+    // Tampilkan atau sembunyikan baris berdasarkan filter
+    $('#Santri tbody tr').each(function() {
+        var cellText = $(this).find('td').eq(kelmdIndex).text().trim();
+        if (selectedKelMD === "" || cellText === selectedKelMD) {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+}
+
+/**
+ * Menginisialisasi filter "KelMD" dan mengatur event listener.
+ */
+function initializeKelMDFilter() {
+    populateKelMDFilter();
+
+    // Event listener untuk perubahan pada select
+    $('#kelmdFilter').on('change', function() {
+        var selectedValue = $(this).val();
+        filterTableByKelMD(selectedValue);
+    });
+}
+
+
+
+
+
+
+
+
 // -------------------------------- Fungsi select di dalam form awal --------------------------------------
 
 // Event Listener untuk select Tanggal dan Bulan
@@ -107,114 +206,6 @@ function filterTableByKelas() {
 
 
 
-// --------------------------------- Fungsi select di dalam tabel -----------------------------
-
-function updateDynamicTableAfterChange(updatedData) {
-    const dynamicBody = document.getElementById('dynamicBody');
-
-    // IDS dari data yang baru diperbarui
-    const updatedIDS = updatedData.IDS.trim(); // Trim IDS untuk menghindari masalah whitespace
-
-    // Ambil semua baris di tabel dinamis
-    const rows = dynamicBody.querySelectorAll('tr');
-
-    // Cari baris dengan IDS yang sesuai
-    let rowToUpdate = null;
-
-    for (let i = 0; i < rows.length; i++) {
-        const row = rows[i];
-        const cells = row.querySelectorAll('td');
-
-        if (cells.length > 1) { // Pastikan baris memiliki setidaknya dua sel
-            const IDSCell = cells[1].textContent.trim();  // Kolom kedua dianggap sebagai kolom IDS
-
-            if (IDSCell === updatedIDS) {
-                rowToUpdate = row;
-                break;  // Berhenti setelah menemukan baris yang sesuai
-            }
-        }
-    }
-
-    if (rowToUpdate) {
-        console.log('IDS ditemukan, memperbarui baris:', updatedIDS);
-
-        // IDS ditemukan, perbarui data baris tersebut
-        const cells = rowToUpdate.querySelectorAll('td');
-
-        for (let key in updatedData) {
-            if (key !== 'IDS' && key !== 'TanggalUpdate') {
-                const columnIndex = getColumnIndexByName(globalSheet2Data, key);
-                if (columnIndex !== -1 && columnIndex < cells.length) {
-                    cells[columnIndex].textContent = updatedData[key];
-                }
-            }
-        }
-    } else {
-        console.log('IDS tidak ditemukan, menambahkan baris baru:', updatedIDS);
-
-        // IDS tidak ditemukan, tambahkan baris baru
-        const newRow = document.createElement('tr');
-        const columns = Object.keys(globalSheet2Data[0]);
-
-        // Membuat sel data berdasarkan kolom yang ada
-        columns.forEach(column => {
-            const newCell = document.createElement('td');
-            newCell.textContent = updatedData[column] || '';  // Menggunakan default kosong jika data tidak ada
-            newRow.appendChild(newCell);
-        });
-
-        // Menambahkan row baru ke dalam body tabel
-        dynamicBody.appendChild(newRow);
-    }
-}
-
-// Fungsi untuk mendapatkan indeks kolom berdasarkan nama kolom
-function getColumnIndexByName(sheet2Data, columnName) {
-    const columns = Object.keys(sheet2Data[0]);
-    return columns.indexOf(columnName);
-}
-
-
-function updateSelectColor(selectElement) {
-    const value = selectElement.value;
-
-    // Menghapus semua kelas warna sebelumnya
-    selectElement.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'bg-light');
-    selectElement.style.color = ''; // Reset warna teks ke default
-    selectElement.style.fontWeight = ''; // Reset font-weight ke default
-
-    switch (value) {
-        case '':
-            selectElement.classList.add('bg-light'); // Kosong: Putih
-            selectElement.style.color = 'black'; // Teks menjadi hitam
-            break;
-        case 'H':
-            selectElement.classList.add('bg-success'); // Hadir: Hijau
-            selectElement.style.color = 'white'; // Teks menjadi putih untuk kontras
-            selectElement.style.fontWeight = 'bold'; // Teks menjadi tebal
-            break;
-        case 'A':
-            selectElement.classList.add('bg-danger'); // Alpha: Merah
-            selectElement.style.color = 'white'; // Teks menjadi putih untuk kontras
-            selectElement.style.fontWeight = 'bold'; // Teks menjadi tebal
-            break;
-        case 'I':
-            selectElement.classList.add('bg-warning'); // Izin: Kuning
-            selectElement.style.color = 'black'; // Teks tetap hitam karena latar belakang kuning cerah
-            selectElement.style.fontWeight = 'bold'; // Teks menjadi tebal
-            break;
-        case 'S':
-            selectElement.classList.add('bg-info'); // Sakit: Biru
-            selectElement.style.color = 'white'; // Teks menjadi putih untuk kontras
-            selectElement.style.fontWeight = 'bold'; // Teks menjadi tebal
-            break;
-        default:
-            selectElement.classList.add('bg-light'); // Default: Putih
-            selectElement.style.color = 'black'; // Teks menjadi hitam
-            break;
-    }
-}
-
 
 
 // Menambahkan Event Listener untuk setiap selectAbsensi
@@ -227,7 +218,24 @@ function addChangeColorListener(selectAbsensi) {
     updateSelectColor(selectAbsensi);
 }
 
+// Fungsi untuk mengisi elemen select dengan opsi bulan
+function IsiBulan(selectId) {
+    // Mendapatkan elemen select berdasarkan id
+    const selectElement = document.getElementById(selectId);
 
+    // Mengosongkan select terlebih dahulu
+    selectElement.innerHTML = "";
+
+    // Menambahkan opsi-opsi bulan ke dalam elemen select
+    for (const bulan in bulanNames) {
+        if (bulanNames.hasOwnProperty(bulan)) {
+            const option = document.createElement("option");
+            option.value = bulan; // "01", "02", ...
+            option.text = bulanNames[bulan]; // "Muharram", "Shafar", ...
+            selectElement.appendChild(option);
+        }
+    }
+}
 
 function isiSelect(idSelect, json, header, event) {
     if (event) {
@@ -278,130 +286,3 @@ function isiSelect(idSelect, json, header, event) {
 
 
 
-
-// --------------------------- Tombol ---------------------
-
-// Toggle the form when the toggle button is clicked
-document.getElementById('toggleFormButton').addEventListener('click', function (event) {
-    var formFilter = document.getElementById('formfilter');
-    if (formFilter.classList.contains('show')) {
-        // Hide form if it is currently shown
-        formFilter.classList.remove('show');
-    } else {
-        // Show form if it is currently hidden
-        formFilter.classList.add('show');
-    }
-
-    // Prevent click from propagating to the document
-    event.stopPropagation();
-});
-
-// Hide form when clicking outside
-document.addEventListener('click', function (event) {
-    var formFilter = document.getElementById('formfilter');
-    var toggleButton = document.getElementById('toggleFormButton');
-
-    // Check if the form is currently shown, and if the click is outside both the form and toggle button
-    if (formFilter.classList.contains('show') &&
-        !formFilter.contains(event.target) &&
-        event.target !== toggleButton) {
-        formFilter.classList.remove('show');
-    }
-});
-
-// Function to make the form element draggable
-function makeElementDraggable(element) {
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    let isDragging = false;
-
-    // Set up mouse and touch listeners for the form element only
-    element.onmousedown = dragMouseDown;
-    element.ontouchstart = dragTouchStart;
-
-    // Function to handle mouse down event
-    function dragMouseDown(e) {
-        e = e || window.event;
-
-        // Ignore the event if it's triggered from an input, select, or other form control
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') {
-            return;
-        }
-
-        e.preventDefault();
-        isDragging = true;
-
-        // Get initial cursor positions
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
-    }
-
-    // Function to handle touch start event
-    function dragTouchStart(e) {
-        e = e || window.event;
-
-        // Ignore the event if it's triggered from an input, select, or other form control
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA') {
-            return;
-        }
-
-        e.preventDefault();
-        isDragging = true;
-
-        // Get initial touch positions
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-        document.ontouchend = closeDragElement;
-        document.ontouchmove = elementDragTouch;
-    }
-
-    // Function to handle element dragging with mouse
-    function elementDrag(e) {
-        if (!isDragging) return;
-
-        e = e || window.event;
-        e.preventDefault();
-
-        // Calculate the new cursor position
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-
-        // Set the element's new position
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-    }
-
-    // Function to handle element dragging with touch
-    function elementDragTouch(e) {
-        if (!isDragging) return;
-
-        e = e || window.event;
-        e.preventDefault();
-
-        // Calculate the new touch position
-        pos1 = pos3 - e.touches[0].clientX;
-        pos2 = pos4 - e.touches[0].clientY;
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-
-        // Set the element's new position
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-    }
-
-    // Function to handle when dragging stops
-    function closeDragElement() {
-        // Stop moving when mouse button or touch ends
-        document.onmouseup = null;
-        document.onmousemove = null;
-        document.ontouchend = null;
-        document.ontouchmove = null;
-        isDragging = false;
-    }
-}
-
-// Make the form draggable
-makeElementDraggable(document.getElementById("formfilter"));

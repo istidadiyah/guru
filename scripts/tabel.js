@@ -1,223 +1,23 @@
-
-// Fungsi untuk memasukkan data ke tabel dan mengatur filter kelas
-function insertDataToTable(sheet1Data) {
-    const tableBody = document.querySelector('#dataTable tbody');
-    const filterKelas = document.getElementById('filterKelas');
-
-    // Set untuk menyimpan kelas yang unik
-    const kelasSet = new Set();
-
-    // Sort the data by 'Nama' first, then by 'Kelas'
-    sheet1Data.sort((a, b) => {
-        // First, sort by Nama
-        const nameCompare = a.Nama.localeCompare(b.Nama);
-        if (nameCompare !== 0) return nameCompare;
-
-        // If Nama is the same, sort by Kelas
-        return a.KelMD.localeCompare(b.KelMD);
-    });
-
-    // Iterasi melalui data dan masukkan ke dalam tabel
-    sheet1Data.forEach(data => {
-        const row = document.createElement('tr');
-
-        // Kolom Nama
-        const namaCell = document.createElement('td');
-        namaCell.textContent = data.Nama;
-        row.appendChild(namaCell);
-
-        // Kolom Kelas
-        const kelasCell = document.createElement('td');
-        kelasCell.textContent = data.KelMD;
-
-        kelasCell.setAttribute('translate', 'no');
-        
-        row.appendChild(kelasCell);
-
-        // Menambahkan kelas ke set untuk filter kelas
-        kelasSet.add(data.KelMD);
-
-        // Kolom Absensi
-        const absensiCell = document.createElement('td');
-        const selectAbsensi = document.createElement('select');
-        selectAbsensi.classList.add('form-control'); // Tambahkan kelas Bootstrap "form-control" dan "selectpicker" untuk menggunakan plugin Bootstrap Select
-
-        const options = ['', 'H', 'A', 'I', 'S'];
-
-        selectAbsensi.setAttribute('data-ids', data.IDS);
-
-        options.forEach(optionValue => {
-            const option = document.createElement('option');
-            option.value = optionValue;
-            option.textContent = optionValue;
-
-            // Tambahkan atribut translate="no" pada setiap elemen <option>
-            option.setAttribute('translate', 'no');
-
-            selectAbsensi.appendChild(option);
-        });
-
-        absensiCell.appendChild(selectAbsensi);
-        row.appendChild(absensiCell);
-
-        tableBody.appendChild(row);
-
-        // Event listener untuk perubahan Absensi
-        selectAbsensi.addEventListener('change', async function () {
-            const nama = namaCell.textContent;
-            const kelas = kelasCell.textContent;
-            const absensi = selectAbsensi.value;
-            const IDS = selectAbsensi.getAttribute('data-ids');
-        
-            // Mengumpulkan data dan mengirimkan ke server
-            const jsonData = collectAbsensiData(IDS, nama, kelas, absensi);
-            const encodedData = encodeData(jsonData);
-            await postJSON(encodedData);
-        
-            // Mengupdate tabel dinamis kedua di halaman setelah data dikirim
-            updateDynamicTableAfterChange(jsonData);
-        });
-
-        addChangeColorListener(selectAbsensi);
-    });
-
-    // Menambahkan kelas ke dropdown filterKelas
-    // Sort kelas alphabetically
-    const sortedKelas = Array.from(kelasSet).sort((a, b) => a.localeCompare(b));
-    sortedKelas.forEach(kelas => {
-        const option = document.createElement('option');
-        option.value = kelas;
-        option.textContent = kelas;
-
-        // Tambahkan atribut translate="no" pada setiap elemen <option>
-        option.setAttribute('translate', 'no');
-
-        filterKelas.appendChild(option);
-    });
-
-    // Tambahkan event listener untuk filter kelas
-    filterKelas.addEventListener('change', filterTableByKelas);
-}
-
-
-// Mengumpulkan data untuk dikirimkan dalam JSON
-function collectAbsensiData(dataIDS, nama, kelas, absensi) {
-    const bulan = document.getElementById('filterBulan').value;
-    const tanggal = document.getElementById('filterTanggal').value;
-    const jam = document.getElementById('filterJam').value;
-    const guru = document.getElementById('filterGuru').value;
-
-    const IDS = `46-${dataIDS}-${bulan}`;
-    const headerTanggal = `${jam}T${tanggal}`;
-
-    // Format TanggalUpdate menjadi "YYYY-MM-DD HH:MM:SS"
-    const now = new Date();
-    const tanggalUpdate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-
-    const jsonData = {
-        TanggalUpdate: tanggalUpdate,
-        IDS: IDS,
-        Nama: nama,
-        Kelas: kelas,
-        Guru: guru,
-        Bulan: bulan ? getBulanName(bulan) : '',
-        [headerTanggal]: absensi
-    };
-
-    return jsonData;
-}
-
-// Fungsi untuk mendapatkan nama bulan berdasarkan kode bulan
-function getBulanName(bulan) {
-    const bulanNames = {
-        "01": "Muharram",
-        "02": "Shafar",
-        "03": "Rabi'ul Awwal",
-        "04": "Rabi'ul Akhir",
-        "05": "Jumadil Awwal",
-        "06": "Jumadil Akhir",
-        "07": "Rajab",
-        "08": "Sya'ban",
-        "09": "Ramadhan",
-        "10": "Syawal",
-        "11": "Dzulqa'dah",
-        "12": "Dzulhijjah"
-    };
-    return bulanNames[bulan] || '';
-}
-
-// Fungsi untuk mengubah objek menjadi format URL-encoded
-function encodeData(data) {
-    const formBody = [];
-    for (const key in data) {
-        const encodedKey = encodeURIComponent(key);
-        const encodedValue = encodeURIComponent(data[key]);
-        formBody.push(encodedKey + "=" + encodedValue);
-    }
-    return formBody.join("&");
-}
+// Objek untuk nama bulan
+const bulanNames = {
+    "01": "Muharram",
+    "02": "Shafar",
+    "03": "Rabi'ul Awal",
+    "04": "Rabi'ul Akhir",
+    "05": "Jumadil Awal",
+    "06": "Jumadil Akhir",
+    "07": "Rajab",
+    "08": "Sya'ban",
+    "09": "Ramadhan",
+    "10": "Syawal",
+    "11": "Dzulqa'dah",
+    "12": "Dzulhijjah"
+};
 
 
 
-
-
-
-// -------------------- Fungsi untuk tabel 2 -------------------------------------
-
-
-let globalSheet2Data = [];  // Variabel global untuk menyimpan data sheet2
-
-// Memasukkan data 2 ke tabel 2
-function insertDataToDynamicTable(sheet2Data) {
-    globalSheet2Data = sheet2Data;  // Simpan sheet2Data ke variabel global
-    
-    const dynamicHeader = document.getElementById('dynamicHeader');
-    const dynamicBody = document.getElementById('dynamicBody');
-
-    // Menghitung kolom-kolom untuk header, menggunakan key dari data pertama
-    if (sheet2Data.length === 0) return;  // Pastikan data tidak kosong
-
-    const columns = Object.keys(sheet2Data[0]); // Ambil keys dari data pertama sebagai header
-
-    // Membuat header dinamis berdasarkan kolom-kolom yang ada
-    const headerRow = document.createElement('tr');
-
-    // Menambahkan setiap kolom sebagai header
-    columns.forEach(column => {
-        const columnHeader = document.createElement('th');
-        columnHeader.textContent = column; // Menambahkan nama kolom sebagai header
-        headerRow.appendChild(columnHeader);
-    });
-
-    // Menambahkan header ke dalam tabel
-    dynamicHeader.innerHTML = ''; // Kosongkan header yang ada sebelumnya
-    dynamicHeader.appendChild(headerRow);
-
-    // Memasukkan data ke dalam body tabel
-    dynamicBody.innerHTML = '';  // Kosongkan body tabel yang ada sebelumnya
-    sheet2Data.forEach(data => {
-        const row = document.createElement('tr');
-
-        // Mengisi data sesuai dengan kolom yang ada
-        columns.forEach(column => {
-            const cell = document.createElement('td');
-            cell.textContent = data[column] || '';  // Menggunakan default kosong jika data tidak ada
-            row.appendChild(cell);
-        });
-
-        // Menambahkan row ke dalam body tabel
-        dynamicBody.appendChild(row);
-    });
-
-    // Menampilkan tabel setelah data dimasukkan
-    document.getElementById('dynamicTable').style.display = 'table';
-}
-
-
-
-
-// Fungsi terbaru memasukkan data ke dalam tabel
-function DataTabel(tableId, jsonData, visibleColumns) {
+//------------------------------------------------------------ Fungsi Input data to tabel -------------------------------------------------------------
+function DataTabelTanpaTombol(tableId, jsonData, visibleColumns) {
     // Cek elemen tabel
     const table = document.getElementById(tableId);
     if (!table) {
@@ -234,17 +34,25 @@ function DataTabel(tableId, jsonData, visibleColumns) {
         return;
     }
 
-    // Mendapatkan header dari data JSON
-    const headers = Object.keys(jsonData[0]);
+    // Mendapatkan header dari data JSON berdasarkan kolom yang terlihat
+    const visibleHeaders = visibleColumns.split(",").map(col => col.trim());
+    if (visibleHeaders.length === 0) {
+        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
+        return;
+    }
 
     // Membuat header tabel dengan <th>
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    headers.forEach(header => {
+    visibleHeaders.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;
         headerRow.appendChild(th);
     });
+
+    // *** Bagian Edit Header Dihapus ***
+    // Jika di masa depan Anda ingin menambahkan kolom lain, Anda bisa menambahkannya di sini.
+
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
@@ -252,11 +60,16 @@ function DataTabel(tableId, jsonData, visibleColumns) {
     const tbody = document.createElement('tbody');
     jsonData.forEach(row => {
         const tr = document.createElement('tr');
-        headers.forEach(header => {
+
+        visibleHeaders.forEach(header => {
             const td = document.createElement('td');
             td.textContent = row[header] !== undefined ? row[header] : '';
             tr.appendChild(td);
         });
+
+        // *** Bagian Edit Kolom Dihapus ***
+        // Jika di masa depan Anda ingin menambahkan kolom lain, Anda bisa menambahkannya di sini.
+
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);
@@ -267,17 +80,16 @@ function DataTabel(tableId, jsonData, visibleColumns) {
     }
 
     // Inisialisasi DataTables
-    const dataTableInstance = $(`#${tableId}`).DataTable({
+    $(`#${tableId}`).DataTable({
         responsive: true,
-        order: [],
-        lengthChange: false, // Menghilangkan opsi tampilan jumlah entri
-        paging: false, // Menghilangkan fitur pagination
-        searching: true, // Menghilangkan fitur pencarian, jika tidak diperlukan
-        info: false, // Menghilangkan informasi "Showing x to y of z entries"
-        initComplete: function () {
-        // Setelah DataTables selesai diinisialisasi, panggil ShowColumns
-        ShowColumns(tableId, visibleColumns);
-        }
+        // order: [],
+        // lengthChange: true, // Aktifkan opsi tampilan jumlah entri
+        paging: false, // Aktifkan fitur pagination
+
+
+        dom: 'frptipB',
+        order: [[0, 'asc']],
+        
     });
 }
 
@@ -392,15 +204,453 @@ function DataTabel(tableId, jsonData, visibleColumns) {
 
     // Inisialisasi DataTables
     $(`#${tableId}`).DataTable({
-        responsive: true,
-        order: [],
-        lengthChange: true, // Aktifkan opsi tampilan jumlah entri
-        paging: true, // Aktifkan fitur pagination
-        searching: true, // Aktifkan fitur pencarian
-        info: false, // Menghilangkan informasi "Showing x to y of z entries"
+        paging: false, // Aktifkan fitur pagination
+        dom: 'frtipB',      
+        scrollY: 500,
+        order: [[0, 'asc']],
+    });
+
+}
+
+function DataTabelSelect(tableId, jsonData, visibleColumns) {
+    // Cek elemen tabel
+    const table = document.getElementById(tableId);
+    if (!table) {
+        console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
+        return;
+    }
+
+    // Hapus konten lama (jika ada)
+    table.innerHTML = '';
+
+    // Validasi data JSON
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+        console.error("Data JSON kosong atau tidak valid.");
+        return;
+    }
+
+    // Mendapatkan header dari data JSON berdasarkan kolom yang terlihat
+    const visibleHeaders = visibleColumns.split(",").map(col => col.trim());
+    if (visibleHeaders.length === 0) {
+        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
+        return;
+    }
+
+    // Membuat header tabel dengan <th>
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    visibleHeaders.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+
+    // Tambahkan kolom untuk tombol edit
+    const editTh = document.createElement('th');
+    editTh.textContent = 'Absen';
+    editTh.style.width = '1%'; // Lebar kecil untuk menyesuaikan tombol
+    headerRow.appendChild(editTh);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Membuat body tabel
+    const tbody = document.createElement('tbody');
+    jsonData.forEach(row => {
+        const tr = document.createElement('tr');
+
+        visibleHeaders.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] !== undefined ? row[header] : '';
+            tr.appendChild(td);
+        });
+
+        // Tambahkan kolom untuk tombol absen
+        const editTd = document.createElement('td');
+        const editButton = document.createElement('button');
+        editButton.className = 'btn btn-light btn-sm'; // Awalnya tombol tanpa teks dan warna netral
+
+        // Menyimpan ID atau IDS ke dalam tombol absen jika tersedia
+        const rowId = row['ID'] || row['IDS'];
+        if (rowId !== undefined) {
+            editButton.id = `edit-${rowId}`;
+            editButton.dataset.rowId = rowId;
+        }
+
+        editButton.onclick = function () {
+            // Array untuk status tombol
+            const statuses = [
+                { text: '', class: 'btn-light' }, // Kosong
+                { text: 'H', class: 'btn-success' }, // Hijau
+                { text: 'A', class: 'btn-danger' }, // Merah
+                { text: 'I', class: 'btn-warning' }, // Kuning
+                { text: 'S', class: 'btn-primary' } // Biru
+            ];
+        
+            // Ambil status saat ini
+            let currentStatus = statuses.findIndex(s => editButton.classList.contains(s.class));
+            currentStatus = (currentStatus + 1) % statuses.length; // Ubah ke status berikutnya
+        
+            // Set teks dan kelas baru
+            editButton.textContent = statuses[currentStatus].text;
+            editButton.className = `btn btn-sm ${statuses[currentStatus].class}`;
+        
+            // Tambahkan log untuk memastikan status berubah
+            console.log(`Status Tombol: ${statuses[currentStatus].text}`);
+        
+            // Panggil fungsi UpdateAbsen dengan parameter yang diperlukan
+            const nama = row['Nama'] || '';
+            const kelMD = row['KelMD'] || '';
+            JsonAbsen(rowId, nama, kelMD, statuses[currentStatus].text);
+        };
+        
+
+        editTd.appendChild(editButton);
+        tr.appendChild(editTd);
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+
+    // Inisialisasi ulang DataTables untuk memastikan fitur sorting berfungsi
+    if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+        $(`#${tableId}`).DataTable().destroy();
+    }
+
+    // Inisialisasi DataTables
+    $(`#${tableId}`).DataTable({
+        paging: false,
+        dom: '<"top"f>rt<"bottom"B>', // Menempatkan tombol di bawah tabel
+        scrollY: 500,
+        order: [[0, 'asc']],
+        buttons: [
+            {
+                extend: 'excelHtml5',
+                text: 'Excel',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            if ($(node).find('button').length > 0) {
+                                return $(node).find('button').text();
+                            }
+                            return data;
+                        }
+                    }
+                }
+            },
+            {
+                extend: 'pdfHtml5',
+                text: 'PDF',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            if ($(node).find('button').length > 0) {
+                                return $(node).find('button').text();
+                            }
+                            return data;
+                        }
+                    }
+                }
+            },
+            {
+                extend: 'print',
+                text: 'Print',
+                exportOptions: {
+                    columns: ':visible',
+                    format: {
+                        body: function (data, row, column, node) {
+                            if ($(node).find('button').length > 0) {
+                                return $(node).find('button').text();
+                            }
+                            return data;
+                        }
+                    }
+                }
+            }
+        ]
+    });    
+    
+}
+
+//-------------------------------------- Updadate Isi tabel absen ------------------------------
+
+// Fungsi untuk memperbarui tombol berdasarkan data dari JSON
+function updateStatusTombol() {
+    // Ambil nilai filter
+    const filterJamValue = document.getElementById('filterJam').value; // Jam yang dipilih (M, 1, 2)
+    const filterTanggalValue = document.getElementById('filterTanggal').value; // Tanggal yang dipilih (1 - 31)
+    const filterBulanValue = document.getElementById('filterBulan').value; // Bulan yang dipilih (01, 02, dst)
+
+    // Validasi jika filter tidak lengkap
+    if (!filterJamValue || !filterTanggalValue || !filterBulanValue) {
+        console.error("Semua filter harus diisi.");
+        return;
+    }
+
+    // Buat kombinasi header berdasarkan filter yang dipilih (misalnya "MT1", "1T1", "MT5")
+    const header = `${filterJamValue}T${filterTanggalValue}`;
+
+    // Filter data berdasarkan bulan (IDS yang diakhiri dengan bulan yang dipilih)
+    const filteredData = globalJsonData.SemuaData.Absen.filter(row => {
+        return row['IDS']?.endsWith(filterBulanValue);
+    });
+
+    // Update tombol berdasarkan data yang difilter
+    filteredData.forEach(row => {
+        // Ambil status dari header (misalnya "MT1", "MT2", dsb.)
+        const status = row[header];
+
+        // Ambil ID tombol berdasarkan IDS yang ada di row (IDS lengkapnya adalah "46-1450025-01")
+        const rowId = row['IDS'].split('-')[1]; // Ambil ID tengah dari IDS (contoh: "1450025")
+
+        // Cari tombol berdasarkan ID dari row
+        const editButton = document.querySelector(`#edit-${rowId}`);
+
+        if (editButton) {
+            // Tentukan status dan kelas tombol berdasarkan status yang didapatkan
+            let statusText = '';
+            let statusClass = 'btn-light'; // Default button class
+
+            if (status === 'H') {
+                statusText = 'H';
+                statusClass = 'btn-success';
+            } else if (status === 'A') {
+                statusText = 'A';
+                statusClass = 'btn-danger';
+            } else if (status === 'I') {
+                statusText = 'I';
+                statusClass = 'btn-warning';
+            } else if (status === 'S') {
+                statusText = 'S';
+                statusClass = 'btn-primary';
+            }
+
+            // Update tombol dengan status dan kelas yang sesuai
+            editButton.textContent = statusText;
+            editButton.className = `btn btn-sm ${statusClass}`;
+        }
     });
 }
 
+// Panggil fungsi updateStatusTombol setiap kali filter berubah
+document.getElementById('filterJam').addEventListener('change', updateStatusTombol);
+document.getElementById('filterTanggal').addEventListener('change', updateStatusTombol);
+document.getElementById('filterBulan').addEventListener('change', updateStatusTombol);
+
+
+
+//----------------------------------------------------------- Fungsi Absen -----------------------------------
+// Fungsi UpdateAbsen yang akan dipanggil
+// Antrian JSON global
+let JsonAntrian = {
+    Absen: [],
+    AbsenGuru: []
+};
+
+// Fungsi untuk mengirim data ke server setelah 3 detik tidak ada perubahan
+let sendTimeout;
+// Update jumlah antrian dan visibilitas elemen
+function updateAntrianDisplay() {
+    const antrianElement = document.getElementById("antrianJson");
+    const absenCount = JsonAntrian.Absen.length; // Hitung jumlah data di Absen
+
+    if (absenCount > 0) {
+        antrianElement.style.display = "block"; // Tampilkan antrian
+        antrianElement.innerText = absenCount; // Perbarui jumlah data
+    } else {
+        antrianElement.style.display = "none"; // Sembunyikan antrian jika kosong
+        antrianElement.innerText = "0"; // Reset teks ke 0
+    }
+}
+
+// Fungsi untuk memperbarui atau menambah data ke dalam Antrian JSON
+function updateAntrianJson(data, isGuru = false) {
+    const targetArray = isGuru ? JsonAntrian.AbsenGuru : JsonAntrian.Absen;
+
+    // Cek apakah IDS sudah ada di dalam antrian
+    const existingIndex = targetArray.findIndex(item => item.IDS === data.IDS);
+
+    if (existingIndex !== -1) {
+        // Jika IDS sudah ada, perbarui data
+        targetArray[existingIndex] = { ...targetArray[existingIndex], ...data };
+    } else {
+        // Jika IDS belum ada, tambahkan data baru
+        targetArray.push(data);
+    }
+
+    // Perbarui tampilan antrian hanya untuk Absen (bukan AbsenGuru)
+    if (!isGuru) {
+        updateAntrianDisplay();
+    }
+
+    // Kirim data dengan penundaan
+    sendDelayedData();
+}
+
+// Fungsi untuk mengirim data ke server setelah 3 detik tidak ada perubahan
+
+function sendDelayedData() {
+    if (sendTimeout) clearTimeout(sendTimeout);
+    sendTimeout = setTimeout(() => {
+        sendPostWithGet(JsonAntrian); // Fungsi pengiriman data
+
+        // Reset antrian setelah pengiriman berhasil
+        JsonAntrian.Absen = []; // Kosongkan Absen
+        JsonAntrian.AbsenGuru = []; // Kosongkan AbsenGuru
+
+        // Perbarui tampilan antrian
+        updateAntrianDisplay();
+    }, 5000); // Tunggu 3 detik sebelum mengirim
+}
+
+// Fungsi untuk mendapatkan tanggal dan waktu dalam format "DD/MM/YYYY HH:mm:ss"
+function getFormattedDate() {
+    const now = new Date();
+
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0
+    const year = now.getFullYear();
+
+    const hours = String(now.getHours()).padStart(2, '0'); // Jam dalam format 24 jam
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
+// Fungsi Absen yang akan dipanggil ketika tombol ditekan
+function JsonAbsen(id, nama, kelMD, status) {
+    // Ambil nilai dari filterBulan, filterJam, dan filterTanggal
+    const filterBulan = document.getElementById('filterBulan').value; // Contoh: "1450023-02"
+    const filterJam = document.getElementById('filterJam').value;     // Contoh: "M"
+    const filterTanggal = document.getElementById('filterTanggal').value; // Contoh: "1"
+
+    // Pastikan nilai-nilai tersedia
+    if (!filterBulan || !filterJam || !filterTanggal) {
+        console.error("Pastikan semua filter (Bulan, Jam, Tanggal) telah diisi.");
+        return;
+    }
+
+    // Buat IDS
+    const IDS = `46-${id}-${filterBulan}`;
+
+    // Buat header kolom (contoh: "MT1")
+    const header = `${filterJam}T${filterTanggal}`;
+
+    // Ambil nama bulan dari objek bulanNames
+    const bulanKey = filterBulan.slice(-2); // Ambil dua digit terakhir dari filterBulan
+    const bulan = bulanNames[bulanKey] || "Bulan Tidak Valid";
+
+    // Ambil TanggalUpdate
+    const TanggalUpdate = getFormattedDate(); // Format: "DD/MM/YYYY HH:mm:ss"
+
+    // Buat objek JSON untuk Absen
+    const Absen = {
+        TanggalUpdate: TanggalUpdate,
+        IDS: IDS,
+        Nama: nama,
+        Kelas: kelMD,
+        Bulan: bulan
+    };
+
+    // Tambahkan header kolom dan status
+    Absen[header] = status;
+
+    // Update data ke dalam antrian JSON (untuk Absen)
+    UpdateCacheJson(globalJsonData, "SemuaData.Absen", "IDS", IDS, header, status)
+    updateAntrianJson(Absen);
+
+    // Ambil data Guru
+    const IDGuru = document.getElementById('IDGuru').innerText; // Ambil IDGuru
+    const NamaGuru = document.getElementById('NamaGuru').innerText; // Ambil NamaGuru
+
+    // Buat objek JSON untuk AbsenGuru
+    const AbsenGuru = {
+        TanggalUpdate: TanggalUpdate,
+        IDS: `46-${IDGuru}-${filterBulan}`,
+        Nama: NamaGuru,
+        Kelas: kelMD,
+        Bulan: bulan
+    };
+
+    // Tambahkan header kolom dan status
+    AbsenGuru[header] = 'H';
+
+    // Update data ke dalam antrian JSON (untuk AbsenGuru)
+    updateAntrianJson(AbsenGuru, true);
+}
+
+
+
+//---------------------------------------------------- Edit Json Utama di scache -------------------------------------------
+/**
+ * Fungsi untuk memperbarui data dalam cache JSON, atau menambahkan data baru jika tidak ditemukan.
+ * @param {object} jsonData - Objek JSON utama yang akan diperbarui (contoh: globalJsonData.Santri).
+ * @param {string} path - Jalur di dalam JSON untuk menemukan data yang akan diperbarui (contoh: "Santri" atau "SemuaData.Absen").
+ * @param {string} idKey - Kunci unik yang digunakan untuk mencari data (contoh: "ID" atau "IDS").
+ * @param {string} idValue - Nilai ID unik untuk menemukan atau menambahkan entri.
+ * @param {string} header - Nama kolom atau properti yang akan diperbarui.
+ * @param {any} newValue - Nilai baru yang akan dimasukkan ke dalam JSON.
+ * @returns {boolean} - True jika pembaruan atau penambahan berhasil, false jika gagal.
+ */
+function UpdateCacheJson(jsonData, path, idKey, idValue, header, newValue) {
+    try {
+        // Pastikan jalur valid dan data target ada
+        const targetData = path.split('.').reduce((obj, key) => obj && obj[key], jsonData);
+        if (!targetData || !Array.isArray(targetData)) {
+            console.error("Data target tidak ditemukan atau bukan array:", path);
+            return false;
+        }
+
+        // Cari item yang sesuai dengan idKey dan idValue
+        const itemIndex = targetData.findIndex(item => item[idKey] === idValue);
+
+        if (itemIndex === -1) {
+            // Jika tidak ditemukan, tambahkan sebagai data baru
+            const newItem = { [idKey]: idValue, [header]: newValue };
+            targetData.push(newItem);
+            console.log(`Data baru ditambahkan: ${JSON.stringify(newItem)}`);
+        } else {
+            // Jika ditemukan, perbarui header dengan nilai baru
+            targetData[itemIndex][header] = newValue;
+            console.log(`Data berhasil diperbarui pada ${idKey}: ${idValue}, ${header}: ${newValue}`);
+        }
+
+        // Simpan perubahan ke cache lokal
+        const cacheObject = JSON.parse(localStorage.getItem(CACHE_KEY));
+        if (cacheObject && cacheObject.data) {
+            path.split('.').reduce((obj, key, idx, arr) => {
+                if (idx === arr.length - 1) {
+                    obj[key] = targetData; // Perbarui array target
+                }
+                return obj[key];
+            }, cacheObject.data);
+
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheObject));
+            console.log("Cache diperbarui di localStorage.");
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Terjadi kesalahan saat memperbarui JSON:", error);
+        return false;
+    }
+}
+
+
+
+
+
+
+//--------------------------------------------------- Vlook Up dari Json ---------------------------------------------
+
+
+
+
+//------------------------------------------------- Tombol Edit Semua Tabel ------------------------------------
 // Fungsi untuk tombol Edit
 function EditData(jsonData) {
     // Tambahkan event listener untuk semua tombol edit
@@ -442,50 +692,4 @@ function EditData(jsonData) {
         });
     });
 }
-
-
-
-// Fungsi untuk tombol Edit
-function EditData(jsonData) {
-    // Tambahkan event listener untuk semua tombol edit
-    document.querySelectorAll('[id^="edit-"]').forEach(button => {
-        button.addEventListener('click', function () {
-            const rowId = this.dataset.rowId;
-            if (!rowId) {
-                console.error('ID tidak ditemukan pada tombol edit.');
-                return;
-            }
-
-            // Cari data dalam JSON berdasarkan ID
-            const dataToEdit = jsonData.find(row => row['ID'] == rowId || row['IDS'] == rowId);
-            if (!dataToEdit) {
-                console.error(`Data dengan ID ${rowId} tidak ditemukan.`);
-                return;
-            }
-
-            // Tampilkan modal edit menggunakan Bootstrap 5 API
-            const editModal = new bootstrap.Modal(document.getElementById('cardEdit'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-            editModal.show();
-
-            // Mengisi setiap input/select dalam modal sesuai dengan data JSON
-            for (const key in dataToEdit) {
-                if (dataToEdit.hasOwnProperty(key)) {
-                    const inputElement = document.getElementById(key);
-                    if (inputElement) {
-                        if (inputElement.tagName.toLowerCase() === 'input' || inputElement.tagName.toLowerCase() === 'textarea') {
-                            inputElement.value = dataToEdit[key];
-                        } else if (inputElement.tagName.toLowerCase() === 'select') {
-                            inputElement.value = dataToEdit[key];
-                        }
-                    }
-                }
-            }
-        });
-    });
-}
-
-
 

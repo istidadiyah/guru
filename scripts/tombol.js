@@ -62,47 +62,102 @@ function moveHtmlContentFromJS(sourceId, targetDivId) {
 
 
 function home() {
-    Sembunyikan("cardTabel");
+    UbahText("Isti'dadiyah", "Aplikasi Khusus Guru");
+    
     Sembunyikan("tombolHome");
+    Sembunyikan("cardSantri");
+    Sembunyikan("cardGuru");
+    Sembunyikan("cardPost");
+
     Sembunyikan("cardSetting", () => {
-        
         Tampilkan("cardIcon");
-        Tampilkan("cardKelompok")
+        DataTabelTanpaTombol("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
+        Tampilkan("cardKelompok");
+        
     });
 }
 
 function KelasButton() {
-    Tampilkan("tombolHome");
+    UbahText("Data Kelas", "Daftar Rombel Isti'dadiyah");
     Sembunyikan("cardIcon");
-    Tampilkan("cardKelompok");
+    
+    Sembunyikan("cardIcon", () => {
+
+        Tampilkan("tombolHome");
+        DataTabel("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
+        Tampilkan("cardKelompok");
+        
+
+    });
+    moveHtmlContent("halaman/form.html", "FormKelas", "cardEdit");
 }
 
 function AbsensiButton() {
     
+    UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
     Sembunyikan("cardIcon");
+
     Sembunyikan("cardKelompok", () => {
-        Tampilkan("cardTabel");
-        Sembunyikan("cardGuru");
-        Sembunyikan("cardPelajaran")
-    });   
+
+        DataTabelSelect("Santri", globalJsonData.Santri, "Nama, KelMD");
+
+        Tampilkan("tombolHome");
+        Tampilkan("filterJam");
+        Tampilkan("filterBulan");
+        Tampilkan("filterTanggal");
+
+        Tampilkan("cardSantri");
+        Tampilkan("cardFilter");
+
+        populateKelMDFilter();
+        initializeKelMDFilter();
+        IsiBulan("filterBulan")
+        
+    });
+
+    moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
+    
 }
 
 function BiodataButton() {
-    
+    UbahText("Biodata", "Biodata Lengkap Santri Isti'dadiyah");
     Sembunyikan("cardIcon");
+
+    Sembunyikan("cardFilter");
+    Sembunyikan("filterJam");
+    Sembunyikan("filterBulan");
+    Sembunyikan("filterTanggal");
+
     Sembunyikan("cardKelompok", () => {
 
         DataTabel("Santri", globalJsonData.Santri, "Nama, KelMD");
-
         Tampilkan("tombolHome");
-        Tampilkan("cardTabel");
-        Sembunyikan("cardGuru");
-        Sembunyikan("cardPelajaran");
+        Tampilkan("cardSantri");
+
+        populateKelMDFilter();
+        initializeKelMDFilter();
+
     });
 
-    moveHtmlContent("halaman/form.html", "FormData", "cardEdit")
-    isiSelect("Kelas", globalJsonData.SemuaData.Kelompok, "ID") 
+    moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
     
+}
+
+function GuruButton() {
+    UbahText("Asatidz", "Biodata Asatidz dan Asayidzah Isti'dadiyah")
+    Sembunyikan("cardIcon");
+    Sembunyikan("cardKelompok", () => {
+
+        DataTabel("Guru", globalJsonData.SemuaData.Guru, "ID, Nama");
+
+        Tampilkan("tombolHome");
+        Tampilkan("cardGuru");
+        Tampilkan("cardTabel");
+    
+    });
+
+    moveHtmlContent("halaman/form.html", "FormGuru", "cardEdit");
+
 }
 
 function SettingButton() {
@@ -144,6 +199,38 @@ function Sembunyikan(id, callback) {
 
 
 
+function UbahText(newHeaderText, newTanggalInfoText) {
+    const headerElement = document.getElementById('headerInfo');
+    const tanggalInfoElement = document.getElementById('tanggalInfo');
+
+    function animateText(element, newText) {
+        // Tambahkan kelas 'fade-out' untuk memulai animasi keluar
+        element.classList.add('fade-out');
+
+        // Ketika animasi keluar selesai
+        element.addEventListener('animationend', function handler() {
+            // Hapus kelas 'fade-out'
+            element.classList.remove('fade-out');
+            // Ubah teks elemen
+            element.textContent = newText;
+            // Tambahkan kelas 'fade-in' untuk animasi masuk
+            element.classList.add('fade-in');
+            // Hapus event listener agar tidak terjadi pemanggilan berulang
+            element.removeEventListener('animationend', handler);
+
+            // Hapus kelas 'fade-in' setelah animasi masuk selesai
+            element.addEventListener('animationend', function handler2() {
+                element.classList.remove('fade-in');
+                element.removeEventListener('animationend', handler2);
+            });
+        });
+    }
+
+    // Panggil fungsi animasi untuk masing-masing elemen
+    animateText(headerElement, newHeaderText);
+    animateText(tanggalInfoElement, newTanggalInfoText);
+}
+
 
 
 // Fungsi untuk menambahkan state ke riwayat browser
@@ -171,3 +258,14 @@ window.onpopstate = () => {
 
 
   
+// Fungsi untuk menangani logout dan menghapus cache (localStorage)
+function logout() {
+    //if (confirm('Apakah Anda yakin ingin keluar? Data login akan dihapus!')) {
+        // Hapus cache (localStorage)
+        localStorage.removeItem('userID');
+        localStorage.removeItem('userName');
+
+        // Arahkan kembali ke halaman login
+        window.location.href = 'login.html'; // Pengalihan ke login.html setelah logout
+    //}
+}

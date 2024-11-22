@@ -1,0 +1,44 @@
+/* Mengatur elemen kontrol DataTables agar menggunakan kelas Bootstrap */
+.dataTables_filter input.form-control {
+    display: inline-block;
+    width: auto;
+    margin-left: 0.5em;
+}
+
+.dataTables_wrapper .dataTables_length select.form-control {
+    display: inline-block;
+    width: auto;
+    margin-left: 0.5em;
+}
+
+/* Mengatur ukuran font dan padding agar lebih kecil */
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+    font-size: 1rem; /* Ukuran font standar untuk tidak terlalu kecil */
+}
+
+/* Menggunakan pengaturan 'table-layout: auto' agar kolom lebih fleksibel */
+table.dataTable {
+    table-layout:auto; /* Lebar tabel mengikuti konten */
+}
+
+/* Menghindari penggunaan Flexbox pada wrapper jika tidak perlu */
+.dataTables_wrapper .row {
+    display: block; /* Hapus Flexbox jika tidak diperlukan */
+}
+
+/* Mengatur posisi 'lengthChange' di kiri dan 'searching' di kanan tanpa Flexbox */
+.dataTables_wrapper .dataTables_length {
+    float: left;
+}
+
+.dataTables_wrapper .dataTables_filter {
+    float: right;
+}
+
+/* Memastikan header tabel memiliki lebar yang cukup */
+.dataTables_wrapper thead th {
+    white-space: nowrap; /* Menghindari pemotongan teks header */
+    padding: 10px 15px; /* Padding yang nyaman */
+    font-size: 1rem; /* Ukuran font untuk header */
+}

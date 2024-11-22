@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome untuk ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
+
+    <!-- Buttons DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+    <!-- SearchBuilder CSS -->
+    <link href="https://cdn.datatables.net/searchbuilder/1.4.3/css/searchBuilder.bootstrap5.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/style.css">
-    <link id="themeStylesheet" rel="stylesheet" href="styles/tema/light.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/tabel.css">
 
+    <link id="themeStylesheet" rel="stylesheet" href="styles/tema/light.css">
+    
     <title>Isti'dadiyah</title>
 
 </head>
@@ -28,17 +39,24 @@
 
     <!-- Header -->
     <header>
-        <h1>Isti'dadiyah</h1>
+        <h1 id="headerInfo">Isti'dadiyah</h1>
         <div class="sub-title" id="tanggalInfo">Aplikasi Khusus Guru Isti'dadiyah</div>
         <div class="container-flex mt- d-flex justify-content-center">
             <div id="tombolHome" class="grid-item" style="display: none;">
                 <a href="javascript:void(0)" onclick="home()">
                     <i id="iconHome" class="fas fa-home fa-2x"></i>
-                    <div>Home</div>
                 </a>
             </div>
         </div>
     </header>
+
+    <!-- Tampilan antrian di pojok kanan atas -->
+    <div id="antrianCounter" style="display: none;">
+        0
+    </div>
+    <div id="antrianJson" style="display: none;">
+        0
+    </div>
 
     <!-- Main Container -->
     <div class="container">
@@ -50,7 +68,8 @@
                     <img src="logo.png" alt="Logo" class="logo">
                 </div>
             </div>
-            
+            <div id="loadingIndicator" style="display: none;">Loading...</div>
+
             <div class="container-flex mt-5">
                 <!-- Links Grid -->
                 <div class="grid-item">
@@ -91,23 +110,31 @@
                     </a>
                 </div>
                 <div class="grid-item">
-                    <a href="javascript:void(0)" onclick="AddColumnWithButton('Santri', 'Edit', editRow)">
+                    <a href="javascript:void(0)" onclick="GuruButton()">
                         <i class="fas fa-user fa-2x"></i>
-                        <div>Tombol</div>
+                        <div>Guru</div>
                     </a>
                 </div>
                 <div class="grid-item">
-                    <a href="javascript:void(0)" onclick="fetchDataFromAppScript()">
+                    <a href="halaman/syahriyah.html">
                         <i class="fas fa-clock fa-2x"></i>
                         <div>Jadwal</div>
                     </a>
                 </div>
+                
                 <div class="grid-item">
                     <a href="javascript:void(0)" onclick="SettingButton()">
                         <i class="fas fa-cog fa-2x"></i>
                         <div>Setting</div>
                     </a>
                 </div>
+                <div class="grid-item">
+                    <a href="javascript:void(0)" onclick="fetchDataFromAppScript(forceRefresh = true);">
+                        <i class="fas fa-sync fa-2x"></i>
+                        <div>Reload</div>
+                    </a>
+                </div>
+                
             </div>
         </div>
         
@@ -122,45 +149,80 @@
         </div>
 
         <!-- Modal Edit -->
-         <div id="cardTabel" style="display: none;">
-            
-
+         <div id="cardTabel">
             <!-- Card Tables -->
-            <div id="cardSantri" class="card shadow-sm mt-4 card-custom">
+            <div id="cardSantri" class="card shadow-sm mt-4 card-custom" style="display: none;">
                 <div class="card-body">
-                    <h2>Isti'dadiyah</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>Isti'dadiyah</h2>
+                        <select id="kelmdFilter" class="form-select" style="width:auto;">
+                            <option value="">All</option>
+                            <!-- Opsi akan diisi secara dinamis oleh JavaScript -->
+                        </select>
+                    </div>
+                    <p id="Hijriyah">Tanggal Hijiriyah</p>
+                    <div id="cardFilter" class="d-flex justify-content-between align-items-center mb-3">
+                        <select id="filterJam" class="form-select" style="width:100%;">
+                            <option value="M">Malam</option>
+                            <option value="1">Jam 1</option>
+                            <option value="2">Jam 2</option>
+                        </select>
+                        <select id="filterTanggal" class="form-select" style="width:auto;">
+                            <script>
+                                for (let i = 1; i <= 31; i++) {
+                                    document.write('<option value="' + i + '">' + (i < 10 ? '0' + i : i) + '</option>');
+                                }
+                            </script>
+                        </select>
+                        <select id="filterBulan" class="form-select" style="width:100%;">
+                            <option value="">All</option>
+                            <!-- Opsi akan diisi secara dinamis oleh JavaScript -->
+                        </select>
+                    </div>
                     <table id="Santri" class="table table-hover table-bordered"></table>
                 </div>
             </div>
 
-            <div id="cardGuru" class="card shadow-sm mt-4 card-custom">
+            <div id="cardGuru" class="card shadow-sm mt-4 card-custom" style="display: none;">
                 <div class="card-body">
                     <h2>Asatidz & Asatidzah</h2>
-                    <table id="Guru" class="table table-striped table-bordered"></table>
+                    <table id="Guru" class="table table-hover table-compact"></table>
                 </div>
             </div>
-
-            <div id="cardPelajaran" class="card shadow-sm mt-4 card-custom">
+            <div id="cardKelompok" class="card shadow-sm mt-4 card-custom">
                 <div class="card-body">
-                    <h2>Pelajaran</h2>
-                    <table id="Pelajaran" class="table table-striped table-bordered"></table>
+                    <h2>Kelas</h2>
+                    <table id="Kelompok" class="table table-hover table-compact"></table>
                 </div>
             </div>
+        
+            <div id="cardPost" class="card shadow-sm mt-4 card-custom" style="display: none;">
+                <div class="card-body">
+                    <h2>doPost</h2>
+                    <table id="tablePost" class="table table-striped table-bordered"></table>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <div id="cardKelompok" class="card shadow-sm mt-4 card-custom">
-        <div class="card-body">
-            <h2>Kelas</h2>
-            <table id="Kelompok" class="table table-hover table-bordered"></table>
-        </div>
-    </div>
+    
 
     <!-- Settings Section -->
     <div id="cardSetting" class="card shadow-sm mt-4 card-custom" style="display: none;">
         
         <div class="container">
             <ul class="settings-list">
+                <!-- Informasi Guru -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div>
+                            <h5 id="NamaGuru" style="margin: 0; font-weight: bold;"></h5>
+                            <h6 id="IDGuru" style="margin: 0; font-size: 14px; color: #888;"></h6>
+                        </div>
+                    </div>
+                </li>
+        
                 <!-- Pengaturan Akun -->
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
@@ -169,7 +231,7 @@
                     </div>
                     <a href="akun.html" class="btn btn-outline-primary btn-sm">Kelola</a>
                 </li>
-                
+        
                 <!-- Mode Gelap -->
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
@@ -181,7 +243,7 @@
                         <label class="form-check-label" for="darkModeToggle"></label>
                     </div>
                 </li>
-                
+        
                 <!-- Tentang -->
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
@@ -190,7 +252,7 @@
                     </div>
                     <a href="about.html" class="btn btn-outline-primary btn-sm">Lihat</a>
                 </li>
-                
+        
                 <!-- Panduan Penggunaan -->
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
@@ -199,30 +261,92 @@
                     </div>
                     <a href="panduan.html" class="btn btn-outline-primary btn-sm">Baca</a>
                 </li>
+        
+                <!-- Tombol Keluar dan Hapus Cache -->
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fas fa-sign-out-alt settings-icon"></i>
+                        <span>Keluar</span>
+                    </div>
+                    <button class="btn btn-danger btn-sm" id="logoutBtn" onclick="logout()">Keluar</button>
+                </li>
+
             </ul>
         </div>
+        
     </div>
+
 
     <!-- JS Scripts -->
     <script src="scripts/setting.js" defer></script>
+    <script src="scripts/select.js"></script>
     <script src="scripts/online.js"></script>
     <script src="scripts/tabel.js"></script>
     <script src="scripts/header.js"></script>
     <script src="scripts/tombol.js"></script>
+    <script src="scripts/cache.js"></script>
+    
+    
+    
 
     <!-- Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+    <!-- Library untuk Bootstrap JS Framework -->
+
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <!-- Library inti jQuery -->
+
+    <!-- DataTables Core JS -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Library DataTables dengan integrasi Bootstrap 5 -->
+
     
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <!-- Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <!-- JSZip untuk ekspor Excel, pdfmake untuk ekspor PDF -->
+
+    <!-- DataTables Buttons Extensions -->
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <!-- Fitur tambahan tombol DataTables: ekspor ke Excel, PDF, print, visibilitas kolom -->
+
+    <!-- DataTables SearchBuilder -->
+    <script src="https://cdn.datatables.net/searchbuilder/1.4.3/js/dataTables.searchBuilder.min.js"></script>
+    <script src="https://cdn.datatables.net/searchbuilder/1.4.3/js/searchBuilder.bootstrap5.min.js"></script>
+    <!-- SearchBuilder untuk fitur pencarian lanjutan dengan integrasi Bootstrap 5 -->
+
 
     <script>
-        $(document).ready(function(){
-            fetchDataFromAppScript();
+        // Memuat data dari localStorage setelah login berhasil
+        window.addEventListener('DOMContentLoaded', function() {
+            const userID = localStorage.getItem('userID');
+            const userName = localStorage.getItem('userName');
+
+            if (userID && userName) {
+                // Menampilkan ID dan Nama pengguna pada elemen yang ada di index.html
+                document.getElementById('NamaGuru').textContent = userName;
+                document.getElementById('IDGuru').textContent = userID;
+            } else {
+                // Jika data tidak ditemukan, redirect ke halaman login
+                window.location.href = 'login.html';
+            }
+
+            // Menjalankan kode fetchDataFromAppScript dan getHijriDate setelah memverifikasi login
+            $(document).ready(function(){
+                fetchDataFromAppScript(forceRefresh = false);
+                getHijriDate();
+            });
         });
     </script>
+
+
+
 </body>
 </html>
