@@ -213,92 +213,88 @@ function DataTabel(tableId, jsonData, visibleColumns) {
 }
 
 function DataTabelSelect(tableId, jsonData) {
-    // Cek elemen tabel
     const table = document.getElementById(tableId);
     if (!table) {
         console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
         return;
     }
 
-    // Hapus konten lama (jika ada)
+    // Hapus konten lama
     table.innerHTML = '';
 
-    // Validasi data JSON
     if (!Array.isArray(jsonData) || jsonData.length === 0) {
         console.error("Data JSON kosong atau tidak valid.");
         return;
     }
 
-    // Membuat header tabel dengan <th> untuk Nama dan Kel
+    // Header tabel
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
 
+    // Kolom Nama
     const thNama = document.createElement('th');
-    thNama.style.width = '100%'
+    thNama.style.width = '100%';
     thNama.textContent = 'Nama';
     headerRow.appendChild(thNama);
 
+    // Kolom Kelompok
     const thKel = document.createElement('th');
     thKel.textContent = 'K';
     headerRow.appendChild(thKel);
 
+    // Kolom Absen
     const thAbsen = document.createElement('th');
-    // Tidak ada teks di header untuk kolom Absen
-    thAbsen.style.width = '1%'; // Lebar kecil untuk menyesuaikan tombol
+    thAbsen.style.width = '1%'; 
     headerRow.appendChild(thAbsen);
 
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    // Membuat body tabel
+    // Body tabel
     const tbody = document.createElement('tbody');
     jsonData.forEach(row => {
         const tr = document.createElement('tr');
 
-        // Kolom Nama
+        // Nama
         const tdNama = document.createElement('td');
-        tdNama.textContent = row['Nama'] !== undefined ? row['Nama'] : '';
+        tdNama.textContent = row['Nama'] || '';
         tr.appendChild(tdNama);
 
-        // Kolom Kel
+        // Kelompok
         const tdKel = document.createElement('td');
-        tdKel.textContent = row['KelMD'] !== undefined ? row['KelMD'] : '';
+        tdKel.textContent = row['KelMD'] || '';
         tr.appendChild(tdKel);
 
-        // Kolom Absen
+        // Tombol Absen
         const tdAbsen = document.createElement('td');
         const absenButton = document.createElement('button');
-        absenButton.className = 'btn btn-light btn-sm'; // Tombol awal tanpa warna
+        absenButton.className = 'btn btn-light btn-sm';
 
-        // Menyimpan ID atau IDS ke dalam tombol absen jika tersedia
+        // ID untuk tombol
         const rowId = row['ID'] || row['IDS'];
-        if (rowId !== undefined) {
+        if (rowId) {
             absenButton.id = `absen-${rowId}`;
             absenButton.dataset.rowId = rowId;
         }
 
+        // Klik untuk mengubah status
         absenButton.onclick = function () {
-            // Array untuk status tombol
             const statuses = [
-                { text: '', class: 'btn-light' }, // Kosong
-                { text: 'H', class: 'btn-success' }, // Hijau
-                { text: 'A', class: 'btn-danger' }, // Merah
-                { text: 'I', class: 'btn-warning' }, // Kuning
-                { text: 'S', class: 'btn-primary' } // Biru
+                { text: '', class: 'btn-light' },
+                { text: 'H', class: 'btn-success' },
+                { text: 'A', class: 'btn-danger' },
+                { text: 'I', class: 'btn-warning' },
+                { text: 'S', class: 'btn-primary' }
             ];
 
-            // Ambil status saat ini
             let currentStatus = statuses.findIndex(s => absenButton.classList.contains(s.class));
-            currentStatus = (currentStatus + 1) % statuses.length; // Ubah ke status berikutnya
+            currentStatus = (currentStatus + 1) % statuses.length;
 
-            // Set teks dan kelas baru
             absenButton.textContent = statuses[currentStatus].text;
             absenButton.className = `btn btn-sm ${statuses[currentStatus].class}`;
-
-            // Panggil fungsi UpdateAbsen dengan parameter yang diperlukan
-            const nama = row['Nama'] || '';
-            const kelMD = row['KelMD'] || '';
-            JsonAbsen(rowId, nama, kelMD, statuses[currentStatus].text);
+            
+            // Panggil fungsi untuk memperbarui data
+            JsonAbsen(rowId, row['Nama'] || '', row['KelMD'] || '', statuses[currentStatus].text);
         };
 
         tdAbsen.appendChild(absenButton);
@@ -309,132 +305,75 @@ function DataTabelSelect(tableId, jsonData) {
 
     table.appendChild(tbody);
 
-    // Inisialisasi ulang DataTables untuk memastikan fitur sorting berfungsi
+    // Inisialisasi ulang DataTables
     if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
         $(`#${tableId}`).DataTable().destroy();
     }
 
-    // Inisialisasi DataTables
     $(`#${tableId}`).DataTable({
         paging: false,
-        dom: '<"top"f>rt<"bottom"B>', // Menempatkan tombol di bawah tabel
+        dom: '<"top"f>rt<"bottom"B>',
         scrollY: 500,
-        order: [[2, 'asc']],
-        buttons: [
-            {
-                extend: 'excelHtml5',
-                text: 'Excel',
-                exportOptions: {
-                    columns: ':visible',
-                    format: {
-                        body: function (data, row, column, node) {
-                            if ($(node).find('button').length > 0) {
-                                return $(node).find('button').text();
-                            }
-                            return data;
-                        }
-                    }
-                }
-            },
-            {
-                extend: 'pdfHtml5',
-                text: 'PDF',
-                exportOptions: {
-                    columns: ':visible',
-                    format: {
-                        body: function (data, row, column, node) {
-                            if ($(node).find('button').length > 0) {
-                                return $(node).find('button').text();
-                            }
-                            return data;
-                        }
-                    }
-                }
-            },
-            {
-                extend: 'print',
-                text: 'Print',
-                exportOptions: {
-                    columns: ':visible',
-                    format: {
-                        body: function (data, row, column, node) {
-                            if ($(node).find('button').length > 0) {
-                                return $(node).find('button').text();
-                            }
-                            return data;
-                        }
-                    }
-                }
-            }
-        ]
+        order: [[0, 'asc']],
+        buttons: ['excelHtml5', 'pdfHtml5', 'print']
     });
 }
+
 
 
 //-------------------------------------- Updadate Isi tabel absen ------------------------------
 
 // Fungsi untuk memperbarui tombol berdasarkan data dari JSON
 function updateStatusTombol() {
-    // Ambil nilai filter
-    const filterJamValue = document.getElementById('filterJam').value; // Jam yang dipilih (M, 1, 2)
-    const filterTanggalValue = document.getElementById('filterTanggal').value; // Tanggal yang dipilih (1 - 31)
-    const filterBulanValue = document.getElementById('filterBulan').value; // Bulan yang dipilih (01, 02, dst)
+    const filterJamValue = document.getElementById('filterJam')?.value;
+    const filterTanggalValue = document.getElementById('filterTanggal')?.value;
+    const filterBulanValue = document.getElementById('filterBulan')?.value;
 
-    // Validasi jika filter tidak lengkap
     if (!filterJamValue || !filterTanggalValue || !filterBulanValue) {
         console.error("Semua filter harus diisi.");
         return;
     }
 
-    // Buat kombinasi header berdasarkan filter yang dipilih (misalnya "MT1", "1T1", "MT5")
     const header = `${filterJamValue}T${filterTanggalValue}`;
+    const filteredData = globalJsonData.SemuaData.Absen.filter(row => row['IDS']?.endsWith(filterBulanValue));
 
-    // Filter data berdasarkan bulan (IDS yang diakhiri dengan bulan yang dipilih)
-    const filteredData = globalJsonData.SemuaData.Absen.filter(row => {
-        return row['IDS']?.endsWith(filterBulanValue);
-    });
-
-    // Update tombol berdasarkan data yang difilter
     filteredData.forEach(row => {
-        // Ambil status dari header (misalnya "MT1", "MT2", dsb.)
         const status = row[header];
+        const rowId = row['IDS']?.split('-')[1];
 
-        // Ambil ID tombol berdasarkan IDS yang ada di row (IDS lengkapnya adalah "46-1450025-01")
-        const rowId = row['IDS'].split('-')[1]; // Ambil ID tengah dari IDS (contoh: "1450025")
+        if (rowId) {
+            const editButton = document.querySelector(`#absen-${rowId}`);
 
-        // Cari tombol berdasarkan ID dari row
-        const editButton = document.querySelector(`#edit-${rowId}`);
+            if (editButton) {
+                let statusText = '';
+                let statusClass = 'btn-light';
 
-        if (editButton) {
-            // Tentukan status dan kelas tombol berdasarkan status yang didapatkan
-            let statusText = '';
-            let statusClass = 'btn-light'; // Default button class
+                if (status === 'H') {
+                    statusText = 'H';
+                    statusClass = 'btn-success';
+                } else if (status === 'A') {
+                    statusText = 'A';
+                    statusClass = 'btn-danger';
+                } else if (status === 'I') {
+                    statusText = 'I';
+                    statusClass = 'btn-warning';
+                } else if (status === 'S') {
+                    statusText = 'S';
+                    statusClass = 'btn-primary';
+                }
 
-            if (status === 'H') {
-                statusText = 'H';
-                statusClass = 'btn-success';
-            } else if (status === 'A') {
-                statusText = 'A';
-                statusClass = 'btn-danger';
-            } else if (status === 'I') {
-                statusText = 'I';
-                statusClass = 'btn-warning';
-            } else if (status === 'S') {
-                statusText = 'S';
-                statusClass = 'btn-primary';
+                editButton.textContent = statusText;
+                editButton.className = `btn btn-sm ${statusClass}`;
             }
-
-            // Update tombol dengan status dan kelas yang sesuai
-            editButton.textContent = statusText;
-            editButton.className = `btn btn-sm ${statusClass}`;
         }
     });
 }
 
+
 // Panggil fungsi updateStatusTombol setiap kali filter berubah
-document.getElementById('filterJam').addEventListener('change', updateStatusTombol);
-document.getElementById('filterTanggal').addEventListener('change', updateStatusTombol);
-document.getElementById('filterBulan').addEventListener('change', updateStatusTombol);
+document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
+document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
+document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
 
 
 
