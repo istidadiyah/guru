@@ -18,6 +18,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+// Fungsi untuk menghapus semua cache dari situs ini
+function clearSiteCache() {
+    // Hapus semua data dari localStorage
+    localStorage.clear();
+
+    // Hapus semua data dari sessionStorage jika Anda menggunakannya
+    sessionStorage.clear();
+
+    // Jika Anda menyimpan data di IndexedDB atau tempat lain, Anda perlu menghapusnya juga
+
+    // Opsi tambahan: Hapus cookie jika diperlukan
+    // JavaScript memiliki keterbatasan dalam menghapus cookie dengan domain dan path tertentu
+    // Berikut adalah contoh untuk menghapus semua cookie yang dapat dijangkau oleh JavaScript
+    document.cookie.split(";").forEach(function(c) { 
+        document.cookie = c.replace(/^ +/, "")
+                           .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+
+    // Tampilkan pesan konfirmasi atau reload halaman
+    alert("Cache telah dihapus. Halaman akan dimuat ulang.");
+    location.reload();
+}
 
 
 
