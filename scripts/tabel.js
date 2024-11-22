@@ -87,7 +87,7 @@ function DataTabelTanpaTombol(tableId, jsonData, visibleColumns) {
         paging: false, // Aktifkan fitur pagination
 
 
-        dom: 'frptipB',
+        dom: 'frptip',
         order: [[0, 'asc']],
         
     });
@@ -205,7 +205,7 @@ function DataTabel(tableId, jsonData, visibleColumns) {
     // Inisialisasi DataTables
     $(`#${tableId}`).DataTable({
         paging: false, // Aktifkan fitur pagination
-        dom: 'frtipB',      
+        dom: 'frtip',      
         scrollY: 500,
         order: [[0, 'asc']],
     });
@@ -312,10 +312,10 @@ function DataTabelSelect(tableId, jsonData) {
 
     $(`#${tableId}`).DataTable({
         paging: false,
-        dom: '<"top"f>rt<"bottom"B>',
+        dom: '<"top"f>rt<"bottom">',
         scrollY: 500,
-        order: [[0, 'asc']],
-        buttons: ['excelHtml5', 'pdfHtml5', 'print']
+        order: [[1, 'asc']],
+        //buttons: ['excelHtml5', 'pdfHtml5', 'print']
     });
 }
 
