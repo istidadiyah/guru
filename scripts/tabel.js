@@ -212,7 +212,7 @@ function DataTabel(tableId, jsonData, visibleColumns) {
 
 }
 
-function DataTabelSelect(tableId, jsonData, visibleColumns) {
+function DataTabelSelect(tableId, jsonData) {
     // Cek elemen tabel
     const table = document.getElementById(tableId);
     if (!table) {
@@ -229,27 +229,23 @@ function DataTabelSelect(tableId, jsonData, visibleColumns) {
         return;
     }
 
-    // Mendapatkan header dari data JSON berdasarkan kolom yang terlihat
-    const visibleHeaders = visibleColumns.split(",").map(col => col.trim());
-    if (visibleHeaders.length === 0) {
-        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
-        return;
-    }
-
-    // Membuat header tabel dengan <th>
+    // Membuat header tabel dengan <th> untuk Nama dan Kel
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
-    visibleHeaders.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-    });
 
-    // Tambahkan kolom untuk tombol edit
-    const editTh = document.createElement('th');
-    editTh.textContent = 'Absen';
-    editTh.style.width = '1%'; // Lebar kecil untuk menyesuaikan tombol
-    headerRow.appendChild(editTh);
+    const thNama = document.createElement('th');
+    thNama.style.width = '100%'
+    thNama.textContent = 'Nama';
+    headerRow.appendChild(thNama);
+
+    const thKel = document.createElement('th');
+    thKel.textContent = 'K';
+    headerRow.appendChild(thKel);
+
+    const thAbsen = document.createElement('th');
+    // Tidak ada teks di header untuk kolom Absen
+    thAbsen.style.width = '1%'; // Lebar kecil untuk menyesuaikan tombol
+    headerRow.appendChild(thAbsen);
 
     thead.appendChild(headerRow);
     table.appendChild(thead);
@@ -259,25 +255,29 @@ function DataTabelSelect(tableId, jsonData, visibleColumns) {
     jsonData.forEach(row => {
         const tr = document.createElement('tr');
 
-        visibleHeaders.forEach(header => {
-            const td = document.createElement('td');
-            td.textContent = row[header] !== undefined ? row[header] : '';
-            tr.appendChild(td);
-        });
+        // Kolom Nama
+        const tdNama = document.createElement('td');
+        tdNama.textContent = row['Nama'] !== undefined ? row['Nama'] : '';
+        tr.appendChild(tdNama);
 
-        // Tambahkan kolom untuk tombol absen
-        const editTd = document.createElement('td');
-        const editButton = document.createElement('button');
-        editButton.className = 'btn btn-light btn-sm'; // Awalnya tombol tanpa teks dan warna netral
+        // Kolom Kel
+        const tdKel = document.createElement('td');
+        tdKel.textContent = row['KelMD'] !== undefined ? row['KelMD'] : '';
+        tr.appendChild(tdKel);
+
+        // Kolom Absen
+        const tdAbsen = document.createElement('td');
+        const absenButton = document.createElement('button');
+        absenButton.className = 'btn btn-light btn-sm'; // Tombol awal tanpa warna
 
         // Menyimpan ID atau IDS ke dalam tombol absen jika tersedia
         const rowId = row['ID'] || row['IDS'];
         if (rowId !== undefined) {
-            editButton.id = `edit-${rowId}`;
-            editButton.dataset.rowId = rowId;
+            absenButton.id = `absen-${rowId}`;
+            absenButton.dataset.rowId = rowId;
         }
 
-        editButton.onclick = function () {
+        absenButton.onclick = function () {
             // Array untuk status tombol
             const statuses = [
                 { text: '', class: 'btn-light' }, // Kosong
@@ -286,27 +286,23 @@ function DataTabelSelect(tableId, jsonData, visibleColumns) {
                 { text: 'I', class: 'btn-warning' }, // Kuning
                 { text: 'S', class: 'btn-primary' } // Biru
             ];
-        
+
             // Ambil status saat ini
-            let currentStatus = statuses.findIndex(s => editButton.classList.contains(s.class));
+            let currentStatus = statuses.findIndex(s => absenButton.classList.contains(s.class));
             currentStatus = (currentStatus + 1) % statuses.length; // Ubah ke status berikutnya
-        
+
             // Set teks dan kelas baru
-            editButton.textContent = statuses[currentStatus].text;
-            editButton.className = `btn btn-sm ${statuses[currentStatus].class}`;
-        
-            // Tambahkan log untuk memastikan status berubah
-            console.log(`Status Tombol: ${statuses[currentStatus].text}`);
-        
+            absenButton.textContent = statuses[currentStatus].text;
+            absenButton.className = `btn btn-sm ${statuses[currentStatus].class}`;
+
             // Panggil fungsi UpdateAbsen dengan parameter yang diperlukan
             const nama = row['Nama'] || '';
             const kelMD = row['KelMD'] || '';
             JsonAbsen(rowId, nama, kelMD, statuses[currentStatus].text);
         };
-        
 
-        editTd.appendChild(editButton);
-        tr.appendChild(editTd);
+        tdAbsen.appendChild(absenButton);
+        tr.appendChild(tdAbsen);
 
         tbody.appendChild(tr);
     });
@@ -323,7 +319,7 @@ function DataTabelSelect(tableId, jsonData, visibleColumns) {
         paging: false,
         dom: '<"top"f>rt<"bottom"B>', // Menempatkan tombol di bawah tabel
         scrollY: 500,
-        order: [[0, 'asc']],
+        order: [[2, 'asc']],
         buttons: [
             {
                 extend: 'excelHtml5',
@@ -371,9 +367,9 @@ function DataTabelSelect(tableId, jsonData, visibleColumns) {
                 }
             }
         ]
-    });    
-    
+    });
 }
+
 
 //-------------------------------------- Updadate Isi tabel absen ------------------------------
 

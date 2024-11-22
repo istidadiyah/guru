@@ -42,3 +42,6 @@ table.dataTable {
     padding: 10px 15px; /* Padding yang nyaman */
     font-size: 1rem; /* Ukuran font untuk header */
 }
+
+/* Untuk memastikan kolom tetap rapi meski teks lebih panjang dari lebar yang ditentukan */
+

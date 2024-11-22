@@ -141,58 +141,6 @@
 }
 
 
-/* CSS for the form filter */
-.form-filter {
-    position: fixed;
-    left: 50%;
-    transform: translate(-50%, 100%) scale(0); /* Start off-screen vertically with scale 0 */
-    opacity: 0;
-    transition: transform 0.5s ease, opacity 0.5s ease, box-shadow 0.3s ease;
-    z-index: 9999;
-    width: 90%;
-    max-width: 500px;
-
-    /* Modern background with gradient */
-    background: linear-gradient(145deg, rgba(0, 150, 7, 0.8), rgba(0, 0, 0, 0.7));
-    border-radius: 15px; /* Rounded corners */
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    padding: 20px; /* Padding inside the form */
-    color: #fff; /* Text color */
-    backdrop-filter: blur(5px); /* Optional: Apply a blur effect to background */
-
-    cursor: grab; /* Mengubah kursor menjadi tangan untuk menunjukkan elemen bisa dipindah */
-    touch-action: none; /* Disable the default touch actions (e.g., scroll) when interacting with the element */
-}
-
-.form-filter:active {
-    cursor: grabbing; /* Mengubah kursor menjadi "grabbing" saat form sedang diseret */
-}
-
-/* Form visible state */
-.form-filter.show {
-    transform: translate(-50%, -20%) scale(1); /* Move slightly below center of the screen with full scale */
-    opacity: 1;
-}
-
-
-/* Additional Styling for Form Inputs */
-.form-filter select,
-.form-filter input {
-    background: rgba(255, 255, 255, 0.2); /* Slight transparent white background for inputs */
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    width: 100%;
-    margin: 5px 0;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.form-filter select:focus,
-.form-filter input:focus {
-    background-color: rgba(255, 255, 255, 0.3); /* Focus effect */
-    transform: scale(1.05); /* Slight scaling effect on focus */
-}
 
 /* #cardIcon sudah didefinisikan di light.css dan dark.css */
 /* Menghapus properti warna di sini */
@@ -271,14 +219,7 @@
     font-size: 14px;
 }
 
-.absensi-button.H { background-color: gray; color: white; }
-.absensi-button.A { background-color: gray; color: white; }
-.absensi-button.S { background-color: gray; color: white; }
-.absensi-button.I { background-color: gray; color: white; }
-.active.H { background-color: green; }
-.active.A { background-color: red; }
-.active.S { background-color: blue; }
-.active.I { background-color: orange; }
+
 
 
 /* ---------------- Style Setting ------------------------------ */

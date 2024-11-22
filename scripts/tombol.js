@@ -99,7 +99,7 @@ function AbsensiButton() {
 
     Sembunyikan("cardKelompok", () => {
 
-        DataTabelSelect("Santri", globalJsonData.Santri, "Nama, KelMD");
+        DataTabelSelect("Santri", globalJsonData.Santri);
 
         Tampilkan("tombolHome");
         Tampilkan("filterJam");
