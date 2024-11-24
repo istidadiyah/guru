@@ -1,5 +1,5 @@
 
-
+//----------------------------------------- Fungsi Chache ---------------------------------------------
 
 // Fungsi untuk menghapus semua cache dari situs ini
 function clearSiteCache() {
@@ -22,6 +22,36 @@ function clearSiteCache() {
     // Tampilkan pesan konfirmasi atau reload halaman
     alert("Cache telah dihapus. Halaman akan dimuat ulang.");
     location.reload();
+}
+
+const FAILED_DATA_KEY = 'failedData';
+
+/**
+ * Simpan data yang gagal ke localStorage.
+ * @param {Object} jsonData - Data JSON yang gagal dikirim.
+ * @param {string} error - Pesan kesalahan.
+ */
+function saveFailedDataToCache(jsonData, error) {
+    const failedData = JSON.parse(localStorage.getItem(FAILED_DATA_KEY)) || [];
+    failedData.push({ jsonData, error });
+    localStorage.setItem(FAILED_DATA_KEY, JSON.stringify(failedData));
+}
+
+/**
+ * Muat data gagal dari localStorage ke tabel.
+ */
+function loadFailedDataFromCache() {
+    const failedData = JSON.parse(localStorage.getItem(FAILED_DATA_KEY)) || [];
+    failedData.forEach(({ jsonData, error }) => {
+        addToFailedTable(jsonData, error);
+    });
+}
+
+/**
+ * Bersihkan data gagal dari localStorage.
+ */
+function clearFailedDataCache() {
+    localStorage.removeItem(FAILED_DATA_KEY);
 }
 
 

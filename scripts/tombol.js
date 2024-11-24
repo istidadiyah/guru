@@ -56,6 +56,23 @@ function AbsensiButton() {
     
 }
 
+function GagalButton() {
+    
+    UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
+    Sembunyikan("cardIcon");
+    Sembunyikan("cardKelompok", () => {
+
+        DataTabelSelect("Santri", globalJsonData.Santri);
+
+        Tampilkan("tombolHome");
+        Tampilkan("cardPost");
+
+        loadFailedDataFromCache();
+        
+    });
+
+}
+
 function BiodataButton() {
     UbahText("Biodata", "Biodata Lengkap Santri Isti'dadiyah");
     Sembunyikan("cardIcon");

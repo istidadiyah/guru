@@ -228,7 +228,11 @@ function addToFailedTable(jsonData, error) {
         if (success) removeTableRow(row);
     };
     actionCell.appendChild(retryButton);
+
+    // Simpan data ke localStorage
+    saveFailedDataToCache(jsonData, error);
 }
+
 
 /**
  * Mengirim ulang data JSON dari tabel kesalahan.
