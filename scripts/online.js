@@ -221,7 +221,6 @@ function encodeData(data) {
  */
 function addToFailedTable(jsonData, error) {
     const table = document.getElementById('tablePost');
-    const jsonString = JSON.stringify(jsonData);
 
     if (!table.tHead) {
         const header = table.createTHead();
@@ -237,20 +236,26 @@ function addToFailedTable(jsonData, error) {
     const rowCount = body.rows.length;
 
     row.insertCell(0).textContent = rowCount;
-    row.insertCell(1).textContent = jsonString;
+
+    // Menyimpan JSON sebagai string yang utuh
+    const jsonString = JSON.stringify(jsonData, null, 2); // Pretty-print untuk debugging
+    row.insertCell(1).textContent = jsonString; // Menampilkan JSON utuh
+
+    // Menampilkan pesan kesalahan
     row.insertCell(2).textContent = error;
 
+    // Tombol untuk mengulangi pengiriman
     const actionCell = row.insertCell(3);
     const retryButton = document.createElement('button');
     retryButton.textContent = 'Ulangi';
     retryButton.className = 'btn btn-primary';
     retryButton.onclick = async () => {
         const success = await retrySendPost(jsonData, row);
-        if (success) removeTableRow(row);
+        if (success) removeTableRow(row); // Hapus dari tabel jika berhasil
     };
     actionCell.appendChild(retryButton);
 
-    // Simpan data ke localStorage
+    // Simpan data ke cache
     saveFailedDataToCache(jsonData, error);
 }
 
@@ -275,6 +280,10 @@ async function retrySendPost(jsonData, row) {
 
         if (data && Array.isArray(data.success)) {
             console.log("Data berhasil dikirim ulang:", data);
+
+            // Hapus dari cache jika berhasil
+            removeDataFromCache(jsonData);
+
             return true;
         } else {
             throw new Error(data.error || "Respons server tidak valid.");
@@ -287,6 +296,7 @@ async function retrySendPost(jsonData, row) {
         updateAntrianCounterPost();
     }
 }
+
 
 /**
  * Menghapus baris dari tabel kesalahan.

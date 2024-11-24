@@ -48,10 +48,15 @@ function loadFailedDataFromCache() {
 }
 
 /**
- * Bersihkan data gagal dari localStorage.
+ * Hapus data yang berhasil dikirim dari cache.
+ * @param {Object} jsonData - Data JSON yang berhasil dikirim.
  */
-function clearFailedDataCache() {
-    localStorage.removeItem(FAILED_DATA_KEY);
+function removeDataFromCache(jsonData) {
+    const failedData = JSON.parse(localStorage.getItem(FAILED_DATA_KEY)) || [];
+    const updatedData = failedData.filter(
+        item => JSON.stringify(item.jsonData) !== JSON.stringify(jsonData)
+    );
+    localStorage.setItem(FAILED_DATA_KEY, JSON.stringify(updatedData));
 }
 
 
