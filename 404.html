@@ -8,33 +8,144 @@
     <link rel="stylesheet" href="styles/header.css">
     <link id="themeStylesheet" rel="stylesheet" href="styles/tema/light.css">
     <title>404</title>
+    <style>
+        /* Global Style */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Dynamic Background with Gradient */
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff4f64, #4caf50, #00bcd4, #ff5722, #9c27b0);
+            background-size: 400% 400%;
+            animation: gradientShift 10s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Header Styling */
+        h1 {
+            font-size: 90px;
+            font-weight: 900;
+            letter-spacing: 10px;
+            animation: fadeInText 1s ease-out;
+            text-transform: uppercase;
+            z-index: 2;
+            text-align: center;
+            opacity: 0;
+            animation-delay: 0.2s; /* Make sure text appears after a small delay */
+        }
+
+        .sub-title {
+            font-size: 24px;
+            opacity: 0;
+            animation: fadeInSubtitle 1.5s ease-out 1s forwards; /* Subtitle appears after the main text */
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        @keyframes fadeInText {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInSubtitle {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Button Styling */
+        .btn-primary {
+            background-color: #003366; /* Dark Blue color */
+            border-color: #003366; /* Dark Blue border */
+            font-size: 18px;
+            padding: 15px 40px;
+            transition: all 0.3s ease;
+            border-radius: 30px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin-top: 30px;
+        }
+
+        .btn-primary:hover {
+            background-color: #00224d; /* Darker Blue on hover */
+            border-color: #00224d;
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(0, 51, 102, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* Button Ripple Effect */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            animation: rippleEffect 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes rippleEffect {
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="svg-container">
-        <!-- SVG Path -->
-        <svg viewbox="0 0 800 400" class="svg">
-            <path id="curve" fill="#50c6d8" d="M 800 300 Q 400 350 0 300 L 0 0 L 800 0 L 800 300 Z"></path>
-        </svg>
-    </div>
-    
+    <div class="background"></div>
+
     <header>
-        <h1>U p s . . . </h1>
-        <div class="sub-title text-center" id="tanggalInfo">
-            Halaman ini masih dalam pembuatan
+        <h1>U p s . . .</h1>
+        <div class="sub-title" id="tanggalInfo">
+            Halaman ini masih dalam tahap pembuatan
         </div>
     </header>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+
     <div class="text-center mt-4">
-        <a href="https://istidadiyah.github.io/guru/" class="btn btn-primary">Home</a>
+        <a href="index.html" class="btn btn-primary">Home</a>
     </div>
 
-    <!-- Script JS -->
-    <!-- Load JavaScript untuk menerapkan dan mengelola tema -->
+    <!-- Scripts -->
     <script src="scripts/setting.js" defer></script>
     <script src="scripts/header.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

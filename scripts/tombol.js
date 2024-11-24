@@ -1,65 +1,3 @@
-function moveHtmlContent(sourceUrl, sourceDivId, targetDivId) {
-  // Ambil elemen target di mana konten akan dipindahkan
-  const targetDiv = document.getElementById(targetDivId);
-  if (!targetDiv) {
-      console.error(`Target div dengan ID ${targetDivId} tidak ditemukan.`);
-      return;
-  }
-
-  // Fetch HTML dari URL yang diberikan
-  fetch(sourceUrl)
-      .then(response => {
-          if (!response.ok) {
-              throw new Error(`Gagal memuat halaman: ${response.statusText}`);
-          }
-          return response.text();
-      })
-      .then(htmlText => {
-          // Buat elemen dummy untuk memparsing HTML yang diambil
-          const parser = new DOMParser();
-          const htmlDocument = parser.parseFromString(htmlText, 'text/html');
-          const sourceDiv = htmlDocument.getElementById(sourceDivId);
-
-          // Pastikan sourceDiv ditemukan
-          if (!sourceDiv) {
-              console.error(`Div dengan ID ${sourceDivId} tidak ditemukan di halaman sumber.`);
-              return;
-          }
-
-          // Pindahkan isi dari sourceDiv (.modal-content) ke target modal di index.html
-          const targetContent = targetDiv.querySelector('.modal-content');
-          if (targetContent) {
-              targetContent.innerHTML = sourceDiv.innerHTML;
-          } else {
-              console.error('Target modal tidak memiliki elemen .modal-content.');
-          }
-      })
-      .catch(error => {
-          console.error('Error saat memindahkan konten:', error);
-      });
-}
-
-
-// Fungsi untuk memindahkan konten berdasarkan ID
-function moveHtmlContentFromJS(sourceId, targetDivId) {
-  // Ambil elemen target di mana konten akan dipindahkan
-  const targetDiv = document.getElementById(targetDivId);
-  if (!targetDiv) {
-      console.error(`Target div dengan ID ${targetDivId} tidak ditemukan.`);
-      return;
-  }
-
-  // Ambil HTML dari objek `htmlTemplates` dengan ID tertentu
-  const contentHTML = htmlTemplates[sourceId];
-  if (!contentHTML) {
-      console.error(`Sumber HTML dengan ID ${sourceId} tidak ditemukan.`);
-      return;
-  }
-
-  // Pindahkan konten ke elemen target
-  targetDiv.innerHTML = contentHTML;
-}
-
 
 function home() {
     UbahText("Isti'dadiyah", "Aplikasi Khusus Guru");
@@ -73,7 +11,7 @@ function home() {
         Tampilkan("cardIcon");
         DataTabelTanpaTombol("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
         Tampilkan("cardKelompok");
-        
+        resetTable("Santri")
     });
 }
 
@@ -133,7 +71,7 @@ function BiodataButton() {
         Tampilkan("tombolHome");
         Tampilkan("cardSantri");
 
-        initializeKelMDFilter("K");
+        initializeFilter("KelMD");
 
     });
 
@@ -228,6 +166,40 @@ function UbahText(newHeaderText, newTanggalInfoText) {
     animateText(headerElement, newHeaderText);
     animateText(tanggalInfoElement, newTanggalInfoText);
 }
+
+function resetTable(tableId) {
+    const oldTable = document.getElementById(tableId);
+
+    if (!oldTable) {
+        console.error(`Tabel dengan ID "${tableId}" tidak ditemukan.`);
+        return;
+    }
+
+    // Hapus DataTables jika ada
+    if ($.fn.DataTable && $.fn.DataTable.isDataTable(oldTable)) {
+        $(oldTable).DataTable().destroy(); // Hapus inisialisasi DataTables
+    }
+
+    // Hapus tabel lama dari DOM
+    oldTable.parentNode.removeChild(oldTable);
+
+    // Buat tabel baru dengan ID dan class yang sama
+    const newTable = document.createElement('table');
+    newTable.id = tableId;
+    newTable.className = 'table table-hover table-bordered'; // Tambahkan class yang sesuai
+
+    // Cari elemen container #TabelUmum
+    const container = document.getElementById('TabelUmum');
+    if (container) {
+        container.appendChild(newTable); // Tambahkan tabel baru ke dalam #TabelUmum
+    } else {
+        console.error('Container dengan ID "TabelUmum" tidak ditemukan.');
+    }
+
+    console.log(`Tabel "${tableId}" telah dihapus dan dibuat ulang.`);
+}
+
+
 
 
 

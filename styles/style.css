@@ -84,17 +84,6 @@
     justify-content: space-between;
 }
 
-/* Mengatur lebar select tanggal agar cukup untuk 2 digit */
-.select-tanggal {
-    width: 70px; /* Menyesuaikan lebar untuk 2 digit */
-    min-width: 70px; /* Tidak boleh lebih kecil dari 70px */
-}
-
-/* Mengatur lebar select bulan agar mengikuti sisa ruang */
-.select-bulan {
-    flex-grow: 1; /* Agar lebar bulan mengisi sisa ruang */
-    min-width: 150px; /* Agar select bulan tidak terlalu kecil */
-}
 
 
 /* Responsif: Mengatur agar flex tetap horizontal */
@@ -109,35 +98,6 @@
         width: 100%; /* Lebar penuh di perangkat kecil */
         min-width: 0; /* Menghindari elemen terlalu besar di layar kecil */
     }
-}
-
-#formfilter {
-    max-width: 330px;
-}
-
-#filterKelas {
-    min-width: 100%;
-}
-
-
-/* CSS for the floating button */
-.toggle-button {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);   
-}
-
-.toggle-button i {
-    font-size: 24px;
-    color: white;
 }
 
 
@@ -177,7 +137,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 0.685);
+    background-color: rgba(255, 255, 255, 0.85);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -189,35 +149,100 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    width: 100px;
+    height: 100px;
 }
 
+/* Efek cahaya melingkar */
 .loading-spinner::before {
     content: '';
     position: absolute;
-    width: 80px;  /* Ukuran ini harus lebih besar dari logo untuk terlihat mengelilinginya */
-    height: 80px; /* Ukuran ini harus lebih besar dari logo untuk terlihat mengelilinginya */
-    border: 5px solid #4CAF50;
-    border-top: 5px solid transparent;
+    width: 100px; /* Ukuran lingkaran luar */
+    height: 100px; /* Ukuran lingkaran luar */
+    border: 5px solid rgba(0, 0, 0, 0.1); /* Bayangan lingkaran */
+    border-top: 5px solid #4CAF50; /* Warna cahaya awal */
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+    animation: spin 1.2s linear infinite, glow 3s ease-in-out infinite;
 }
 
-.logo {
-    position: relative;
-    width: 60px; /* Ukuran logo */
-    height: 60px; /* Ukuran logo */
+/* Efek animasi warna */
+@keyframes glow {
+    0% {
+        border-top-color: #4CAF50;
+        box-shadow: 0 0 10px #4CAF50;
+    }
+    50% {
+        border-top-color: #00BCD4;
+        box-shadow: 0 0 20px #00BCD4;
+    }
+    100% {
+        border-top-color: #FF5722;
+        box-shadow: 0 0 15px #FF5722;
+    }
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.absensi-button {
+/* Logo di tengah */
+.logo {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    z-index: 2;
+    background: radial-gradient(circle at center, #4CAF50, #00BCD4);
     border-radius: 50%;
-    padding: 2px 2px;
-    margin: 0 1px;
-    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+    transform-style: preserve-3d;
+    animation: logoAnimation 2s infinite ease-in-out;
 }
+
+/* Animasi 3D pada logo */
+@keyframes logoAnimation {
+    0% {
+        transform: rotateY(0deg) rotateX(0deg);
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+    }
+    50% {
+        transform: rotateY(15deg) rotateX(15deg);
+        box-shadow: 0 0 25px rgba(0, 188, 212, 0.7);
+    }
+    100% {
+        transform: rotateY(0deg) rotateX(0deg);
+        box-shadow: 0 0 15px rgba(0, 188, 212, 0.5);
+    }
+}
+
+/* Animasi cahaya pada logo */
+.logo::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.8;
+    }
+}
+
+
+
 
 
 

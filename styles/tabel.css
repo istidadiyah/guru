@@ -1,9 +1,9 @@
-/* Mengatur elemen kontrol DataTables agar menggunakan kelas Bootstrap */
+/* Mengatur elemen kontrol DataTables agar menggunakan kelas Bootstrap 
 .dataTables_filter input.form-control {
     display: inline-block;
     width: auto;
     margin-left: 0.5em;
-}
+}*/
 
 .dataTables_wrapper .dataTables_length select.form-control {
     display: inline-block;

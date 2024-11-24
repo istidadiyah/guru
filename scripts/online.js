@@ -4,7 +4,7 @@ let globalJsonData = {};
 
 // Nama kunci untuk menyimpan data di localStorage
 const CACHE_KEY = 'googleSheetsData';
-const CACHE_DURATION = 60 * 60 * 1000; // 1 jam dalam milidetik
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 jam dalam milidetik
 
 /**
  * Fungsi untuk mengambil data dari Google Sheets dan menyimpan dalam variabel global.
