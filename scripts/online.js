@@ -118,23 +118,28 @@ async function sendPostWithGet(jsonData) {
     antrianPostCount++;
     updateAntrianCounterPost();
 
+    // Fungsi untuk memproses respons server
     const processPostResponse = (data, jsonData) => {
+        let allSuccess = true; // Untuk melacak apakah semua berhasil
+        let failedSheets = []; // Menyimpan sheet yang gagal
+
         if (data && Array.isArray(data.success)) {
-            let allSuccess = true; // Untuk memastikan semua berhasil
-            let failedSheets = []; // Menyimpan sheet yang gagal
-    
             data.success.forEach(sheetData => {
-                // Jika newRowIndexes kosong, tetapi sheet berhasil diperbarui, kita anggap sukses
-                if (sheetData.IDS.newRowIndexes.length === 0 && sheetData.IDS.updated) {
-                    // Jika ada data 'updated', artinya update berhasil walaupun tidak ada baris baru
-                    console.log(`${sheetData.sheet} berhasil diperbarui tanpa baris baru.`);
+                // Cek apakah sheet berhasil diperbarui
+                if (
+                    sheetData.IDS.newRowIndexes.length === 0 &&
+                    sheetData.IDS.updated
+                ) {
+                    console.log(
+                        `${sheetData.sheet} berhasil diperbarui tanpa baris baru.`
+                    );
                 } else if (sheetData.IDS.newRowIndexes.length === 0) {
-                    // Jika tidak ada perubahan (baik baris baru maupun update), tandai sebagai gagal
+                    // Jika tidak ada baris baru atau update, tandai sebagai gagal
                     allSuccess = false;
                     failedSheets.push(sheetData.sheet);
                 }
             });
-    
+
             if (allSuccess) {
                 console.log("Data berhasil diproses untuk semua sheet:", data);
             } else {
@@ -142,28 +147,44 @@ async function sendPostWithGet(jsonData) {
                 addToFailedTable(jsonData, `Sheet gagal: ${failedSheets.join(", ")}`);
             }
         } else {
-            console.error("Respons server tidak valid atau tidak ada data sukses:", data);
+            console.error(
+                "Respons server tidak valid atau tidak ada data sukses:",
+                data
+            );
             addToFailedTable(jsonData, "Format respons server tidak sesuai.");
         }
-    
-        // Log untuk error tambahan
+
+        // Log kesalahan tambahan jika ada
         if (data && Array.isArray(data.errors) && data.errors.length > 0) {
             console.error("Server errors:", data.errors);
         }
     };
-    
 
     try {
-        const encodedData = encodeData({ action: 'Post', json: JSON.stringify(jsonData) });
-        const response = await fetch(`${scriptPostURL}?${encodedData}`, { method: 'GET' });
+        // Cek koneksi internet
+        if (!navigator.onLine) {
+            throw new Error("Tidak ada koneksi internet.");
+        }
 
-        if (!response.ok) throw new Error(`Network response not ok: ${response.statusText}`);
+        const encodedData = encodeData({
+            action: "Post",
+            json: JSON.stringify(jsonData)
+        });
+
+        const response = await fetch(`${scriptPostURL}?${encodedData}`, {
+            method: "GET"
+        });
+
+        if (!response.ok)
+            throw new Error(`Respons jaringan tidak OK: ${response.statusText}`);
 
         const data = await response.json();
         console.log("Respons server:", data);
         processPostResponse(data, jsonData);
     } catch (error) {
         console.error("Kesalahan saat mengirim data:", error);
+
+        // Masukkan semua JSON ke tabel gagal
         addToFailedTable(jsonData, error.message || "Kesalahan tidak diketahui.");
     } finally {
         antrianPostCount--;
