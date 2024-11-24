@@ -60,7 +60,7 @@ function removeDataFromCache(jsonData) {
 }
 
 
-//--------------------------------- Membuat Json Simpan Edit data --------------------------------
+//--------------------------------- Membuat Json Simpan dan menyimpan Edit data --------------------------------
 function generateJSON() {
     // Ambil elemen-elemen dari div dengan id "cardEdit"
     const cardEdit = document.getElementById("cardEdit");
@@ -87,6 +87,31 @@ function generateJSON() {
     return JSON.stringify(jsonData); // Kembalikan JSON dalam bentuk string
 }
 
+function generateJSONGuru() {
+    // Ambil elemen-elemen dari div dengan id "cardEdit"
+    const cardEdit = document.getElementById("cardEdit");
+    const inputs = cardEdit.querySelectorAll("input, select");
+    
+    // Objek yang akan menjadi hasil akhir
+    let rowData = {};
+    
+    // Iterasi melalui semua input dan select
+    inputs.forEach(input => {
+        const key = input.id; // Menggunakan ID sebagai header
+        const value = input.value; // Mengambil nilai dari input atau select
+        rowData[key] = value; // Memasukkan ke objek
+    });
+
+    // Format JSON sesuai permintaan
+    const jsonData = {
+        Guru: [rowData]
+    };
+
+    console.log(jsonData); // Untuk debugging
+    sendPostWithGet(jsonData);
+
+    return JSON.stringify(jsonData); // Kembalikan JSON dalam bentuk string
+}
 
 
 //------------------------------------ Memindah isi form edit ke halaman utama ---------------------------------------

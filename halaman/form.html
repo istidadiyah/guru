@@ -113,6 +113,43 @@
                         </div>
                     </div>
                 </div>
+                <!-- Form Alamat -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Alamat</h5>
+                        <!-- Dusun, RT, RW -->
+                        <div class="mb-3 row">
+                            <label for="Dusun" class="form-label">Dusun, RT, RW</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="Dusun" placeholder="Dusun">
+                                <input type="text" class="form-control" id="RT" placeholder="RT" style="width: 50px; margin-left: 5px;">
+                                <input type="text" class="form-control" id="RW" placeholder="RW" style="width: 50px; margin-left: 5px;">
+                            </div>
+                        </div>
+                        <!-- Desa -->
+                        <div class="mb-3">
+                            <label for="Desa" class="form-label">Desa</label>
+                            <input type="text" class="form-control" id="Desa">
+                        </div>
+                        <!-- Kecamatan -->
+                        <div class="mb-3">
+                            <label for="Kecamatan" class="form-label">Kecamatan</label>
+                            <input type="text" class="form-control" id="Kecamatan">
+                        </div>
+                        <!-- Kabupaten -->
+                        <div class="mb-3">
+                            <label for="Kabupaten" class="form-label">Kabupaten</label>
+                            <input type="text" class="form-control" id="Kabupaten">
+                        </div>
+                        <!-- Provinsi -->
+                        <div class="mb-3">
+                            <label for="Provinsi" class="form-label">Provinsi</label>
+                            <input type="text" class="form-control" id="Provinsi">
+                        </div>
+                    </div>
+                </div>
+
+
             </form>
         </div>
         <div class="modal-footer">
@@ -174,7 +211,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Biodata Guru</h5>
                         <div class="mb-3">
-                            <label for="ID" class="form-label">Guru ID</label>
+                            <label for="ID" class="form-label">ID</label>
                             <input type="text" class="form-control" id="ID" disabled>
                         </div>
                         <div class="mb-3">
@@ -182,15 +219,57 @@
                             <input type="text" class="form-control" id="Nama">
                         </div>
                         <div class="mb-3">
-                            <label for="NIK" class="form-label">NIK</label>
+                            <label for="NIK" class="form-label">Nomor NIK</label>
                             <input type="text" class="form-control" id="NIK">
+                        </div>
+                        <div class="mb-3 row">
+                            <label for="TempatLahir" class="form-label">Tempat Tanggal Lahir</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="TempatLahir" placeholder="Tempat Lahir">
+                                <input type="date" class="form-control" id="TanggalLahir" style="width: 150px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                 <!-- Form Alamat -->
+                 <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Alamat</h5>
+                        <!-- Dusun, RT, RW -->
+                        <div class="mb-3 row">
+                            <label for="Dusun" class="form-label">Dusun, RT, RW</label>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <input type="text" class="form-control" id="Dusun" placeholder="Dusun">
+                                <input type="text" class="form-control" id="RT" placeholder="RT" style="width: 50px; margin-left: 5px;">
+                                <input type="text" class="form-control" id="RW" placeholder="RW" style="width: 50px; margin-left: 5px;">
+                            </div>
+                        </div>
+                        <!-- Desa -->
+                        <div class="mb-3">
+                            <label for="Desa" class="form-label">Desa</label>
+                            <input type="text" class="form-control" id="Desa">
+                        </div>
+                        <!-- Kecamatan -->
+                        <div class="mb-3">
+                            <label for="Kecamatan" class="form-label">Kecamatan</label>
+                            <input type="text" class="form-control" id="Kecamatan">
+                        </div>
+                        <!-- Kabupaten -->
+                        <div class="mb-3">
+                            <label for="Kabupaten" class="form-label">Kabupaten</label>
+                            <input type="text" class="form-control" id="Kabupaten">
+                        </div>
+                        <!-- Provinsi -->
+                        <div class="mb-3">
+                            <label for="Provinsi" class="form-label">Provinsi</label>
+                            <input type="text" class="form-control" id="Provinsi">
                         </div>
                     </div>
                 </div>
             </form>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Simpan</button>
+            <button type="submit" class="btn btn-primary" onclick="generateJSONGuru()">Simpan</button>
         </div>
     </div>
 </div>

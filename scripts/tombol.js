@@ -58,7 +58,7 @@ function AbsensiButton() {
 
 function GagalButton() {
     
-    UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
+    UbahText("Offline", "Data yang gagal di kirim");
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
@@ -101,7 +101,7 @@ function GuruButton() {
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
-        DataTabel("Guru", globalJsonData.SemuaData.Guru, "ID, Nama");
+        DataTabel("Guru", globalJsonData.SemuaData.Guru, "Nama");
 
         Tampilkan("tombolHome");
         Tampilkan("cardGuru");

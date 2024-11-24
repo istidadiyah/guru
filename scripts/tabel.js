@@ -372,9 +372,6 @@ function updateStatusTombol() {
 }
 
 
-
-
-
 // Panggil fungsi updateStatusTombol setiap kali filter berubah
 document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
 document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
@@ -443,7 +440,7 @@ function sendDelayedData() {
 
         // Perbarui tampilan antrian
         updateAntrianDisplay();
-    }, 5000); // Tunggu 3 detik sebelum mengirim
+    }, 8000); // Tunggu 5 detik sebelum mengirim
 }
 
 // Fungsi untuk mendapatkan tanggal dan waktu dalam format "DD/MM/YYYY HH:mm:ss"
@@ -525,7 +522,7 @@ function JsonAbsen(id, nama, kelMD, status) {
 
 
 
-//---------------------------------------------------- Edit Json Utama di scache -------------------------------------------
+//---------------------------------------------------- Edit Json Utama di cache -------------------------------------------
 /**
  * Fungsi untuk memperbarui data dalam cache JSON, atau menambahkan data baru jika tidak ditemukan.
  * @param {object} jsonData - Objek JSON utama yang akan diperbarui (contoh: globalJsonData.Santri).
@@ -581,11 +578,6 @@ function UpdateCacheJson(jsonData, path, idKey, idValue, header, newValue) {
 }
 
 
-
-
-
-
-//--------------------------------------------------- Vlook Up dari Json ---------------------------------------------
 
 
 
