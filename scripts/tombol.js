@@ -6,6 +6,7 @@ function home() {
     Sembunyikan("cardSantri");
     Sembunyikan("cardGuru");
     Sembunyikan("cardPost");
+    Sembunyikan("cardRekap")
 
     Sembunyikan("cardSetting", () => {
         Tampilkan("cardIcon");
@@ -49,7 +50,9 @@ function AbsensiButton() {
 
         initializeFilter("K");
         IsiBulan("filterBulan");
-        
+        getHijriDate();
+
+        updateStatusTombol();
     });
 
     moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
@@ -121,7 +124,14 @@ function SettingButton() {
     });
 }
 
+function RekapButton() {
+    Sembunyikan("cardSantri", () => {
 
+        DataTabelTanpaTombol("Rekap", globalJsonData.SemuaData.Absen, "IDS, Nama, Kelas, A, I, S");
+
+        Tampilkan("cardRekap");
+    });
+}
 
 function Tampilkan(id) {
     const elem = document.getElementById(id);

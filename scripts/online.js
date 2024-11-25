@@ -118,79 +118,46 @@ async function sendPostWithGet(jsonData) {
     antrianPostCount++;
     updateAntrianCounterPost();
 
-    // Fungsi untuk memproses respons server
-    const processPostResponse = (data, jsonData) => {
-        let allSuccess = true; // Untuk melacak apakah semua berhasil
-        let failedSheets = []; // Menyimpan sheet yang gagal
-
-        if (data && Array.isArray(data.success)) {
-            data.success.forEach(sheetData => {
-                // Cek apakah sheet berhasil diperbarui
-                if (
-                    sheetData.IDS.newRowIndexes.length === 0 &&
-                    sheetData.IDS.updated
-                ) {
-                    console.log(
-                        `${sheetData.sheet} berhasil diperbarui tanpa baris baru.`
-                    );
-                } else if (sheetData.IDS.newRowIndexes.length === 0) {
-                    // Jika tidak ada baris baru atau update, tandai sebagai gagal
-                    allSuccess = false;
-                    failedSheets.push(sheetData.sheet);
-                }
-            });
-
-            if (allSuccess) {
-                console.log("Data berhasil diproses untuk semua sheet:", data);
-            } else {
-                console.error("Beberapa sheet gagal diproses:", failedSheets);
-                addToFailedTable(jsonData, `Sheet gagal: ${failedSheets.join(", ")}`);
-            }
-        } else {
-            console.error(
-                "Respons server tidak valid atau tidak ada data sukses:",
-                data
-            );
-            addToFailedTable(jsonData, "Format respons server tidak sesuai.");
-        }
-
-        // Log kesalahan tambahan jika ada
-        if (data && Array.isArray(data.errors) && data.errors.length > 0) {
-            console.error("Server errors:", data.errors);
-        }
-    };
-
     try {
-        // Cek koneksi internet
+        // Periksa koneksi internet
         if (!navigator.onLine) {
             throw new Error("Tidak ada koneksi internet.");
         }
 
+        // Encode data menjadi parameter URL
         const encodedData = encodeData({
             action: "Post",
             json: JSON.stringify(jsonData)
         });
 
+        // Kirim permintaan GET ke server
         const response = await fetch(`${scriptPostURL}?${encodedData}`, {
             method: "GET"
         });
 
-        if (!response.ok)
+        // Jika respons tidak OK, lemparkan kesalahan
+        if (!response.ok) {
             throw new Error(`Respons jaringan tidak OK: ${response.statusText}`);
+        }
 
+        // Parsing data dari respons server
         const data = await response.json();
         console.log("Respons server:", data);
+
+        // Proses hasil respons
         processPostResponse(data, jsonData);
     } catch (error) {
         console.error("Kesalahan saat mengirim data:", error);
 
-        // Masukkan semua JSON ke tabel gagal
+        // Masukkan data ke tabel gagal jika terjadi kesalahan
         addToFailedTable(jsonData, error.message || "Kesalahan tidak diketahui.");
     } finally {
+        // Kurangi jumlah antrian aktif
         antrianPostCount--;
         updateAntrianCounterPost();
     }
 }
+
 
 /**
  * Memperbarui tampilan jumlah antrian Post.
@@ -214,13 +181,15 @@ function encodeData(data) {
         .join("&");
 }
 
-/**
- * Menambahkan data ke tabel kesalahan jika gagal dikirim.
- * @param {Object} jsonData - Data JSON yang gagal dikirim.
- * @param {string} error - Pesan kesalahan.
- */
 function addToFailedTable(jsonData, error) {
     const table = document.getElementById('tablePost');
+    const jsonHash = hashJson(jsonData); // Buat hash unik untuk JSON
+
+    // Cek apakah data sudah ada di tabel
+    if (isJsonAlreadyInTable(jsonHash, table)) {
+        console.warn("Data JSON sudah ada di tabel, tidak ditambahkan lagi.");
+        return;
+    }
 
     if (!table.tHead) {
         const header = table.createTHead();
@@ -236,15 +205,9 @@ function addToFailedTable(jsonData, error) {
     const rowCount = body.rows.length;
 
     row.insertCell(0).textContent = rowCount;
-
-    // Menyimpan JSON sebagai string yang utuh
-    const jsonString = JSON.stringify(jsonData, null, 2); // Pretty-print untuk debugging
-    row.insertCell(1).textContent = jsonString; // Menampilkan JSON utuh
-
-    // Menampilkan pesan kesalahan
+    row.insertCell(1).textContent = JSON.stringify(jsonData, null, 2); // Pretty-print untuk debugging
     row.insertCell(2).textContent = error;
 
-    // Tombol untuk mengulangi pengiriman
     const actionCell = row.insertCell(3);
     const retryButton = document.createElement('button');
     retryButton.textContent = 'Ulangi';
@@ -255,47 +218,131 @@ function addToFailedTable(jsonData, error) {
     };
     actionCell.appendChild(retryButton);
 
-    // Simpan data ke cache
-    saveFailedDataToCache(jsonData, error);
+    // Tambahkan atribut hash ke row untuk identifikasi
+    row.dataset.jsonHash = jsonHash;
 }
 
+
+/**
+ * Memeriksa apakah JSON sudah ada di tabel kesalahan.
+ * @param {string} jsonHash - Hash unik dari JSON.
+ * @param {HTMLTableElement} table - Elemen tabel untuk memeriksa data.
+ * @returns {boolean} - True jika JSON sudah ada di tabel, false jika belum.
+ */
+function isJsonAlreadyInTable(jsonHash, table) {
+    const body = table.tBodies[0];
+    if (!body) return false;
+
+    for (let row of body.rows) {
+        const existingJsonHash = row.dataset.jsonHash; // Ambil hash dari atribut data
+        if (existingJsonHash === jsonHash) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Memeriksa apakah JSON sudah ada di cache.
+ * @param {string} jsonHash - Hash unik dari JSON.
+ * @returns {boolean} - True jika JSON sudah ada di cache, false jika belum.
+ */
+function isJsonAlreadyInCache(jsonHash) {
+    const failedData = JSON.parse(localStorage.getItem('failedData') || '[]');
+    return failedData.some(item => hashJson(item.data) === jsonHash);
+}
+
+function saveFailedDataToCache(jsonData, error) {
+    const failedData = JSON.parse(localStorage.getItem('failedData') || '[]');
+    const jsonHash = hashJson(jsonData);
+
+    if (!failedData.some(item => hashJson(item.data) === jsonHash)) {
+        failedData.push({ data: jsonData, error });
+        localStorage.setItem('failedData', JSON.stringify(failedData));
+        console.log("Data gagal disimpan ke cache:", jsonData);
+    } else {
+        console.warn("Data sudah ada di cache, tidak disimpan ulang.");
+    }
+}
+
+function removeDataFromCache(jsonData) {
+    const failedData = JSON.parse(localStorage.getItem('failedData') || '[]');
+    const jsonHash = hashJson(jsonData);
+
+    const updatedData = failedData.filter(item => hashJson(item.data) !== jsonHash);
+    localStorage.setItem('failedData', JSON.stringify(updatedData));
+    console.log("Data berhasil dihapus dari cache:", jsonData);
+}
+
+/**
+ * Membuat hash unik untuk JSON dengan urutan konsisten.
+ * @param {Object} json - Data JSON.
+ * @returns {string} - Hash unik dari JSON.
+ */
+function hashJson(json) {
+    const orderedJson = JSON.stringify(json, Object.keys(json).sort()); // Urutkan kunci
+    return btoa(orderedJson); // Encode JSON sebagai string base64
+}
+
+
+/**
+ * Menghapus baris dari tabel kesalahan.
+ * @param {HTMLTableRowElement} row - Baris tabel yang akan dihapus.
+ */
+function removeTableRow(row) {
+    if (row && row.parentNode) {
+        row.parentNode.removeChild(row);
+    }
+}
 
 /**
  * Mengirim ulang data JSON dari tabel kesalahan.
  * @param {Object} jsonData - Data JSON yang gagal dikirim.
  * @param {HTMLTableRowElement} row - Baris tabel yang terkait.
- * @returns {boolean} - True jika berhasil dikirim ulang, false jika gagal.
+ * @returns {Promise<boolean>} - True jika berhasil dikirim ulang, false jika gagal.
  */
 async function retrySendPost(jsonData, row) {
     antrianPostCount++;
     updateAntrianCounterPost();
 
     try {
-        const encodedData = encodeData({ action: 'Post', json: JSON.stringify(jsonData) });
+        // Encode data untuk request
+        const encodedData = encodeData({
+            action: 'Post',
+            json: JSON.stringify(jsonData)
+        });
+
+        // Kirim ulang data ke server
         const response = await fetch(`${scriptPostURL}?${encodedData}`, { method: 'GET' });
 
-        if (!response.ok) throw new Error(`Network response not ok: ${response.statusText}`);
+        // Cek respons server
+        if (!response.ok) {
+            throw new Error(`Respons jaringan tidak OK: ${response.statusText}`);
+        }
 
         const data = await response.json();
 
-        if (data && Array.isArray(data.success)) {
+        // Verifikasi apakah server berhasil memproses data
+        if (data && Array.isArray(data.success) && data.success.length > 0) {
             console.log("Data berhasil dikirim ulang:", data);
 
-            // Hapus dari cache jika berhasil
+            // Hapus data dari cache jika berhasil
             removeDataFromCache(jsonData);
 
-            return true;
+            return true; // Berhasil
         } else {
             throw new Error(data.error || "Respons server tidak valid.");
         }
     } catch (error) {
-        row.cells[2].textContent = error.message;
-        return false;
+        console.error("Gagal mengirim ulang data:", error);
+        row.cells[2].textContent = error.message; // Update pesan error pada tabel
+        return false; // Gagal
     } finally {
         antrianPostCount--;
         updateAntrianCounterPost();
     }
 }
+
 
 
 /**

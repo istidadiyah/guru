@@ -38,14 +38,22 @@ function saveFailedDataToCache(jsonData, error) {
 }
 
 /**
- * Muat data gagal dari localStorage ke tabel.
+ * Muat data gagal dari localStorage ke tabel tanpa menduplikasi data.
  */
 function loadFailedDataFromCache() {
     const failedData = JSON.parse(localStorage.getItem(FAILED_DATA_KEY)) || [];
-    failedData.forEach(({ jsonData, error }) => {
-        addToFailedTable(jsonData, error);
+    const table = document.getElementById('tablePost');
+    
+    failedData.forEach(({ data, error }) => {
+        const jsonHash = hashJson(data); // Buat hash unik untuk data JSON
+        
+        // Periksa apakah data sudah ada di tabel
+        if (!isJsonAlreadyInTable(jsonHash, table)) {
+            addToFailedTable(data, error);
+        }
     });
 }
+
 
 /**
  * Hapus data yang berhasil dikirim dari cache.
@@ -194,13 +202,36 @@ function getHijriDate() {
     
     // Mengonversi Julian Day ke Hijriyah
     const hijri = jdToHijri(jd);
-    
+
     // Format tanggal Hijriyah (contoh: 11 Muharram 1446)
     const hijriDate = `${hijri.day} ${bulanNames[hijri.month]} ${hijri.year}`;
 
     // Menampilkan tanggal Hijriyah di elemen dengan id "Hijriyah"
     document.getElementById('Hijriyah').textContent = hijriDate;
+
+    // Memasukkan bulan ke dalam select filterBulan
+    const filterBulan = document.getElementById("filterBulan");
+    if (filterBulan) {
+        filterBulan.innerHTML = ''; // Hapus semua opsi yang ada
+        Object.keys(bulanNames).forEach((key) => {
+            const option = document.createElement("option");
+            option.value = key; // Value tetap 01 hingga 12
+            option.textContent = bulanNames[key]; // Nama bulan dari objek bulanNames
+            if (key === hijri.month) {
+                option.selected = true; // Set bulan sesuai hasil konversi
+            }
+            filterBulan.appendChild(option);
+        });
+    }
+
+    // Memasukkan tanggal ke dalam input filterTanggal
+    const filterTanggal = document.getElementById("filterTanggal");
+    if (filterTanggal) {
+        filterTanggal.value = hijri.day < 10 ? '0' + hijri.day : hijri.day; // Format dua digit untuk hari
+    }
 }
+
+
 
 // Fungsi untuk mengonversi tanggal Gregorian ke Julian Day
 function gregorianToJD(year, month, day) {
