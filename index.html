@@ -168,26 +168,28 @@
                         </select>
                     </div>
                     <p id="Hijriyah">Tanggal Hijiriyah</p>
-                    <div id="cardFilter" class="d-flex justify-content-between align-items-center mb-3">
-                        <select id="filterJam" class="form-select" style="width:100%;">
-                            <option value="M">Malam</option>
-                            <option value="1">Jam 1</option>
-                            <option value="2">Jam 2</option>
-                        </select>
-                        <select id="filterTanggal" class="form-select" style="width:auto;">
-                            <script>
-                                for (let i = 1; i <= 31; i++) {
-                                    document.write('<option value="' + i + '">' + (i < 10 ? '0' + i : i) + '</option>');
-                                }
-                            </script>
-                        </select>
-                    </div>
-                    <div id="cardFilter" class="d-flex justify-content-between align-items-center mb-3">
-                        <select id="filterBulan" class="form-select" style="width:100%;">
-                            <option value="">All</option>
-                            <!-- Opsi akan diisi secara dinamis oleh JavaScript -->
-                        </select>
-                        <button type="submit" class="btn btn-primary" onclick="RekapButton()">Rekap</button>
+                    <div id="cardFilter">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <select id="filterJam" class="form-select" style="width:100%;">
+                                <option value="M">Malam</option>
+                                <option value="1">Jam 1</option>
+                                <option value="2">Jam 2</option>
+                            </select>
+                            <select id="filterTanggal" class="form-select" style="width:auto;">
+                                <script>
+                                    for (let i = 1; i <= 31; i++) {
+                                        document.write('<option value="' + i + '">' + (i < 10 ? '0' + i : i) + '</option>');
+                                    }
+                                </script>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <select id="filterBulan" class="form-select" style="width:100%;">
+                                <option value="">All</option>
+                                <!-- Opsi akan diisi secara dinamis oleh JavaScript -->
+                            </select>
+                            <button type="submit" class="btn btn-primary" onclick="RekapButton()">Rekap</button>
+                        </div>
                     </div>
                     <div id="TabelUmum">
                         <table id="Santri" class="table table-hover table-bordered"></table>

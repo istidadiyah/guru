@@ -118,46 +118,75 @@ async function sendPostWithGet(jsonData) {
     antrianPostCount++;
     updateAntrianCounterPost();
 
+    // Fungsi untuk memproses respons server
+    const processPostResponse = (data, jsonData) => {
+        let allSuccess = true; // Untuk melacak apakah semua berhasil
+        let failedSheets = []; // Menyimpan sheet yang gagal
+    
+        if (data && Array.isArray(data.success)) {
+            data.success.forEach(sheetData => {
+                // Sheet dianggap berhasil jika ada update atau tidak perlu update/buat baris baru
+                const isSuccessful = 
+                    sheetData.IDS.updated || sheetData.IDS.newRowIndexes.length > 0;
+    
+                if (!isSuccessful) {
+                    allSuccess = false;
+                    failedSheets.push(sheetData.sheet); // Tambahkan sheet yang gagal
+                }
+            });
+    
+            if (allSuccess) {
+                console.log("Semua sheet berhasil diproses:", data);
+                // Hapus data dari cache jika semua sheet berhasil
+                removeDataFromCache(jsonData);
+            } else {
+                console.error("Beberapa sheet gagal diproses:", failedSheets);
+                addToFailedTable(jsonData, `Sheet gagal: ${failedSheets.join(", ")}`);
+            }
+        } else {
+            console.error("Respons server tidak valid atau tidak ada data sukses:", data);
+            addToFailedTable(jsonData, "Format respons server tidak sesuai.");
+        }
+    
+        // Log kesalahan tambahan jika ada
+        if (data && Array.isArray(data.errors) && data.errors.length > 0) {
+            console.error("Kesalahan server tambahan:", data.errors);
+        }
+    };
+    
+    
+
     try {
-        // Periksa koneksi internet
+        // Cek koneksi internet
         if (!navigator.onLine) {
             throw new Error("Tidak ada koneksi internet.");
         }
 
-        // Encode data menjadi parameter URL
         const encodedData = encodeData({
             action: "Post",
             json: JSON.stringify(jsonData)
         });
 
-        // Kirim permintaan GET ke server
         const response = await fetch(`${scriptPostURL}?${encodedData}`, {
             method: "GET"
         });
 
-        // Jika respons tidak OK, lemparkan kesalahan
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`Respons jaringan tidak OK: ${response.statusText}`);
-        }
 
-        // Parsing data dari respons server
         const data = await response.json();
         console.log("Respons server:", data);
-
-        // Proses hasil respons
         processPostResponse(data, jsonData);
     } catch (error) {
         console.error("Kesalahan saat mengirim data:", error);
 
-        // Masukkan data ke tabel gagal jika terjadi kesalahan
+        // Masukkan semua JSON ke tabel gagal
         addToFailedTable(jsonData, error.message || "Kesalahan tidak diketahui.");
     } finally {
-        // Kurangi jumlah antrian aktif
         antrianPostCount--;
         updateAntrianCounterPost();
     }
 }
-
 
 /**
  * Memperbarui tampilan jumlah antrian Post.

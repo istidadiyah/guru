@@ -41,9 +41,6 @@ function AbsensiButton() {
         DataTabelSelect("Santri", globalJsonData.Santri);
 
         Tampilkan("tombolHome");
-        Tampilkan("filterJam");
-        Tampilkan("filterBulan");
-        Tampilkan("filterTanggal");
 
         Tampilkan("cardSantri");
         Tampilkan("cardFilter");
@@ -81,9 +78,6 @@ function BiodataButton() {
     Sembunyikan("cardIcon");
 
     Sembunyikan("cardFilter");
-    Sembunyikan("filterJam");
-    Sembunyikan("filterBulan");
-    Sembunyikan("filterTanggal");
 
     Sembunyikan("cardKelompok", () => {
 
@@ -93,6 +87,7 @@ function BiodataButton() {
 
         initializeFilter("KelMD");
 
+        getHijriDate();
     });
 
     moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
