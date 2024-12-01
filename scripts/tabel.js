@@ -17,6 +17,113 @@ const bulanNames = {
 
 
 //------------------------------------------------------------ Fungsi Input data to tabel -------------------------------------------------------------
+function DataTabelRekap(tableId, jsonData, visibleColumns) {
+    // Cek elemen tabel
+    const table = document.getElementById(tableId);
+    if (!table) {
+        console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
+        return;
+    }
+
+    // Hapus konten lama (jika ada)
+    table.innerHTML = '';
+
+    // Validasi data JSON
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+        console.error("Data JSON kosong atau tidak valid.");
+        return;
+    }
+
+    // Ambil filter bulan dari elemen dengan ID "filterBulan"
+    const filterBulanElement = document.getElementById('filterBulan');
+    if (!filterBulanElement) {
+        console.error("Elemen filterBulan tidak ditemukan.");
+        return;
+    }
+
+    const selectedBulan = filterBulanElement.value; // Ambil value bulan yang dipilih
+    if (!selectedBulan) {
+        console.error("Bulan tidak dipilih atau value bulan kosong.");
+        return;
+    }
+
+    // Ambil filter kelas dari elemen dengan ID "kelmdFilter"
+    const kelmdFilterElement = document.getElementById('kelmdFilter');
+    if (!kelmdFilterElement) {
+        console.error("Elemen kelmdFilter tidak ditemukan.");
+        return;
+    }
+
+    const selectedKelas = kelmdFilterElement.value; // Ambil value kelas yang dipilih
+
+    // Filter data JSON berdasarkan IDS yang diakhiri dengan bulan terpilih dan kelas
+    const filteredData = jsonData.filter(row => {
+        const idsBulan = row.IDS ? row.IDS.slice(-2) : null;
+        const rowKelas = row.Kelas || ''; // Pastikan properti Kelas ada di data JSON
+
+        // Filter berdasarkan bulan dan kelas
+        const matchBulan = idsBulan === selectedBulan;
+        const matchKelas = !selectedKelas || selectedKelas === rowKelas; // Jika kelas kosong, tampilkan semua
+
+        return matchBulan && matchKelas;
+    });
+
+    // Periksa apakah ada data yang sesuai filter
+    if (filteredData.length === 0) {
+        console.warn("Tidak ada data yang sesuai dengan filter bulan dan kelas.");
+        return;
+    }
+
+    // Mendapatkan header dari data JSON berdasarkan kolom yang terlihat
+    const visibleHeaders = visibleColumns.split(",").map(col => col.trim());
+    if (visibleHeaders.length === 0) {
+        console.error("Tidak ada kolom yang valid untuk ditampilkan.");
+        return;
+    }
+
+    // Membuat header tabel dengan <th>
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    visibleHeaders.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Membuat body tabel
+    const tbody = document.createElement('tbody');
+    filteredData.forEach(row => {
+        const tr = document.createElement('tr');
+
+        visibleHeaders.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] !== undefined ? row[header] : '';
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Inisialisasi ulang DataTables untuk memastikan fitur sorting berfungsi
+    if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+        $(`#${tableId}`).DataTable().destroy();
+    }
+
+    // Inisialisasi DataTables
+    $(`#${tableId}`).DataTable({
+        responsive: true,
+        paging: false, // Matikan fitur pagination
+        dom: 'frptipB',
+        order: [[1, 'asc']],
+    });
+}
+
+
+
+
 function DataTabelTanpaTombol(tableId, jsonData, visibleColumns) {
     // Cek elemen tabel
     const table = document.getElementById(tableId);
@@ -337,7 +444,7 @@ function updateStatusTombol() {
     }
 
     const header = `${filterJamValue}T${filterTanggalValue}`;
-    const filteredData = globalJsonData.SemuaData.Absen.filter(row => row['IDS']?.endsWith(filterBulanValue));
+    const filteredData = JSON.parse(localStorage.getItem('Absen')).data.filter(row => row['IDS']?.endsWith(filterBulanValue));
 
     filteredData.forEach(row => {
         const status = row[header];
@@ -497,7 +604,14 @@ function JsonAbsen(id, nama, kelMD, status) {
     Absen[header] = status;
 
     // Update data ke dalam antrian JSON (untuk Absen)
-    UpdateCacheJson(globalJsonData, "SemuaData.Absen", "IDS", IDS, header, status)
+    const absenData = JSON.parse(localStorage.getItem('Absen')).data; 
+
+    if (absenData && absenData.data) {  // Pastikan data ada dan properti .data ada
+        UpdateCacheJson(absenData, "IDS", IDS, header, status);
+    } else {
+        console.error("Data Absen tidak ditemukan atau format tidak valid.");
+    }
+
     updateAntrianJson(Absen);
 
     // Ambil data Guru
@@ -533,49 +647,41 @@ function JsonAbsen(id, nama, kelMD, status) {
  * @param {any} newValue - Nilai baru yang akan dimasukkan ke dalam JSON.
  * @returns {boolean} - True jika pembaruan atau penambahan berhasil, false jika gagal.
  */
-function UpdateCacheJson(jsonData, path, idKey, idValue, header, newValue) {
+function UpdateCacheJson(jsonData, idKey, idValue, header, newValue) {
     try {
-        // Pastikan jalur valid dan data target ada
-        const targetData = path.split('.').reduce((obj, key) => obj && obj[key], jsonData);
-        if (!targetData || !Array.isArray(targetData)) {
-            console.error("Data target tidak ditemukan atau bukan array:", path);
+        // Pastikan jsonData adalah array
+        if (!jsonData || !Array.isArray(jsonData)) {
+            console.error("Data JSON tidak ditemukan atau bukan array.");
             return false;
         }
 
-        // Cari item yang sesuai dengan idKey dan idValue
-        const itemIndex = targetData.findIndex(item => item[idKey] === idValue);
+        // Cari item berdasarkan idKey dan idValue
+        const itemIndex = jsonData.findIndex(item => item[idKey] === idValue);
+        console.log("Index item yang ditemukan:", itemIndex);
 
         if (itemIndex === -1) {
-            // Jika tidak ditemukan, tambahkan sebagai data baru
+            // Jika item tidak ditemukan, tambahkan item baru
             const newItem = { [idKey]: idValue, [header]: newValue };
-            targetData.push(newItem);
+            jsonData.push(newItem);
             console.log(`Data baru ditambahkan: ${JSON.stringify(newItem)}`);
         } else {
-            // Jika ditemukan, perbarui header dengan nilai baru
-            targetData[itemIndex][header] = newValue;
-            console.log(`Data berhasil diperbarui pada ${idKey}: ${idValue}, ${header}: ${newValue}`);
+            // Jika item ditemukan, update nilai header
+            jsonData[itemIndex][header] = newValue;
+            console.log(`Data berhasil diperbarui: ${idKey}: ${idValue}, ${header}: ${newValue}`);
         }
 
-        // Simpan perubahan ke cache lokal
-        const cacheObject = JSON.parse(localStorage.getItem(CACHE_KEY));
-        if (cacheObject && cacheObject.data) {
-            path.split('.').reduce((obj, key, idx, arr) => {
-                if (idx === arr.length - 1) {
-                    obj[key] = targetData; // Perbarui array target
-                }
-                return obj[key];
-            }, cacheObject.data);
-
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cacheObject));
-            console.log("Cache diperbarui di localStorage.");
-        }
+        // Simpan data yang sudah diperbarui ke localStorage
+        localStorage.setItem('Absen', JSON.stringify({ data: jsonData, timestamp: Date.now() }));
+        console.log("Cache diperbarui di localStorage.");
 
         return true;
     } catch (error) {
-        console.error("Terjadi kesalahan saat memperbarui JSON:", error);
+        console.error("Terjadi kesalahan saat memperbarui cache:", error);
         return false;
     }
 }
+
+
 
 
 

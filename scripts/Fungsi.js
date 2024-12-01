@@ -1,5 +1,34 @@
 
 //----------------------------------------- Fungsi Chache ---------------------------------------------
+// Fungsi untuk memeriksa cache berdasarkan kunci dan durasi cache
+function CekCache(cacheKey) {
+    const cachedData = localStorage.getItem(cacheKey);  // Cek apakah ada data di cache
+    const currentTime = Date.now();
+
+    if (cachedData) {
+        try {
+            const parsedCache = JSON.parse(cachedData);
+            const cacheTime = parsedCache.timestamp;
+            const cacheDuration = 24 * 60 * 60 * 1000;  // Misalnya, durasi cache 24 jam (24 * 60 * 60 * 1000 ms)
+
+            // Jika cache masih berlaku (dalam durasi yang ditentukan), kembalikan data cache
+            if ((currentTime - cacheTime) < cacheDuration) {
+                console.log(`Cache untuk ${cacheKey} masih berlaku.`);
+                return parsedCache.data;  // Kembalikan data dari cache
+            } else {
+                console.log(`Cache untuk ${cacheKey} sudah kedaluwarsa.`);
+                return null;  // Cache sudah kedaluwarsa, kembalikan null
+            }
+        } catch (e) {
+            console.error(`Gagal memparsing cache untuk ${cacheKey}:`, e);
+            return null;  // Jika terjadi error dalam parsing, kembalikan null
+        }
+    } else {
+        console.log(`Cache untuk ${cacheKey} tidak ditemukan.`);
+        return null;  // Tidak ada cache untuk key yang diberikan, kembalikan null
+    }
+}
+
 
 // Fungsi untuk menghapus semua cache dari situs ini
 function clearSiteCache() {
@@ -193,9 +222,28 @@ function moveHtmlContent(sourceUrl, sourceDivId, targetDivId) {
 //------------------------------------ Hijri date -------------------------------
 function getHijriDate() {
     const date = new Date();
-    const gDate = date.getDate();
-    const gMonth = date.getMonth() + 1; // 1 = Januari, 12 = Desember
-    const gYear = date.getFullYear();
+    let gDate = date.getDate();
+    let gMonth = date.getMonth() + 1; // 1 = Januari, 12 = Desember
+    let gYear = date.getFullYear();
+
+    // Menambahkan 1 hari jika setelah pukul 6 sore
+    const currentHour = date.getHours();
+    if (currentHour >= 18) { 
+        gDate += 1;
+
+        // Menangani overflow tanggal di akhir bulan
+        const daysInMonth = new Date(gYear, gMonth, 0).getDate(); // Jumlah hari di bulan ini
+        if (gDate > daysInMonth) {
+            gDate = 1; // Reset ke hari pertama bulan berikutnya
+            gMonth += 1;
+
+            // Jika bulan Desember, lanjut ke Januari tahun berikutnya
+            if (gMonth > 12) {
+                gMonth = 1;
+                gYear += 1;
+            }
+        }
+    }
 
     // Mengonversi tanggal Gregorian (Masehi) ke Julian Day
     const jd = gregorianToJD(gYear, gMonth, gDate);
@@ -230,6 +278,7 @@ function getHijriDate() {
         filterTanggal.value = hijri.day < 10 ? '0' + hijri.day : hijri.day; // Format dua digit untuk hari
     }
 }
+
 
 
 

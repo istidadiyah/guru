@@ -10,7 +10,7 @@ function home() {
 
     Sembunyikan("cardSetting", () => {
         Tampilkan("cardIcon");
-        DataTabelTanpaTombol("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
+        DataTabelTanpaTombol("Kelompok", JSON.parse(localStorage.getItem('Kelompok')).data, "ID, WaliKelas");
         Tampilkan("cardKelompok");
         resetTable("Santri")
     });
@@ -23,10 +23,9 @@ function KelasButton() {
     Sembunyikan("cardIcon", () => {
 
         Tampilkan("tombolHome");
-        DataTabel("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
+        DataTabel("Kelompok", JSON.parse(localStorage.getItem('Kelompok')).data, "ID, WaliKelas");
         Tampilkan("cardKelompok");
         
-
     });
     moveHtmlContent("halaman/form.html", "FormKelas", "cardEdit");
 }
@@ -35,10 +34,10 @@ function AbsensiButton() {
     
     UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
     Sembunyikan("cardIcon");
-
+    Sembunyikan("cardRekap")
     Sembunyikan("cardKelompok", () => {
-
-        DataTabelSelect("Santri", globalJsonData.Santri);
+        
+        DataTabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
 
         Tampilkan("tombolHome");
 
@@ -62,7 +61,7 @@ function GagalButton() {
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
-        DataTabelSelect("Santri", globalJsonData.Santri);
+        DataTabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
 
         Tampilkan("tombolHome");
         Tampilkan("cardPost");
@@ -81,7 +80,8 @@ function BiodataButton() {
 
     Sembunyikan("cardKelompok", () => {
 
-        DataTabel("Santri", globalJsonData.Santri, "Nama, KelMD");
+        DataTabel("Santri", JSON.parse(localStorage.getItem('db')).data, "Nama, KelMD");
+
         Tampilkan("tombolHome");
         Tampilkan("cardSantri");
 
@@ -99,7 +99,7 @@ function GuruButton() {
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
-        DataTabel("Guru", globalJsonData.SemuaData.Guru, "Nama");
+        DataTabel("Guru", JSON.parse(localStorage.getItem('Guru')).data, "Nama");
 
         Tampilkan("tombolHome");
         Tampilkan("cardGuru");
@@ -122,7 +122,7 @@ function SettingButton() {
 function RekapButton() {
     Sembunyikan("cardSantri", () => {
 
-        DataTabelTanpaTombol("Rekap", globalJsonData.SemuaData.Absen, "IDS, Nama, Kelas, A, I, S");
+        DataTabelRekap("Rekap", JSON.parse(localStorage.getItem('Absen')).data, "Nama, Kelas, A, I, S");
 
         Tampilkan("cardRekap");
     });

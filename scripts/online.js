@@ -1,47 +1,44 @@
-// Variabel global untuk menyimpan data JSON dari Google Sheets
 const scriptPostURL = 'https://script.google.com/macros/s/AKfycbxjihsdj_d2k0KgvbMHmHj-E95OpYl9pHrq98KB5vnFiBcJZwMn0QBCiT5GLwXLwdz5YA/exec';
-let globalJsonData = {};
 
-// Nama kunci untuk menyimpan data di localStorage
-const CACHE_KEY = 'googleSheetsData';
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 jam dalam milidetik
-
-/**
- * Fungsi untuk mengambil data dari Google Sheets dan menyimpan dalam variabel global.
- * @param {boolean} forceRefresh - Jika true, akan memaksa mengambil data dari server dan memperbarui cache.
- */
-async function fetchDataFromAppScript(forceRefresh = false) {
-    const url = scriptPostURL;
+async function fetchDataFromAppScript(dataSettings = {}, forceRefresh = false) {
+    const urlBase = scriptPostURL;
     const loadingSpinner = document.getElementById("loadingSpinner");
-    if (loadingSpinner) {
-        loadingSpinner.style.display = "flex"; // Perbaiki nilai display menjadi "block"
-    }
 
-    const processData = (data) => {
-        if (data) {
-            globalJsonData = data;
-            const cacheObject = {
-                data: data,
-                timestamp: new Date().getTime()
-            };
-            try {
-                localStorage.setItem(CACHE_KEY, JSON.stringify(cacheObject));
-                console.log("Data dan timestamp disimpan ke cache.");
-            } catch (e) {
-                console.error("Gagal menyimpan data ke cache:", e);
-            }
-
-            if (data.SemuaData && data.SemuaData.Kelompok) {
-                DataTabelTanpaTombol("Kelompok", data.SemuaData.Kelompok, "ID, WaliKelas");
+    // Fungsi untuk menghapus durasi dan menyiapkan data sebelum dikirim ke server
+    const removeDurasiAndPrepareData = (data) => {
+        const filteredData = {};
+        Object.keys(data).forEach(key => {
+            if (data[key].durasi) {
+                const { durasi, ...rest } = data[key];
+                filteredData[key] = rest;
             } else {
-                console.error("Data Kelompok tidak ditemukan.");
+                filteredData[key] = data[key];
+            }
+        });
+        return filteredData;
+    };
+
+    // Fungsi untuk menyimpan dan memproses data setelah diambil
+    const processData = (data, dataKey) => {
+        if (data) {
+            try {
+                // Menyimpan data ke cache (localStorage)
+                localStorage.setItem(dataKey, JSON.stringify({ data, timestamp: Date.now() }));
+                console.log(`Data ${dataKey} dan timestamp disimpan ke cache.`);
+            } catch (e) {
+                console.error(`Gagal menyimpan data ${dataKey} ke cache:`, e);
             }
         } else {
-            console.error("Data tidak lengkap atau tidak valid.");
+            console.error(`Data ${dataKey} tidak lengkap atau tidak valid.`);
         }
     };
 
+    // Fungsi untuk mengambil data dari server
     const fetchFromServer = async () => {
+        const filteredData = removeDurasiAndPrepareData(dataSettings);
+        const filters = encodeURIComponent(JSON.stringify(filteredData));
+        const url = `${urlBase}?action=Data&filters=${filters}`;
+
         try {
             const response = await fetch(url);
             if (!response.ok) {
@@ -49,59 +46,60 @@ async function fetchDataFromAppScript(forceRefresh = false) {
             }
             const data = await response.json();
             console.log("Data diterima:", data);
-            processData(data);
+
+            // Proses setiap data yang dipilih untuk disimpan
+            Object.keys(dataSettings).forEach((dataKey) => {
+                const dataToCache = data[dataKey];
+                if (dataToCache) {
+                    processData(dataToCache, dataKey);
+                } else {
+                    console.error(`Data untuk kunci "${dataKey}" tidak ditemukan.`);
+                }
+            });
         } catch (error) {
             console.error("Terjadi kesalahan saat mengambil data:", error);
         } finally {
             if (loadingSpinner) {
-                loadingSpinner.style.display = "none"; // Sembunyikan spinner setelah proses selesai
+                loadingSpinner.style.display = "none"; // Menyembunyikan spinner setelah selesai
             }
         }
     };
 
+    // Jika forceRefresh aktif, ambil data langsung dari server dan perbarui cache
     if (forceRefresh) {
         console.log("Force refresh aktif. Mengambil data dari server dan memperbarui cache.");
         await fetchFromServer();
         return;
     }
 
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    if (cachedData) {
-        try {
-            const parsedCache = JSON.parse(cachedData);
-            const currentTime = Date.now();
-            const cacheTime = parsedCache.timestamp;
+    // Memeriksa cache untuk setiap data yang dipilih
+    Object.keys(dataSettings).forEach(async (dataKey) => {
+        const cachedData = localStorage.getItem(dataKey);
+        if (cachedData) {
+            try {
+                const parsedCache = JSON.parse(cachedData);
+                const currentTime = Date.now();
+                const cacheTime = parsedCache.timestamp;
+                const cacheDuration = dataSettings[dataKey].durasi || Infinity;  // Durasi default selamanya (Infinity)
 
-            if ((currentTime - cacheTime) < CACHE_DURATION) {
-                console.log("Data diambil dari cache:", parsedCache.data);
-                globalJsonData = parsedCache.data;
-
-                if (globalJsonData.SemuaData && globalJsonData.SemuaData.Kelompok) {
-                    DataTabelTanpaTombol("Kelompok", globalJsonData.SemuaData.Kelompok, "ID, WaliKelas");
+                // Memeriksa apakah cache masih berlaku
+                if (cacheDuration === Infinity || (currentTime - cacheTime) < cacheDuration) {
+                    console.log(`Data ${dataKey} diambil dari cache:`, parsedCache.data);
+                    processData(parsedCache.data, dataKey);
                 } else {
-                    console.error("Data Kelompok tidak ditemukan dalam cache.");
+                    console.log(`Cache ${dataKey} sudah kedaluwarsa. Mengambil data baru dari server.`);
+                    await fetchFromServer();
                 }
-
-                if (loadingSpinner) {
-                    loadingSpinner.style.display = "none";
-                }
-
-                return;
-            } else {
-                console.log("Cache sudah kedaluwarsa. Mengambil data baru dari server.");
+            } catch (e) {
+                console.error(`Gagal memparsing cache ${dataKey}:`, e);
                 await fetchFromServer();
             }
-        } catch (e) {
-            console.error("Gagal memparsing data dari cache:", e);
+        } else {
+            console.log(`Tidak ada data cache untuk ${dataKey}. Mengambil data dari server.`);
             await fetchFromServer();
         }
-    } else {
-        console.log("Tidak ada data di cache. Mengambil data dari server.");
-        await fetchFromServer();
-    }
+    });
 }
-
-
 
 
 
