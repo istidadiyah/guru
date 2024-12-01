@@ -49,6 +49,11 @@ function AbsensiButton() {
         getHijriDate();
 
         updateStatusTombol();
+
+        fetchDataFromAppScript({
+            "Absen": { "durasi": 24 * 60 * 60 * 1000 }
+        }, true);
+        
     });
 
     moveHtmlContent("halaman/form.html", "FormData", "cardEdit");

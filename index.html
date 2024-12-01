@@ -63,7 +63,7 @@
 
         <!-- Main Navigation Cards -->
         <div id="cardIcon" class="card shadow-sm mt-4">
-            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+            <div id="loadingSpinner" class="loading-spinner">
                 <div class="spinner-inner">
                     <img src="logo.png" alt="Logo" class="logo">
                 </div>
@@ -372,9 +372,11 @@
             // Menjalankan kode fetchDataFromAppScript dan getHijriDate setelah memverifikasi login
             $(document).ready(function(){
                 // Memanggil fetchDataFromAppScript dengan parameter objek yang menyertakan durasi cache dan forceRefresh
+                
+
                 fetchDataFromAppScript({
-                    "db": { "durasi": 24 * 60 * 60 * 1000, "Diniyah": "Isti" },  // Durasi cache untuk 'db' adalah 24 jam
-                    "Absen": {},  // Durasi cache untuk 'Absen' tidak ditentukan, akan menggunakan durasi default
+                    "db": { "Diniyah": "Isti" },  // Durasi cache untuk 'db' adalah 24 jam
+                    "Absen": { "durasi": 24 * 60 * 60 * 1000 },  // Durasi cache untuk 'Absen' tidak ditentukan, akan menggunakan durasi default
                     "Kelompok": {},
                     "Guru": {}
                 }, false);  //cache

@@ -86,6 +86,9 @@ async function fetchDataFromAppScript(dataSettings = {}, forceRefresh = false) {
                 if (cacheDuration === Infinity || (currentTime - cacheTime) < cacheDuration) {
                     console.log(`Data ${dataKey} diambil dari cache:`, parsedCache.data);
                     processData(parsedCache.data, dataKey);
+                    if (loadingSpinner) {
+                        loadingSpinner.style.display = "none"; // Menyembunyikan spinner setelah selesai
+                    }
                 } else {
                     console.log(`Cache ${dataKey} sudah kedaluwarsa. Mengambil data baru dari server.`);
                     await fetchFromServer();

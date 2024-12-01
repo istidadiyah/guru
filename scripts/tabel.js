@@ -603,15 +603,7 @@ function JsonAbsen(id, nama, kelMD, status) {
     // Tambahkan header kolom dan status
     Absen[header] = status;
 
-    // Update data ke dalam antrian JSON (untuk Absen)
-    const absenData = JSON.parse(localStorage.getItem('Absen')).data; 
-
-    if (absenData && absenData.data) {  // Pastikan data ada dan properti .data ada
-        UpdateCacheJson(absenData, "IDS", IDS, header, status);
-    } else {
-        console.error("Data Absen tidak ditemukan atau format tidak valid.");
-    }
-
+    UpdateLocalStorage("Absen", "IDS", IDS, header, status);
     updateAntrianJson(Absen);
 
     // Ambil data Guru
@@ -681,6 +673,50 @@ function UpdateCacheJson(jsonData, idKey, idValue, header, newValue) {
     }
 }
 
+function UpdateLocalStorage(storageKey, idKey, idValue, header, newValue) {
+    try {
+        // Ambil data dari localStorage
+        const rawData = localStorage.getItem(storageKey);
+        if (!rawData) {
+            console.error(`Data dengan key "${storageKey}" tidak ditemukan di localStorage.`);
+            return false;
+        }
+
+        // Parse data menjadi JSON
+        const parsedData = JSON.parse(rawData);
+        const jsonData = parsedData.data || []; // Gunakan array kosong jika data tidak ditemukan
+
+        // Pastikan jsonData adalah array
+        if (!Array.isArray(jsonData)) {
+            console.error("Data JSON dalam localStorage bukan array.");
+            return false;
+        }
+
+        // Cari item berdasarkan idKey dan idValue
+        const itemIndex = jsonData.findIndex(item => item[idKey] === idValue);
+        console.log("Index item yang ditemukan:", itemIndex);
+
+        if (itemIndex === -1) {
+            // Jika item tidak ditemukan, tambahkan item baru
+            const newItem = { [idKey]: idValue, [header]: newValue };
+            jsonData.push(newItem);
+            console.log(`Data baru ditambahkan: ${JSON.stringify(newItem)}`);
+        } else {
+            // Jika item ditemukan, update nilai header
+            jsonData[itemIndex][header] = newValue;
+            console.log(`Data berhasil diperbarui: ${idKey}: ${idValue}, ${header}: ${newValue}`);
+        }
+
+        // Simpan data yang sudah diperbarui kembali ke localStorage
+        localStorage.setItem(storageKey, JSON.stringify({ data: jsonData, timestamp: parsedData.timestamp }));
+        console.log("Cache diperbarui di localStorage.");
+
+        return true;
+    } catch (error) {
+        console.error("Terjadi kesalahan saat memperbarui data di localStorage:", error);
+        return false;
+    }
+}
 
 
 
