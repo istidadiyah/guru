@@ -275,7 +275,7 @@ function getHijriDate() {
     // Memasukkan tanggal ke dalam input filterTanggal
     const filterTanggal = document.getElementById("filterTanggal");
     if (filterTanggal) {
-        filterTanggal.value = hijri.day < 10 ? '0' + hijri.day : hijri.day; // Format dua digit untuk hari
+        filterTanggal.value = hijri.day; // Tetap menggunakan nilai asli tanpa format tambahan
     }
 }
 
@@ -310,4 +310,31 @@ function jdToHijri(jd) {
         month: iMonth < 10 ? '0' + iMonth : iMonth, // Format bulan dua digit
         year: iYear + 1 // Tahun Hijriyah dimulai dari 1
     };
+}
+
+
+
+
+
+//--------------------------------------------- Hash ID ---------------------------------
+// Fungsi untuk membuat ID unik dari gabungan tiga parameter: Pelajaran, Kelas, Kitab
+async function buatID(Pelajaran, Kelas, kitab) {
+    // Gabungkan parameter menjadi satu string
+    const data = Pelajaran + '-' + Kelas + '-' + kitab;
+
+    // Menggunakan SubtleCrypto untuk hash SHA-256
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(data);
+    
+    // Hash menggunakan SHA-256
+    const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
+    
+    // Mengonversi hashBuffer menjadi string hexadecimal
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+
+    // Potong hasil hash untuk mendapatkan ID unik sepanjang 8 karakter
+    const idUnik = hashHex.substring(0, 8);
+
+    return idUnik;
 }

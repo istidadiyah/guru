@@ -351,6 +351,7 @@ function DataTabelSelect(tableId, jsonData) {
 
     // Kolom Absen
     const thAbsen = document.createElement('th');
+    thAbsen.textContent = 'A';
     thAbsen.style.width = '1%'; 
     headerRow.appendChild(thAbsen);
 
