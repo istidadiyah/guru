@@ -432,7 +432,7 @@
         if ('serviceWorker' in navigator) {
             // Pastikan HTTPS atau localhost
             if (location.protocol === 'https:' || location.hostname === 'localhost') {
-                navigator.serviceWorker.register('/sw.js?v=1.0') // Versi untuk mencegah cache
+                navigator.serviceWorker.register('https://istidadiyah.github.io/guru/sw.js?v=1.0') // Versi untuk mencegah cache
                     .then(() => console.log('Service Worker berhasil didaftarkan.'))
                     .catch((error) => {
                         console.error('Pendaftaran Service Worker gagal:', error.message);
