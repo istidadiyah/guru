@@ -411,15 +411,24 @@
     </script>
     
     <script>
-        // Registrasi Service Worker
+        // Cek dukungan Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker berhasil didaftarkan.'))
-                .catch((error) => console.error('Pendaftaran Service Worker gagal:', error));
+            // Pastikan HTTPS atau localhost
+            if (location.protocol === 'https:' || location.hostname === 'localhost') {
+                navigator.serviceWorker.register('/sw.js?v=1.0') // Versi untuk mencegah cache
+                    .then(() => console.log('Service Worker berhasil didaftarkan.'))
+                    .catch((error) => {
+                        console.error('Pendaftaran Service Worker gagal:', error.message);
+                        console.error('Detail error:', error);
+                    });
+            } else {
+                console.warn('Service Worker hanya didukung di HTTPS atau localhost.');
+            }
         } else {
             console.warn('Browser Anda tidak mendukung Service Worker.');
         }
     </script>
+    
     
 
 
