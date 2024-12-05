@@ -313,6 +313,51 @@ function jdToHijri(jd) {
 }
 
 
+//------------------------------------------------- Update PWA --------------------------------
+function updatePWA() {
+    const statusElement = document.getElementById('notifUpdate'); // Notifikasi di elemen ini
+    const button = document.getElementById('updateBtn'); // Tombol Update
+    statusElement.style.display = 'none'; // Sembunyikan notifikasi awalnya
+    button.disabled = true; // Nonaktifkan tombol sementara pembaruan berlangsung
+    button.textContent = 'Memperbarui...'; // Ubah teks tombol untuk memberikan feedback
+
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistration()
+            .then((registration) => {
+                if (registration) {
+                    registration.update()
+                        .then(() => {
+                            button.textContent = 'Update'; // Kembalikan teks tombol
+                            button.disabled = false; // Aktifkan tombol kembali
+                            statusElement.style.display = 'block'; // Tampilkan notifikasi
+                            console.log('Service Worker berhasil diperbarui.');
+                        })
+                        .catch((error) => {
+                            button.textContent = 'Update'; // Kembalikan teks tombol
+                            button.disabled = false; // Aktifkan tombol kembali
+                            console.error('Error saat memperbarui Service Worker:', error);
+                            alert('Gagal memperbarui cache. Silakan coba lagi.');
+                        });
+                } else {
+                    button.textContent = 'Update'; // Kembalikan teks tombol
+                    button.disabled = false; // Aktifkan tombol kembali
+                    alert('Tidak ada Service Worker terdaftar.');
+                }
+            })
+            .catch((error) => {
+                button.textContent = 'Update'; // Kembalikan teks tombol
+                button.disabled = false; // Aktifkan tombol kembali
+                console.error('Error saat memeriksa Service Worker:', error);
+                alert('Gagal memeriksa pendaftaran Service Worker.');
+            });
+    } else {
+        button.textContent = 'Update'; // Kembalikan teks tombol
+        button.disabled = false; // Aktifkan tombol kembali
+        alert('Browser tidak mendukung Service Worker.');
+    }
+}
+
+
 
 
 

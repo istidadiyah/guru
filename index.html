@@ -327,6 +327,17 @@
 
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
+                        <i class="fas fa-sync-alt settings-icon"></i> <!-- Ikon yang lebih relevan untuk Update -->
+                        <span>Update Aplikasi</span>
+                    </div>
+                    <button class="btn btn-primary btn-sm" id="updateBtn" onclick="updatePWA()">Update</button>
+                </li>
+                <div id="notifUpdate" style="display: none; margin-top: 10px; color: green; font-weight: bold;">
+                    Cache berhasil diperbarui ke versi terbaru!
+                </div>
+
+                <li class="settings-item">
+                    <div style="display: flex; align-items: center;">
                         <i class="fas fa-sign-out-alt settings-icon"></i>
                         <span>Chache</span>
                     </div>
@@ -443,7 +454,7 @@
         // Menghilangkan splash screen dengan animasi yang halus
         window.addEventListener('load', () => {
             const splash = document.getElementById('splash-screen');
-            const splashDuration = 3000; // Durasi total splash screen dalam milidetik (3 detik)
+            const splashDuration = 2000; // Durasi total splash screen dalam milidetik (3 detik)
 
             setTimeout(() => {
                 // Mulai animasi fade-out background
@@ -453,7 +464,7 @@
                 setTimeout(() => {
                     const logo = document.getElementById('splash-logo');
                     logo.style.animation = 'sinkLogo 1s ease-out forwards';
-                }, 1000); // Setelah 1 detik dari awal fade-out
+                }, 3000); // Setelah 1 detik dari awal fade-out
 
                 // Setelah durasi fade-out, sembunyikan splash screen dan tampilkan konten utama
                 setTimeout(() => {
