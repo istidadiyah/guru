@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pwa-cache-v1'; // Ganti versi jika ada update
+const CACHE_NAME = 'pwa-cache-v2'; // Ganti versi jika ada update
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
