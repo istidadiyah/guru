@@ -1,4 +1,4 @@
-/* Reset margin dan padding serta atur box-sizing */
+/* Reset Margin, Padding, Box-Sizing */
 * {
     margin: 0;
     padding: 0;
@@ -18,8 +18,16 @@
     align-items: center;
     flex-direction: column;
     z-index: 9999;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1s ease-out, visibility 1s ease-out;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Fade Out Background */
+.fade-out-background {
     opacity: 0;
-    animation: fadeIn 1s forwards, fadeOut 1s forwards 4s;
+    visibility: hidden;
 }
 
 /* Konten Splash Screen */
@@ -28,7 +36,8 @@
     color: #fff;
     opacity: 0;
     transform: translateY(50px);
-    animation: slideUp 1s ease-out forwards 1s;
+    animation: slideUp 0.5s ease-out forwards;
+    animation-delay: 0.3s;
 }
 
 /* Logo Animasi */
@@ -38,7 +47,8 @@
     margin-bottom: 20px;
     transform: scale(0.5);
     opacity: 0;
-    animation: scaleUp 1s ease-out forwards 1s;
+    animation: scaleUp 0.5s ease-out forwards;
+    animation-delay: 0.3s;
 }
 
 /* Teks Judul */
@@ -50,9 +60,10 @@
 
 /* Animasi Keyframes */
 
-/* Fade In Splash Screen */
-@keyframes fadeIn {
+/* Slide Up Konten Splash */
+@keyframes slideUp {
     to {
+        transform: translateY(0);
         opacity: 1;
     }
 }
@@ -65,31 +76,22 @@
     }
 }
 
-/* Slide Up Konten Splash */
-@keyframes slideUp {
+/* Sink Logo (Tenggelam) */
+@keyframes sinkLogo {
     to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* Fade Out Splash Screen */
-@keyframes fadeOut {
-    to {
+        transform: translateY(100px);
         opacity: 0;
-        visibility: hidden;
     }
 }
 
 /* Konten Utama Awalnya Tersembunyi */
 #main-content {
     opacity: 0;
-    animation: fadeInContent 1s forwards 5s;
+    transition: opacity 0.5s ease-in;
+    font-family: 'Arial', sans-serif;
 }
 
-/* Fade In Konten Utama Setelah Splash Screen */
-@keyframes fadeInContent {
-    to {
-        opacity: 1;
-    }
+/* Tampilkan Konten Utama Setelah Splash Screen */
+body.splash-hidden #main-content {
+    opacity: 1;
 }
