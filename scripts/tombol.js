@@ -37,7 +37,7 @@ function AbsensiButton() {
     Sembunyikan("cardRekap")
     Sembunyikan("cardKelompok", () => {
         
-        DataTabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
+        TabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
 
         Tampilkan("tombolHome");
 
@@ -51,7 +51,7 @@ function AbsensiButton() {
         updateStatusTombol();
 
         fetchDataFromAppScript({
-            "Absen": { "durasi": 24 * 60 * 60 * 1000 }
+            "Absen": {}
         }, true);
         
     });
@@ -93,6 +93,10 @@ function BiodataButton() {
         initializeFilter("KelMD");
 
         getHijriDate();
+
+        fetchDataFromAppScript({
+            "db": { "Diniyah": "Isti", "StatusSantri": "Mukim" },
+        }, true);
     });
 
     moveHtmlContent("halaman/form.html", "FormData", "cardEdit");

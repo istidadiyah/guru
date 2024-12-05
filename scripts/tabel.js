@@ -118,6 +118,8 @@ function DataTabelRekap(tableId, jsonData, visibleColumns) {
         paging: false, // Matikan fitur pagination
         dom: 'frptipB',
         order: [[1, 'asc']],
+        scrollx: true,
+        scrollY: 800
     });
 }
 
@@ -319,7 +321,7 @@ function DataTabel(tableId, jsonData, visibleColumns) {
 
 }
 
-function DataTabelSelect(tableId, jsonData) {
+function TabelSelect(tableId, jsonData) {
     const table = document.getElementById(tableId);
     if (!table) {
         console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
@@ -427,6 +429,105 @@ function DataTabelSelect(tableId, jsonData) {
     });
 }
 
+function Tabel3Select(tableId, jsonData) {
+    const table = document.getElementById(tableId);
+    if (!table) {
+        console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
+        return;
+    }
+
+    // Hapus konten lama
+    table.innerHTML = '';
+
+    if (!Array.isArray(jsonData) || jsonData.length === 0) {
+        console.error("Data JSON kosong atau tidak valid.");
+        return;
+    }
+
+    // Header tabel
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    const createHeader = (text, width = 'auto') => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        th.style.width = width;
+        return th;
+    };
+
+    headerRow.appendChild(createHeader('Nama', '40%'));
+    headerRow.appendChild(createHeader('Kelompok', '20%'));
+    headerRow.appendChild(createHeader('M', '10%'));
+    headerRow.appendChild(createHeader('1', '10%'));
+    headerRow.appendChild(createHeader('2', '10%'));
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Body tabel
+    const tbody = document.createElement('tbody');
+    jsonData.forEach(row => {
+        const tr = document.createElement('tr');
+
+        // Kolom Nama dan Kelompok
+        const tdNama = document.createElement('td');
+        tdNama.textContent = row['Nama'] || '';
+        tr.appendChild(tdNama);
+
+        const tdKel = document.createElement('td');
+        tdKel.textContent = row['KelMD'] || '';
+        tr.appendChild(tdKel);
+
+        // Tambahkan tombol M, 1, dan 2 dengan event onclick
+        ['m', '1', '2'].forEach(col => {
+            const tdButton = document.createElement('td');
+            const button = document.createElement('button');
+            button.id = `absen-${col}-${row['IDS']}`;
+            button.className = 'btn btn-light btn-sm';
+            button.textContent = ''; // Default kosong
+            button.onclick = function () {
+                // Menentukan status tombol berdasarkan klik
+                const statuses = [
+                    { text: '', class: 'btn-light' },    // Default
+                    { text: 'H', class: 'btn-success' }, // Hadir
+                    { text: 'A', class: 'btn-danger' },  // Absen
+                    { text: 'I', class: 'btn-warning' }, // Izin
+                    { text: 'S', class: 'btn-primary' }  // Sakit
+                ];
+
+                let currentStatus = statuses.findIndex(s => button.classList.contains(s.class));
+                currentStatus = (currentStatus + 1) % statuses.length;  // Bergerak ke status berikutnya
+
+                // Update teks dan kelas tombol
+                button.textContent = statuses[currentStatus].text;
+                button.className = `btn btn-sm ${statuses[currentStatus].class}`;
+
+                // Update data berdasarkan klik tombol
+                Json3Absen(row['IDS'], row['Nama'], row['KelMD'], col, statuses[currentStatus].text);
+            };
+            tdButton.appendChild(button);
+            tr.appendChild(tdButton);
+        });
+
+        tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+
+    // Reinitialize DataTables
+    if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
+        $(`#${tableId}`).DataTable().destroy();
+    }
+
+    $(`#${tableId}`).DataTable({
+        paging: false,
+        dom: '<"top"f>rt<"bottom">',
+        scrollY: 500,
+        order: [[0, 'asc']],
+    });
+}
+
+
 
 
 
@@ -481,10 +582,77 @@ function updateStatusTombol() {
 
 
 // Panggil fungsi updateStatusTombol setiap kali filter berubah
-document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
-document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
-document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
+//document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
+//document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
+//document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
 
+function updateStatus3Tombol() {
+    const filterJamValue = document.getElementById('filterJam')?.value;
+    const filterTanggalValue = document.getElementById('filterTanggal')?.value;
+    const filterBulanValue = document.getElementById('filterBulan')?.value;
+
+    if (!filterJamValue || !filterTanggalValue || !filterBulanValue) {
+        console.error("Semua filter harus diisi.");
+        return;
+    }
+
+    const filteredData = JSON.parse(localStorage.getItem('Absen'))?.data.filter(row => 
+        row['IDS']?.endsWith(filterBulanValue)
+    ) || [];
+
+    if (!filteredData.length) {
+        console.warn("Data tidak ditemukan berdasarkan filter yang diberikan.");
+        return;
+    }
+
+    // Refresh tabel
+    DataTabelSelect("absenTable", filteredData);
+
+    // Perbarui status tombol dalam tabel sesuai data JSON
+    filteredData.forEach(row => {
+        const rowId = row['IDS']?.split('-')[1];
+
+        if (rowId) {
+            const headerJam = `${filterJamValue}T${filterTanggalValue}`; // Kolom untuk status di tabel
+            const statusJam = row[headerJam];
+
+            const updateButtonStatus = (columnName, columnValue) => {
+                const button = document.querySelector(`#${columnName}-${rowId}`);
+                if (button) {
+                    let statusText = '';
+                    let statusClass = 'btn-light';
+
+                    if (columnValue === 'H') {
+                        statusText = 'H';
+                        statusClass = 'btn-success';
+                    } else if (columnValue === 'A') {
+                        statusText = 'A';
+                        statusClass = 'btn-danger';
+                    } else if (columnValue === 'I') {
+                        statusText = 'I';
+                        statusClass = 'btn-warning';
+                    } else if (columnValue === 'S') {
+                        statusText = 'S';
+                        statusClass = 'btn-primary';
+                    }
+
+                    button.textContent = statusText;
+                    button.className = `btn btn-sm ${statusClass}`;
+                }
+            };
+
+            // Update tombol untuk Jam, Malam, dan Jam 2
+            updateButtonStatus('absen-m', row['MT1'] || ''); // Contoh key untuk Malam
+            updateButtonStatus('absen-1', row['1T1'] || ''); // Contoh key untuk Jam 1
+            updateButtonStatus('absen-2', row['2T1'] || ''); // Contoh key untuk Jam 2
+        }
+    });
+}
+
+// Panggil fungsi updateStatusTombol setiap kali filter berubah
+['filterJam', 'filterTanggal', 'filterBulan'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', updateStatus3Tombol);
+});
 
 
 //----------------------------------------------------------- Fungsi Absen -----------------------------------
@@ -627,6 +795,70 @@ function JsonAbsen(id, nama, kelMD, status) {
     updateAntrianJson(AbsenGuru, true);
 }
 
+function Json3Absen(id, nama, kelMD, jam, status) {
+    const filterBulan = document.getElementById('filterBulan').value;
+    const filterTanggal = document.getElementById('filterTanggal').value;
+
+    if (!filterBulan || !filterTanggal) {
+        console.error("Pastikan filter (Bulan dan Tanggal) telah diisi.");
+        return;
+    }
+
+    const IDS = `46-${id}-${filterBulan}`;
+    const header = `${jam}T${filterTanggal}`;
+    const TanggalUpdate = getFormattedDate();
+
+    const Absen = {
+        TanggalUpdate,
+        IDS,
+        Nama: nama,
+        Kelas: kelMD,
+        Bulan: filterBulan,
+        [header]: status,
+    };
+
+    UpdateLocalStorage("Absen", "IDS", IDS, header, status);
+    updateAntrianJson(Absen);
+
+
+    const IDGuru = document.getElementById('IDGuru').innerText; 
+    const NamaGuru = document.getElementById('NamaGuru').innerText;
+
+    const AbsenGuru = {
+        TanggalUpdate: TanggalUpdate,
+        IDS: `46-${IDGuru}-${filterBulan}`,
+        Nama: NamaGuru,
+        Kelas: kelMD,
+        Bulan: bulan
+    };
+
+    AbsenGuru[header] = 'H';
+
+    updateAntrianJson(AbsenGuru, true);
+}
+
+function getNextStatus(current) {
+    const statuses = ['', 'H', 'A', 'I', 'S']; // Urutan status
+    const currentIndex = statuses.indexOf(current);
+    return statuses[(currentIndex + 1) % statuses.length];
+}
+
+function updateButtonAppearance(button, status) {
+    let statusClass = 'btn-light'; // Default button class
+
+    if (status === 'H') {
+        statusClass = 'btn-success';
+    } else if (status === 'A') {
+        statusClass = 'btn-danger';
+    } else if (status === 'I') {
+        statusClass = 'btn-warning';
+    } else if (status === 'S') {
+        statusClass = 'btn-primary';
+    }
+
+    button.textContent = status; // Update teks tombol
+    button.className = `btn btn-sm ${statusClass}`; // Update class tombol
+}
 
 
 //---------------------------------------------------- Edit Json Utama di cache -------------------------------------------
@@ -726,7 +958,6 @@ function UpdateLocalStorage(storageKey, idKey, idValue, header, newValue) {
 
 
 //------------------------------------------------- Tombol Edit Semua Tabel ------------------------------------
-// Fungsi untuk tombol Edit
 function EditData(jsonData) {
     // Tambahkan event listener untuk semua tombol edit
     document.querySelectorAll('[id^="edit-"]').forEach(button => {
@@ -746,8 +977,8 @@ function EditData(jsonData) {
 
             // Tampilkan modal edit
             const editModal = new bootstrap.Modal(document.getElementById('cardEdit'), {
-                backdrop: 'static',
-                keyboard: false
+                backdrop: true, // Mengizinkan klik di luar modal untuk menutup
+                keyboard: true   // Memungkinkan tombol keyboard untuk menutup modal
             });
             editModal.show();
 
