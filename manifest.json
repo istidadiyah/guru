@@ -1,8 +1,8 @@
 {
-  "name": "Isti\\'dadiyah",
-  "short_name": "Isti\\'dad",
+  "name": "Istidadiyah",
+  "short_name": "Istidad",
   "description": "Aplikasi PWA untuk Isti'dadiyah.",
-  "start_url": "/login.html",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
@@ -12,7 +12,7 @@
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "icon-192x192.png",
+      "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
@@ -24,8 +24,8 @@
   ],
   "related_applications": [
     {
-      "platform": "play",
-      "url": "https://play.google.com/store/apps/details?id=com.istidadiyah"
+      "platform": "crhome",
+      "url": "https://istidadiyah.github.io/guru/"
     }
   ],
   "prefer_related_applications": false
