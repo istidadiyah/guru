@@ -340,6 +340,7 @@
     <!-- Library untuk Bootstrap JS Framework -->
 
     <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <!-- Library inti jQuery -->
 
@@ -368,45 +369,58 @@
     <script src="https://cdn.datatables.net/searchbuilder/1.4.3/js/searchBuilder.bootstrap5.min.js"></script>
     <!-- SearchBuilder untuk fitur pencarian lanjutan dengan integrasi Bootstrap 5 -->
 
+    
+
 
     <script>
         // Memuat data dari localStorage setelah login berhasil
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', function () {
             const userID = localStorage.getItem('userID');
             const userName = localStorage.getItem('userName');
-
+    
             if (userID && userName) {
                 // Menampilkan ID dan Nama pengguna pada elemen yang ada di index.html
-                document.getElementById('NamaGuru').textContent = userName;
-                document.getElementById('IDGuru').textContent = userID;
+                const namaGuruElement = document.getElementById('NamaGuru');
+                const idGuruElement = document.getElementById('IDGuru');
+    
+                if (namaGuruElement && idGuruElement) {
+                    namaGuruElement.textContent = userName;
+                    idGuruElement.textContent = userID;
+                } else {
+                    console.error('Elemen NamaGuru atau IDGuru tidak ditemukan di HTML.');
+                }
             } else {
                 // Jika data tidak ditemukan, redirect ke halaman login
+                console.warn('Data userID atau userName tidak ditemukan di localStorage.');
                 window.location.href = 'login.html';
+                return; // Menghentikan eksekusi kode berikutnya
             }
-
-            // Menjalankan kode fetchDataFromAppScript dan getHijriDate setelah memverifikasi login
-            $(document).ready(function(){
-                // Memanggil fetchDataFromAppScript dengan parameter objek yang menyertakan durasi cache dan forceRefresh
-                
-
+    
+            // Memastikan jQuery sudah siap sebelum melanjutkan
+            $(document).ready(function () {
+                // Memanggil fetchDataFromAppScript dengan parameter yang sesuai
                 fetchDataFromAppScript({
-                    "db": { "Diniyah": "Isti", "StatusSantri": "Mukim" },  // Durasi cache untuk 'db' adalah 24 jam
-                    "Absen": {},  // Durasi cache untuk 'Absen' tidak ditentukan, akan menggunakan durasi default
+                    "db": { "Diniyah": "Isti", "StatusSantri": "Mukim" }, // Cache 24 jam
+                    "Absen": {}, // Default cache duration
                     "Kelompok": {},
                     "Guru": {},
                     "Pelajaran": {}
-                }, false);  //cache
+                }, false); // false berarti menggunakan cache
             });
         });
     </script>
-
+    
     <script>
+        // Registrasi Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js')
-            .then(() => console.log('Service Worker registered'))
-            .catch((error) => console.log('Registration failed:', error));
+                .then(() => console.log('Service Worker berhasil didaftarkan.'))
+                .catch((error) => console.error('Pendaftaran Service Worker gagal:', error));
+        } else {
+            console.warn('Browser Anda tidak mendukung Service Worker.');
         }
     </script>
+    
 
 
 </body>
