@@ -398,17 +398,18 @@
     
 
 
+    <!-- JavaScript untuk Mengelola Splash Screen dan Data -->
     <script>
         // Memuat data dari localStorage setelah login berhasil
         window.addEventListener('DOMContentLoaded', function () {
             const userID = localStorage.getItem('userID');
             const userName = localStorage.getItem('userName');
-    
+
             if (userID && userName) {
                 // Menampilkan ID dan Nama pengguna pada elemen yang ada di index.html
                 const namaGuruElement = document.getElementById('NamaGuru');
                 const idGuruElement = document.getElementById('IDGuru');
-    
+
                 if (namaGuruElement && idGuruElement) {
                     namaGuruElement.textContent = userName;
                     idGuruElement.textContent = userID;
@@ -421,32 +422,47 @@
                 window.location.href = 'login.html';
                 return; // Menghentikan eksekusi kode berikutnya
             }
-    
-            // Memastikan jQuery sudah siap sebelum melanjutkan
-            $(document).ready(function () {
-                // Memanggil fetchDataFromAppScript dengan parameter yang sesuai
-                fetchDataFromAppScript({
-                    "db": { "Diniyah": "Isti", "StatusSantri": "Mukim" }, // Cache 24 jam
-                    "Absen": {}, // Default cache duration
-                    "Kelompok": {},
-                    "Guru": {},
-                    "Pelajaran": {}
-                }, false); // false berarti menggunakan cache
-            });
-        });
-    </script>
-    
-    <script>
-            // Menghilangkan splash screen setelah animasi selesai (4 detik)
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.display = 'none'; // Sembunyikan splash screen setelah 4 detik
-            }, 4000); // Durasi animasi
-        });
-    </script>
 
-    <script>
+            // Memastikan jQuery sudah siap sebelum melanjutkan
+            if (typeof jQuery !== 'undefined') {
+                $(document).ready(function () {
+                    // Memanggil fetchDataFromAppScript dengan parameter yang sesuai
+                    fetchDataFromAppScript({
+                        "db": { "Diniyah": "Isti", "StatusSantri": "Mukim" }, // Cache 24 jam
+                        "Absen": {}, // Default cache duration
+                        "Kelompok": {},
+                        "Guru": {},
+                        "Pelajaran": {}
+                    }, false); // false berarti menggunakan cache
+                });
+            } else {
+                console.error('jQuery tidak ditemukan. Pastikan jQuery sudah dimuat.');
+            }
+        });
+
+        // Menghilangkan splash screen dengan animasi yang halus
+        window.addEventListener('load', () => {
+            const splash = document.getElementById('splash-screen');
+            const splashDuration = 3000; // Durasi total splash screen dalam milidetik (3 detik)
+
+            setTimeout(() => {
+                // Mulai animasi fade-out background
+                splash.classList.add('fade-out-background');
+
+                // Menambahkan sinkLogo animasi setelah setengah durasi fade-out
+                setTimeout(() => {
+                    const logo = document.getElementById('splash-logo');
+                    logo.style.animation = 'sinkLogo 1s ease-out forwards';
+                }, 1000); // Setelah 1 detik dari awal fade-out
+
+                // Setelah durasi fade-out, sembunyikan splash screen dan tampilkan konten utama
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.body.classList.add('splash-hidden');
+                }, 2000); // Setelah 2 detik, sesuai dengan durasi fadeOutBackground
+            }, splashDuration);
+        });
+
         // Cek dukungan Service Worker
         if ('serviceWorker' in navigator) {
             // Pastikan HTTPS atau localhost
