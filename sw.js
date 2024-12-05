@@ -17,7 +17,9 @@ const ASSETS_TO_CACHE = [
     'styles/style.css',
     'styles/header.css',
     'styles/tabel.css',
+    'styles/splas.css',
     'styles/tema/light.css',
+    'styles/tema/dark.css',
 ];
 
 // Install event - Cache semua resource

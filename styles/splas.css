@@ -1,70 +1,95 @@
-/* Splash Screen Container */
+/* Reset margin dan padding serta atur box-sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Splash Screen Styles */
 #splash-screen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
-    animation: gradientAnimation 4s infinite;
+    background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
     z-index: 9999;
-    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1s forwards, fadeOut 1s forwards 4s;
 }
 
-/* Splash Screen Content */
+/* Konten Splash Screen */
 .splash-content {
     text-align: center;
-    color: white;
+    color: #fff;
     opacity: 0;
-    animation: fadeIn 1.5s forwards;
+    transform: translateY(50px);
+    animation: slideUp 1s ease-out forwards 1s;
 }
 
-/* Logo Styling */
+/* Logo Animasi */
 #splash-logo {
     width: 150px;
-    height: auto;
+    height: 150px;
     margin-bottom: 20px;
-    animation: scaleUp 1s forwards;
+    transform: scale(0.5);
+    opacity: 0;
+    animation: scaleUp 1s ease-out forwards 1s;
 }
 
-/* Fade-in animation */
+/* Teks Judul */
+.splash-content h1 {
+    font-family: 'Arial', sans-serif;
+    font-size: 2em;
+    margin-top: 10px;
+}
+
+/* Animasi Keyframes */
+
+/* Fade In Splash Screen */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
     to {
         opacity: 1;
     }
 }
 
-/* Scale-up animation for logo */
+/* Scale Up Logo */
 @keyframes scaleUp {
-    from {
-        transform: scale(0);
-    }
     to {
         transform: scale(1);
+        opacity: 1;
     }
 }
 
-/* Gradient animation */
-@keyframes gradientAnimation {
-    0% {
-        background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
+/* Slide Up Konten Splash */
+@keyframes slideUp {
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
-    25% {
-        background: linear-gradient(135deg, #56ccf2, #6e7dd7, #ab7cf7, #f05a28);
+}
+
+/* Fade Out Splash Screen */
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
     }
-    50% {
-        background: linear-gradient(135deg, #00d2ff, #3a7bd5, #00c6ff, #f05a28);
-    }
-    75% {
-        background: linear-gradient(135deg, #ff9a8b, #ff6a00, #fdc830, #ff6a00);
-    }
-    100% {
-        background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
+}
+
+/* Konten Utama Awalnya Tersembunyi */
+#main-content {
+    opacity: 0;
+    animation: fadeInContent 1s forwards 5s;
+}
+
+/* Fade In Konten Utama Setelah Splash Screen */
+@keyframes fadeInContent {
+    to {
+        opacity: 1;
     }
 }
