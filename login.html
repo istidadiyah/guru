@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Link ke file CSS -->
     <link rel="stylesheet" href="styles/login.css">
+
 </head>
 <body>
     <div class="wrapper">
@@ -41,18 +42,6 @@
     <script src="scripts/online.js"></script>
     <script src="scripts/login.js"></script>
 
-    <link rel="manifest" href="/manifest.json">
-    
-    <script>
-        // Registrasi Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js')
-                .then(() => console.log('Service Worker berhasil didaftarkan.'))
-                .catch((error) => console.error('Pendaftaran Service Worker gagal:', error));
-        } else {
-            console.warn('Browser Anda tidak mendukung Service Worker.');
-        }
-    </script>
 
 </body>
 </html>

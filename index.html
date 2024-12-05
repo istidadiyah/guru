@@ -52,6 +52,7 @@
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/header.css">
     <link rel="stylesheet" href="styles/tabel.css">
+    <link rel="stylesheet" href="styles/splas.css">
 
     <link id="themeStylesheet" rel="stylesheet" href="styles/tema/light.css">
     
@@ -59,6 +60,14 @@
 
 </head>
 <body>
+    <!-- Splash Screen -->
+<div id="splash-screen">
+    <div class="splash-content">
+        <img src="https://istidadiyah.github.io/guru/logo.png" alt="Logo" id="splash-logo"/>
+        <h1>Welcome to Isti'dadiyah App</h1>
+    </div>
+</div>
+
     <!-- SVG Container -->
     <div class="svg-container">
         <svg viewBox="0 0 800 400" class="svg">
@@ -92,7 +101,7 @@
 
         <!-- Main Navigation Cards -->
         <div id="cardIcon" class="card shadow-sm mt-4">
-            <div id="loadingSpinner" class="loading-spinner">
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
                 <div class="spinner-inner">
                     <img src="logo.png" alt="Logo" class="logo">
                 </div>
@@ -427,6 +436,16 @@
         });
     </script>
     
+    <script>
+            // Menghilangkan splash screen setelah animasi selesai (4 detik)
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.display = 'none'; // Sembunyikan splash screen setelah 4 detik
+            }, 4000); // Durasi animasi
+        });
+    </script>
+
     <script>
         // Cek dukungan Service Worker
         if ('serviceWorker' in navigator) {

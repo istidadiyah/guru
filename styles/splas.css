@@ -1,0 +1,70 @@
+/* Splash Screen Container */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
+    animation: gradientAnimation 4s infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+/* Splash Screen Content */
+.splash-content {
+    text-align: center;
+    color: white;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+}
+
+/* Logo Styling */
+#splash-logo {
+    width: 150px;
+    height: auto;
+    margin-bottom: 20px;
+    animation: scaleUp 1s forwards;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Scale-up animation for logo */
+@keyframes scaleUp {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* Gradient animation */
+@keyframes gradientAnimation {
+    0% {
+        background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
+    }
+    25% {
+        background: linear-gradient(135deg, #56ccf2, #6e7dd7, #ab7cf7, #f05a28);
+    }
+    50% {
+        background: linear-gradient(135deg, #00d2ff, #3a7bd5, #00c6ff, #f05a28);
+    }
+    75% {
+        background: linear-gradient(135deg, #ff9a8b, #ff6a00, #fdc830, #ff6a00);
+    }
+    100% {
+        background: linear-gradient(135deg, #ff7e5f, #feb47b, #ff6a00, #f05a28);
+    }
+}
