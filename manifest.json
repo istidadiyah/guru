@@ -2,7 +2,7 @@
   "name": "Istidadiyah",
   "short_name": "Istidad",
   "description": "Aplikasi PWA untuk program Istidadiyah.",
-  "start_url": "https://istidadiyah.github.io/guru/",
+  "start_url": "index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#1197BC",
