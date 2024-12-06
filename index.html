@@ -6,14 +6,14 @@
 
     <meta property="og:title" content="Aplikasi Isti'dadiyah">
     <meta property="og:description" content="Aplikasi khusus untuk guru Isti'dadiyah">
-    <meta property="og:image" content="https://istidadiyah.github.io/guru/bg.jpg">
+    <meta property="og:image" content="bg.jpg">
     <meta property="og:url" content="https://istidadiyah.github.io/guru">
     <meta property="og:type" content="website">
 
     
     <link rel="icon" href="logo.png" type="image/x-icon">
 
-    <link rel="manifest" href="https://istidadiyah.github.io/guru/manifest.json">
+    <link rel="manifest" href="manifest.json">
     
     <meta name="Description" content="Ini adalah aplikasi pwa Istidadiyah" />
     <!-- Mendeklarasikan warna yang muncul pada address bar Chrome versi seluler -->
@@ -478,7 +478,7 @@
         if ('serviceWorker' in navigator) {
             // Pastikan HTTPS atau localhost
             if (location.protocol === 'https:' || location.hostname === 'localhost') {
-                navigator.serviceWorker.register('https://istidadiyah.github.io/guru/sw.js?v=2.0') // Versi untuk mencegah cache
+                navigator.serviceWorker.register('sw.js?v=2.0') // Versi untuk mencegah cache
                     .then(() => console.log('Service Worker berhasil didaftarkan.'))
                     .catch((error) => {
                         console.error('Pendaftaran Service Worker gagal:', error.message);
