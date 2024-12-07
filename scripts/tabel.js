@@ -582,9 +582,9 @@ function updateStatusTombol() {
 
 
 // Panggil fungsi updateStatusTombol setiap kali filter berubah
-//document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
-//document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
-//document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
+document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
+document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
+document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
 
 function updateStatus3Tombol() {
     const filterJamValue = document.getElementById('filterJam')?.value;
@@ -649,10 +649,11 @@ function updateStatus3Tombol() {
     });
 }
 
-// Panggil fungsi updateStatusTombol setiap kali filter berubah
+/* Panggil fungsi updateStatusTombol setiap kali filter berubah
 ['filterJam', 'filterTanggal', 'filterBulan'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', updateStatus3Tombol);
 });
+*/
 
 
 //----------------------------------------------------------- Fungsi Absen -----------------------------------
