@@ -1,4 +1,4 @@
-const CACHE_NAME = 'pwa-cache-v2'; // Ganti versi jika ada update
+const CACHE_NAME = 'pwa-cache-v2'; // Versi cache tetap sama
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
@@ -37,7 +37,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activate event - Hapus cache lama
+// Activate event - Hapus cache lama dan force update
 self.addEventListener('activate', (event) => {
     console.log('[Service Worker] Activating...');
     event.waitUntil(
@@ -54,7 +54,7 @@ self.addEventListener('activate', (event) => {
             })
             .then(() => {
                 console.log('[Service Worker] Activation complete');
-                return self.clients.claim();
+                return self.clients.claim(); // Memaksa SW mengambil alih
             })
             .catch((error) => {
                 console.error('[Service Worker] Error during activation:', error);

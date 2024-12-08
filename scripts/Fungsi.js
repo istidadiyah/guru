@@ -295,13 +295,12 @@ function jdToHijri(jd) {
 }
 
 
-//------------------------------------------------- Update PWA --------------------------------
+// Fungsi untuk memperbarui Service Worker dan force skipWaiting
 function updatePWA() {
-    const statusElement = document.getElementById('notifUpdate'); // Notifikasi di elemen ini
-    const button = document.getElementById('updateBtn'); // Tombol Update
-    //statusElement.style.display = 'none'; // Sembunyikan notifikasi awalnya
-    button.disabled = true; // Nonaktifkan tombol sementara pembaruan berlangsung
-    button.textContent = 'Memperbarui...'; // Ubah teks tombol untuk memberikan feedback
+    const statusElement = document.getElementById('notifUpdate');
+    const button = document.getElementById('updateBtn');
+    button.disabled = true;
+    button.textContent = 'Memperbarui...';
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistration()
@@ -309,35 +308,51 @@ function updatePWA() {
                 if (registration) {
                     registration.update()
                         .then(() => {
-                            button.textContent = 'Update'; // Kembalikan teks tombol
-                            button.disabled = false; // Aktifkan tombol kembali
-                            //statusElement.style.display = 'block'; // Tampilkan notifikasi
-                            showNotification('Service Worker berhasil diperbarui!'); // Tampilkan notifikasi
+                            // Jika ada worker yang menunggu (waiting), paksa untuk mengambil alih
+                            if (registration.waiting) {
+                                registration.waiting.postMessage({ action: 'skipWaiting' });
+                            }
+
+                            button.textContent = 'Update';
+                            button.disabled = false;
+                            showNotification('Service Worker berhasil diperbarui!');
                             console.log('Service Worker berhasil diperbarui.');
                         })
                         .catch((error) => {
-                            button.textContent = 'Update'; // Kembalikan teks tombol
-                            button.disabled = false; // Aktifkan tombol kembali
+                            button.textContent = 'Update';
+                            button.disabled = false;
                             console.error('Error saat memperbarui Service Worker:', error);
                             alert('Gagal memperbarui cache. Silakan coba lagi.');
                         });
                 } else {
-                    button.textContent = 'Update'; // Kembalikan teks tombol
-                    button.disabled = false; // Aktifkan tombol kembali
+                    button.textContent = 'Update';
+                    button.disabled = false;
                     alert('Tidak ada Service Worker terdaftar.');
                 }
             })
             .catch((error) => {
-                button.textContent = 'Update'; // Kembalikan teks tombol
-                button.disabled = false; // Aktifkan tombol kembali
+                button.textContent = 'Update';
+                button.disabled = false;
                 console.error('Error saat memeriksa Service Worker:', error);
                 alert('Gagal memeriksa pendaftaran Service Worker.');
             });
     } else {
-        button.textContent = 'Update'; // Kembalikan teks tombol
-        button.disabled = false; // Aktifkan tombol kembali
+        button.textContent = 'Update';
+        button.disabled = false;
         alert('Browser tidak mendukung Service Worker.');
     }
+}
+
+// Menangani pesan dari service worker untuk skipWaiting
+if (navigator.serviceWorker) {
+    navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.action === 'skipWaiting') {
+            // Memaksa service worker untuk segera aktif
+            navigator.serviceWorker.ready.then((registration) => {
+                registration.waiting.postMessage({ action: 'skipWaiting' });
+            });
+        }
+    });
 }
 
 
