@@ -45,3 +45,10 @@ table.dataTable {
 
 /* Untuk memastikan kolom tetap rapi meski teks lebih panjang dari lebar yang ditentukan */
 
+
+
+
+/* ------------------------------------ tabel santri ----------------------------------*/
+#Santri {
+    font-size: 16px; /* Ukuran default */
+}

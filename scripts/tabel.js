@@ -14,6 +14,11 @@ const bulanNames = {
     "12": "Dzulhijjah"
 };
 
+document.getElementById('fontSizeSelect').addEventListener('change', function() {
+    const table = document.getElementById('Santri');
+    const selectedSize = this.value;
+    table.style.fontSize = selectedSize; // Ubah ukuran font tabel sesuai pilihan
+});
 
 
 //------------------------------------------------------------ Fungsi Input data to tabel -------------------------------------------------------------
