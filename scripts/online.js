@@ -4,6 +4,11 @@ async function fetchDataFromAppScript(dataSettings = {}, forceRefresh = false) {
     const urlBase = scriptPostURL;
     const loadingSpinner = document.getElementById("loadingSpinner");
 
+    if (loadingSpinner) {
+        loadingSpinner.style.display = 'flex';
+    }
+
+
     // Fungsi untuk menghapus durasi dan menyiapkan data sebelum dikirim ke server
     const removeDurasiAndPrepareData = (data) => {
         const filteredData = {};

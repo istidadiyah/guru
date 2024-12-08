@@ -106,7 +106,7 @@ function initializeFilter(columnName) {
 
 
 // -------------------------------- Fungsi select di dalam form awal --------------------------------------
-
+/*
 // Event Listener untuk select Tanggal dan Bulan
 document.getElementById('filterTanggal').addEventListener('change', updateAbsensiFromDynamicTable);
 document.getElementById('filterBulan').addEventListener('change', updateAbsensiFromDynamicTable);
@@ -192,7 +192,7 @@ function updateHeaderInfo() {
     }
 }
 
-
+*/
 
 // Fungsi untuk memfilter tabel berdasarkan kelas
 function filterTableByKelas() {

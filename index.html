@@ -6,7 +6,7 @@
 
     <meta property="og:title" content="Aplikasi Isti'dadiyah">
     <meta property="og:description" content="Aplikasi khusus untuk guru Isti'dadiyah">
-    <meta property="og:image" content="bg.jpg">
+    <meta property="og:image" content="https://istidadiyah.github.io/guru/bg.jpg">
     <meta property="og:url" content="https://istidadiyah.github.io/guru">
     <meta property="og:type" content="website">
 
@@ -22,9 +22,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Nama Situs" />
-    <link rel="apple-touch-icon" href="icon-192x192.png" />
+    <link rel="apple-touch-icon" href="gambar/icon-192x192.png" />
     <!-- Mendeklarasikan ikon untuk Windows -->
-    <meta name="msapplication-TileImage" content="icon-192x192.png" />
+    <meta name="msapplication-TileImage" content="gambar/icon-192x192.png" />
     <meta name="msapplication-TileColor" content="#000000" />
 
 
@@ -61,12 +61,12 @@
 </head>
 <body>
     <!-- Splash Screen -->
-<div id="splash-screen">
-    <div class="splash-content">
-        <img src="https://istidadiyah.github.io/guru/icon-512x512.png" alt="Logo" id="splash-logo"/>
-        <h1>Welcome to Isti'dadiyah App</h1>
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="gambar/icon-512x512.png" alt="Logo" id="splash-logo"/>
+            <h1>Welcome to Isti'dadiyah App</h1>
+        </div>
     </div>
-</div>
 
     <!-- SVG Container -->
     <div class="svg-container">
@@ -101,12 +101,7 @@
 
         <!-- Main Navigation Cards -->
         <div id="cardIcon" class="card shadow-sm mt-4">
-            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-                <div class="spinner-inner">
-                    <img src="logo.png" alt="Logo" class="logo">
-                </div>
-            </div>
-            <div id="loadingIndicator" style="display: none;">Loading...</div>
+            
 
             <div class="container-flex mt-5">
                 <!-- Links Grid -->
@@ -174,11 +169,28 @@
                 </div>
                 
                 <div class="grid-item">
-                    <a href="javascript:void(0)" onclick="fetchDataFromAppScript(forceRefresh = true);">
+                    <a 
+                        href="javascript:void(0)"
+                        onclick="fetchDataFromAppScript({
+                            'db': { 'Diniyah': 'Isti', 'StatusSantri': 'Mukim' }, // Cache 24 jam
+                            'Absen': {}, // Default cache duration
+                            'Kelompok': {},
+                            'Guru': {},
+                            'Pelajaran': {}
+                        }, true);">
                         <i class="fas fa-sync fa-2x"></i>
-                        <div>Reload</div>
+                        
                     </a>
+                    <div>Reload</div>
+                    <div>
+                        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                            <div class="spinner-inner">
+                                <img src="logo.png" alt="Logo" class="logo">
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                
                 
             </div>
         </div>
@@ -328,20 +340,17 @@
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
                         <i class="fas fa-sync-alt settings-icon"></i> <!-- Ikon yang lebih relevan untuk Update -->
-                        <span>Update Aplikasi</span>
+                        <span>Update Aplikasi PWA</span>
                     </div>
                     <button class="btn btn-primary btn-sm" id="updateBtn" onclick="updatePWA()">Update</button>
                 </li>
-                <div id="notifUpdate" style="display: none; margin-top: 10px; color: green; font-weight: bold;">
-                    Cache berhasil diperbarui ke versi terbaru!
-                </div>
 
                 <li class="settings-item">
                     <div style="display: flex; align-items: center;">
-                        <i class="fas fa-sign-out-alt settings-icon"></i>
-                        <span>Chache</span>
+                        <i class="fas fa-database settings-icon"></i>
+                        <span>Cache</span>
                     </div>
-                    <button class="btn btn-danger btn-sm" id="logoutBtn" onclick="clearSiteCache()">Hapus Semua Chache</button>
+                    <button class="btn btn-danger btn-sm" id="logoutBtn" onclick="clearSiteCache()">Bersihkan Cache</button>
                 </li>
                 <!-- Tombol Keluar dan Hapus Cache -->
                 <li class="settings-item">
@@ -354,9 +363,12 @@
 
             </ul>
         </div>
+
         
+
     </div>
 
+    <div id="notifContainer" class="notif-container"></div>
 
     <!-- JS Scripts -->
     <script src="scripts/setting.js" defer></script>
@@ -378,12 +390,12 @@
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <!--<script src="https://code.jquery.com/jquery-3.7.1.js"></script>-->
     <!-- Library inti jQuery -->
 
     <!-- DataTables Core JS -->
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <!--<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>-->
     <!-- Library DataTables dengan integrasi Bootstrap 5 -->
 
     

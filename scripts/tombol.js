@@ -34,10 +34,10 @@ function AbsensiButton() {
     
     UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
     Sembunyikan("cardIcon");
-    Sembunyikan("cardRekap")
+    Sembunyikan("cardRekap");
     Sembunyikan("cardKelompok", () => {
         
-        TabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
+        TabelSelect2("Santri", JSON.parse(localStorage.getItem('db')).data, "M,1,2");
 
         Tampilkan("tombolHome");
 
@@ -56,7 +56,7 @@ function AbsensiButton() {
         
     });
 
-    moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
+    //moveHtmlContent("halaman/form.html", "FormData", "cardEdit");
     
 }
 
@@ -66,7 +66,7 @@ function GagalButton() {
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
-        DataTabelSelect("Santri", JSON.parse(localStorage.getItem('db')).data);
+        DataTabelSelect("tablePost", JSON.parse(localStorage.getItem('failedData')).data);
 
         Tampilkan("tombolHome");
         Tampilkan("cardPost");
@@ -137,125 +137,8 @@ function RekapButton() {
     });
 }
 
-function Tampilkan(id) {
-    const elem = document.getElementById(id);
-    if (elem) {
-        elem.classList.remove('fade-out');
-        elem.classList.add('fade-in');
-        elem.style.display = "block"; // Tampilkan elemen
-    } else {
-        console.error(`Elemen dengan id "${id}" tidak ditemukan.`);
-    }
-}
-
-function Sembunyikan(id, callback) {
-    const elem = document.getElementById(id);
-    if (elem) {
-        elem.classList.remove('fade-in');
-        elem.classList.add('fade-out');
-        setTimeout(() => {
-            elem.style.display = "none"; // Sembunyikan elemen sepenuhnya setelah animasi selesai
-            if (callback) {
-                callback(); // Panggil callback setelah selesai disembunyikan
-            }
-        }, 800); // Sesuaikan waktu sesuai durasi animasi (800ms)
-    } else {
-        console.error(`Elemen dengan id "${id}" tidak ditemukan.`);
-    }
-}
 
 
-
-function UbahText(newHeaderText, newTanggalInfoText) {
-    const headerElement = document.getElementById('headerInfo');
-    const tanggalInfoElement = document.getElementById('tanggalInfo');
-
-    function animateText(element, newText) {
-        // Tambahkan kelas 'fade-out' untuk memulai animasi keluar
-        element.classList.add('fade-out');
-
-        // Ketika animasi keluar selesai
-        element.addEventListener('animationend', function handler() {
-            // Hapus kelas 'fade-out'
-            element.classList.remove('fade-out');
-            // Ubah teks elemen
-            element.textContent = newText;
-            // Tambahkan kelas 'fade-in' untuk animasi masuk
-            element.classList.add('fade-in');
-            // Hapus event listener agar tidak terjadi pemanggilan berulang
-            element.removeEventListener('animationend', handler);
-
-            // Hapus kelas 'fade-in' setelah animasi masuk selesai
-            element.addEventListener('animationend', function handler2() {
-                element.classList.remove('fade-in');
-                element.removeEventListener('animationend', handler2);
-            });
-        });
-    }
-
-    // Panggil fungsi animasi untuk masing-masing elemen
-    animateText(headerElement, newHeaderText);
-    animateText(tanggalInfoElement, newTanggalInfoText);
-}
-
-function resetTable(tableId) {
-    const oldTable = document.getElementById(tableId);
-
-    if (!oldTable) {
-        console.error(`Tabel dengan ID "${tableId}" tidak ditemukan.`);
-        return;
-    }
-
-    // Hapus DataTables jika ada
-    if ($.fn.DataTable && $.fn.DataTable.isDataTable(oldTable)) {
-        $(oldTable).DataTable().destroy(); // Hapus inisialisasi DataTables
-    }
-
-    // Hapus tabel lama dari DOM
-    oldTable.parentNode.removeChild(oldTable);
-
-    // Buat tabel baru dengan ID dan class yang sama
-    const newTable = document.createElement('table');
-    newTable.id = tableId;
-    newTable.className = 'table table-hover table-bordered'; // Tambahkan class yang sesuai
-
-    // Cari elemen container #TabelUmum
-    const container = document.getElementById('TabelUmum');
-    if (container) {
-        container.appendChild(newTable); // Tambahkan tabel baru ke dalam #TabelUmum
-    } else {
-        console.error('Container dengan ID "TabelUmum" tidak ditemukan.');
-    }
-
-    console.log(`Tabel "${tableId}" telah dihapus dan dibuat ulang.`);
-}
-
-
-
-
-
-// Fungsi untuk menambahkan state ke riwayat browser
-function pushState() {
-    window.history.pushState({page: "newState"}, "", window.location.href);
-}
-
-// Tambahkan state awal ke riwayat saat halaman pertama kali dimuat
-window.onload = () => {
-    pushState();
-};
-
-// Event listener untuk mendeteksi tombol "kembali"
-window.onpopstate = () => {
-    const cardIconElem = document.getElementById('cardIcon');
-
-    // Cek apakah elemen 'cardIcon' sedang disembunyikan
-    if (cardIconElem && cardIconElem.style.display === 'none') {
-        // Panggil fungsi home() untuk menampilkan kembali cardIcon
-        home();
-        // Kembalikan state ke riwayat agar fungsi tetap bisa mendeteksi "back"
-        pushState();
-    }
-};
 
 
   

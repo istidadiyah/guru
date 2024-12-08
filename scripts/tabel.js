@@ -429,7 +429,7 @@ function TabelSelect(tableId, jsonData) {
     });
 }
 
-function Tabel3Select(tableId, jsonData) {
+function TabelSelect2(tableId, jsonData, tombol) {
     const table = document.getElementById(tableId);
     if (!table) {
         console.error(`Tabel dengan ID ${tableId} tidak ditemukan.`);
@@ -444,22 +444,35 @@ function Tabel3Select(tableId, jsonData) {
         return;
     }
 
+    // Parse opsi tombol
+    const tombolArray = tombol.split(',').map(t => t.trim());
+    if (tombolArray.length === 0) {
+        console.error("Opsi tombol tidak valid.");
+        return;
+    }
+
     // Header tabel
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
 
-    const createHeader = (text, width = 'auto') => {
-        const th = document.createElement('th');
-        th.textContent = text;
-        th.style.width = width;
-        return th;
-    };
+    // Kolom Nama
+    const thNama = document.createElement('th');
+    thNama.style.width = '100%';
+    thNama.textContent = 'Nama';
+    headerRow.appendChild(thNama);
 
-    headerRow.appendChild(createHeader('Nama', '40%'));
-    headerRow.appendChild(createHeader('Kelompok', '20%'));
-    headerRow.appendChild(createHeader('M', '10%'));
-    headerRow.appendChild(createHeader('1', '10%'));
-    headerRow.appendChild(createHeader('2', '10%'));
+    // Kolom Kelompok
+    const thKel = document.createElement('th');
+    thKel.textContent = 'K';
+    headerRow.appendChild(thKel);
+
+    // Tambahkan header untuk setiap opsi tombol
+    tombolArray.forEach(label => {
+        const th = document.createElement('th');
+        th.textContent = label;
+        th.style.width = '1%';
+        headerRow.appendChild(th);
+    });
 
     thead.appendChild(headerRow);
     table.appendChild(thead);
@@ -469,42 +482,54 @@ function Tabel3Select(tableId, jsonData) {
     jsonData.forEach(row => {
         const tr = document.createElement('tr');
 
-        // Kolom Nama dan Kelompok
+        // Nama
         const tdNama = document.createElement('td');
         tdNama.textContent = row['Nama'] || '';
         tr.appendChild(tdNama);
 
+        // Kelompok
         const tdKel = document.createElement('td');
         tdKel.textContent = row['KelMD'] || '';
         tr.appendChild(tdKel);
 
-        // Tambahkan tombol M, 1, dan 2 dengan event onclick
-        ['m', '1', '2'].forEach(col => {
+        // Tambahkan tombol untuk setiap opsi
+        tombolArray.forEach(label => {
             const tdButton = document.createElement('td');
             const button = document.createElement('button');
-            button.id = `absen-${col}-${row['IDS']}`;
             button.className = 'btn btn-light btn-sm';
-            button.textContent = ''; // Default kosong
+
+            // ID untuk tombol
+            const rowId = row['ID'] || row['IDS'];
+            if (rowId) {
+                // Gunakan atribut data-id daripada id
+                const dataId = `${label}_${rowId}`;
+                button.setAttribute('data-id', dataId); // Menggunakan data-id sebagai pengganti ID
+                button.dataset.rowId = rowId;
+
+                // Log data-id tombol untuk debugging
+                console.log(`Button data-id: ${dataId}`); // Debugging data-id tombol
+            }
+
+            // Klik untuk mengubah status
             button.onclick = function () {
-                // Menentukan status tombol berdasarkan klik
                 const statuses = [
-                    { text: '', class: 'btn-light' },    // Default
-                    { text: 'H', class: 'btn-success' }, // Hadir
-                    { text: 'A', class: 'btn-danger' },  // Absen
-                    { text: 'I', class: 'btn-warning' }, // Izin
-                    { text: 'S', class: 'btn-primary' }  // Sakit
+                    { text: '', class: 'btn-light' },
+                    { text: 'H', class: 'btn-success' },
+                    { text: 'A', class: 'btn-danger' },
+                    { text: 'I', class: 'btn-warning' },
+                    { text: 'S', class: 'btn-primary' }
                 ];
 
                 let currentStatus = statuses.findIndex(s => button.classList.contains(s.class));
-                currentStatus = (currentStatus + 1) % statuses.length;  // Bergerak ke status berikutnya
+                currentStatus = (currentStatus + 1) % statuses.length;
 
-                // Update teks dan kelas tombol
                 button.textContent = statuses[currentStatus].text;
                 button.className = `btn btn-sm ${statuses[currentStatus].class}`;
 
-                // Update data berdasarkan klik tombol
-                Json3Absen(row['IDS'], row['Nama'], row['KelMD'], col, statuses[currentStatus].text);
+                // Panggil fungsi untuk memperbarui data
+                JsonAbsen2(button.getAttribute('data-id'), row['Nama'] || '', row['KelMD'] || '', statuses[currentStatus].text, label);
             };
+
             tdButton.appendChild(button);
             tr.appendChild(tdButton);
         });
@@ -514,16 +539,17 @@ function Tabel3Select(tableId, jsonData) {
 
     table.appendChild(tbody);
 
-    // Reinitialize DataTables
+    // Inisialisasi ulang DataTables
     if ($.fn.DataTable.isDataTable(`#${tableId}`)) {
         $(`#${tableId}`).DataTable().destroy();
     }
 
     $(`#${tableId}`).DataTable({
+        responsive: true,
         paging: false,
-        dom: '<"top"f>rt<"bottom">',
+        dom: '<"top"f>rt<"bottom">', // Tampilan datatables tanpa tombol tambahan
         scrollY: 500,
-        order: [[0, 'asc']],
+        order: [[1, 'asc']],
     });
 }
 
@@ -532,9 +558,11 @@ function Tabel3Select(tableId, jsonData) {
 
 
 
+
+
+
 //-------------------------------------- Updadate Isi tabel absen ------------------------------
 
-// Fungsi untuk memperbarui tombol berdasarkan data dari JSON
 function updateStatusTombol() {
     const filterJamValue = document.getElementById('filterJam')?.value;
     const filterTanggalValue = document.getElementById('filterTanggal')?.value;
@@ -546,8 +574,23 @@ function updateStatusTombol() {
     }
 
     const header = `${filterJamValue}T${filterTanggalValue}`;
-    const filteredData = JSON.parse(localStorage.getItem('Absen')).data.filter(row => row['IDS']?.endsWith(filterBulanValue));
+    const localData = JSON.parse(localStorage.getItem('Absen'));
 
+    if (!localData || !localData.data) {
+        console.error("Data 'Absen' tidak ditemukan di localStorage.");
+        return;
+    }
+
+    const filteredData = localData.data.filter(row => row['IDS']?.endsWith(filterBulanValue));
+    const allButtons = document.querySelectorAll("[id^='absen-']");
+
+    // Reset semua tombol terlebih dahulu
+    allButtons.forEach(button => {
+        button.textContent = '';
+        button.className = 'btn btn-sm btn-light'; // Reset ke status default
+    });
+
+    // Update tombol berdasarkan filteredData
     filteredData.forEach(row => {
         const status = row[header];
         const rowId = row['IDS']?.split('-')[1];
@@ -580,80 +623,92 @@ function updateStatusTombol() {
     });
 }
 
-
-// Panggil fungsi updateStatusTombol setiap kali filter berubah
+/* Panggil fungsi updateStatusTombol setiap kali filter berubah
 document.getElementById('filterJam')?.addEventListener('change', updateStatusTombol);
 document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
 document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
-
-function updateStatus3Tombol() {
-    const filterJamValue = document.getElementById('filterJam')?.value;
+*/
+function updateStatusTombol2() {
+    // Ambil nilai filter
     const filterTanggalValue = document.getElementById('filterTanggal')?.value;
     const filterBulanValue = document.getElementById('filterBulan')?.value;
 
-    if (!filterJamValue || !filterTanggalValue || !filterBulanValue) {
-        console.error("Semua filter harus diisi.");
+    if (!filterTanggalValue || !filterBulanValue) {
+        console.error("Filter Tanggal dan Bulan harus diisi.");
         return;
     }
 
-    const filteredData = JSON.parse(localStorage.getItem('Absen'))?.data.filter(row => 
-        row['IDS']?.endsWith(filterBulanValue)
-    ) || [];
+    // Ambil data dari localStorage
+    const localData = JSON.parse(localStorage.getItem('Absen'));
 
-    if (!filteredData.length) {
-        console.warn("Data tidak ditemukan berdasarkan filter yang diberikan.");
+    if (!localData || !localData.data) {
+        console.error("Data 'Absen' tidak ditemukan di localStorage.");
         return;
     }
 
-    // Refresh tabel
-    DataTabelSelect("absenTable", filteredData);
+    // Filter data berdasarkan bulan
+    const filteredData = localData.data.filter(row => row['IDS']?.endsWith(filterBulanValue));
 
-    // Perbarui status tombol dalam tabel sesuai data JSON
+    // Ambil semua tombol berdasarkan data-id
+    const allButtons = document.querySelectorAll("[data-id]");
+    
+    // Reset semua tombol terlebih dahulu
+    allButtons.forEach(button => {
+        button.textContent = '';
+        button.className = 'btn btn-sm btn-light'; // Reset ke status default
+    });
+
+    // Update tombol berdasarkan filteredData
     filteredData.forEach(row => {
-        const rowId = row['IDS']?.split('-')[1];
+        const rowId = row['IDS']?.split('-')[1]; // Ambil ID siswa
 
         if (rowId) {
-            const headerJam = `${filterJamValue}T${filterTanggalValue}`; // Kolom untuk status di tabel
-            const statusJam = row[headerJam];
+            // Iterasi kolom dengan pola dinamis berdasarkan tanggal (T) dan tombol (M, 1, 2, dst.)
+            Object.keys(row).forEach(key => {
+                if (key.endsWith(`T${filterTanggalValue}`)) { // Hanya kolom dengan Tanggal saat ini
+                    const prefix = key.slice(0, -(`T${filterTanggalValue}`.length)); // Ambil prefix tombol (M, 1, 2, dst.)
+                    const tombolDataId = `${prefix}_${rowId}`; // Membuat data-id tombol
+                    
+                    const editButton = Array.from(allButtons).find(button => button.getAttribute('data-id') === tombolDataId); // Cari tombol berdasarkan data-id
+                    
+                    if (editButton) {
+                        const status = row[key];
+                        let statusText = '';
+                        let statusClass = 'btn-light';
 
-            const updateButtonStatus = (columnName, columnValue) => {
-                const button = document.querySelector(`#${columnName}-${rowId}`);
-                if (button) {
-                    let statusText = '';
-                    let statusClass = 'btn-light';
+                        // Set status tombol
+                        if (status === 'H') {
+                            statusText = 'H';
+                            statusClass = 'btn-success';
+                        } else if (status === 'A') {
+                            statusText = 'A';
+                            statusClass = 'btn-danger';
+                        } else if (status === 'I') {
+                            statusText = 'I';
+                            statusClass = 'btn-warning';
+                        } else if (status === 'S') {
+                            statusText = 'S';
+                            statusClass = 'btn-primary';
+                        }
 
-                    if (columnValue === 'H') {
-                        statusText = 'H';
-                        statusClass = 'btn-success';
-                    } else if (columnValue === 'A') {
-                        statusText = 'A';
-                        statusClass = 'btn-danger';
-                    } else if (columnValue === 'I') {
-                        statusText = 'I';
-                        statusClass = 'btn-warning';
-                    } else if (columnValue === 'S') {
-                        statusText = 'S';
-                        statusClass = 'btn-primary';
+                        editButton.textContent = statusText;
+                        editButton.className = `btn btn-sm ${statusClass}`;
+                    } else {
+                        console.error(`Tombol dengan data-id '${tombolDataId}' tidak ditemukan.`);
                     }
-
-                    button.textContent = statusText;
-                    button.className = `btn btn-sm ${statusClass}`;
                 }
-            };
-
-            // Update tombol untuk Jam, Malam, dan Jam 2
-            updateButtonStatus('absen-m', row['MT1'] || ''); // Contoh key untuk Malam
-            updateButtonStatus('absen-1', row['1T1'] || ''); // Contoh key untuk Jam 1
-            updateButtonStatus('absen-2', row['2T1'] || ''); // Contoh key untuk Jam 2
+            });
+        } else {
+            console.error("Row ID tidak valid:", row);
         }
     });
 }
 
-/* Panggil fungsi updateStatusTombol setiap kali filter berubah
-['filterJam', 'filterTanggal', 'filterBulan'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', updateStatus3Tombol);
-});
-*/
+
+// Panggil fungsi updateStatusTombol setiap kali filter berubah
+document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol2);
+document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol2);
+
 
 
 //----------------------------------------------------------- Fungsi Absen -----------------------------------
@@ -761,13 +816,17 @@ function JsonAbsen(id, nama, kelMD, status) {
     // Ambil TanggalUpdate
     const TanggalUpdate = getFormattedDate(); // Format: "DD/MM/YYYY HH:mm:ss"
 
+    // Ambil data Guru
+    const IDGuru = document.getElementById('IDGuru').innerText; // Ambil IDGuru
+    const NamaGuru = document.getElementById('NamaGuru').innerText; // Ambil NamaGuru
     // Buat objek JSON untuk Absen
     const Absen = {
         TanggalUpdate: TanggalUpdate,
         IDS: IDS,
         Nama: nama,
         Kelas: kelMD,
-        Bulan: bulan
+        Bulan: bulan,
+        Guru: NamaGuru
     };
 
     // Tambahkan header kolom dan status
@@ -776,9 +835,7 @@ function JsonAbsen(id, nama, kelMD, status) {
     UpdateLocalStorage("Absen", "IDS", IDS, header, status);
     updateAntrianJson(Absen);
 
-    // Ambil data Guru
-    const IDGuru = document.getElementById('IDGuru').innerText; // Ambil IDGuru
-    const NamaGuru = document.getElementById('NamaGuru').innerText; // Ambil NamaGuru
+
 
     // Buat objek JSON untuk AbsenGuru
     const AbsenGuru = {
@@ -796,35 +853,61 @@ function JsonAbsen(id, nama, kelMD, status) {
     updateAntrianJson(AbsenGuru, true);
 }
 
-function Json3Absen(id, nama, kelMD, jam, status) {
-    const filterBulan = document.getElementById('filterBulan').value;
-    const filterTanggal = document.getElementById('filterTanggal').value;
-
-    if (!filterBulan || !filterTanggal) {
-        console.error("Pastikan filter (Bulan dan Tanggal) telah diisi.");
+// Fungsi Absen yang akan dipanggil ketika tombol ditekan
+function JsonAbsen2(buttonId, nama, kelMD, status) {
+    // Pecah ID tombol menjadi dua bagian: jenis tombol dan IDS
+    const [filterJam, id] = buttonId.split('_');
+    if (!filterJam || !id) {
+        console.error(buttonId)
+        console.error("ID tombol tidak valid. Pastikan dalam format [JenisTombol]-[IDS].");
         return;
     }
 
-    const IDS = `46-${id}-${filterBulan}`;
-    const header = `${jam}T${filterTanggal}`;
-    const TanggalUpdate = getFormattedDate();
+    // Ambil nilai dari filterBulan dan filterTanggal
+    const filterBulan = document.getElementById('filterBulan').value; // Contoh: "1450023-02"
+    const filterTanggal = document.getElementById('filterTanggal').value; // Contoh: "1"
 
+    // Pastikan nilai-nilai tersedia
+    if (!filterBulan || !filterTanggal) {
+        console.error("Pastikan semua filter (Bulan, Tanggal) telah diisi.");
+        return;
+    }
+
+    // Buat IDS
+    const IDS = `46-${id}-${filterBulan}`;
+
+    // Buat header kolom (contoh: "MT1")
+    const header = `${filterJam}T${filterTanggal}`;
+
+    // Ambil nama bulan dari objek bulanNames
+    const bulanKey = filterBulan.slice(-2); // Ambil dua digit terakhir dari filterBulan
+    const bulan = bulanNames[bulanKey] || "Bulan Tidak Valid";
+
+    // Ambil TanggalUpdate
+    const TanggalUpdate = getFormattedDate(); // Format: "DD/MM/YYYY HH:mm:ss"
+
+    // Ambil data Guru
+    const IDGuru = document.getElementById('IDGuru').innerText; // Ambil IDGuru
+    const NamaGuru = document.getElementById('NamaGuru').innerText; // Ambil NamaGuru
+
+    // Buat objek JSON untuk Absen
     const Absen = {
-        TanggalUpdate,
-        IDS,
+        TanggalUpdate: TanggalUpdate,
+        IDS: IDS,
         Nama: nama,
         Kelas: kelMD,
-        Bulan: filterBulan,
-        [header]: status,
+        Bulan: bulan,
+        Guru: NamaGuru
     };
 
+    // Tambahkan header kolom dan status
+    Absen[header] = status;
+
+    // Update data ke dalam LocalStorage dan antrian JSON
     UpdateLocalStorage("Absen", "IDS", IDS, header, status);
     updateAntrianJson(Absen);
 
-
-    const IDGuru = document.getElementById('IDGuru').innerText; 
-    const NamaGuru = document.getElementById('NamaGuru').innerText;
-
+    // Buat objek JSON untuk AbsenGuru
     const AbsenGuru = {
         TanggalUpdate: TanggalUpdate,
         IDS: `46-${IDGuru}-${filterBulan}`,
@@ -833,10 +916,13 @@ function Json3Absen(id, nama, kelMD, jam, status) {
         Bulan: bulan
     };
 
+    // Tambahkan header kolom dan status
     AbsenGuru[header] = 'H';
 
+    // Update data ke dalam antrian JSON (untuk AbsenGuru)
     updateAntrianJson(AbsenGuru, true);
 }
+
 
 function getNextStatus(current) {
     const statuses = ['', 'H', 'A', 'I', 'S']; // Urutan status

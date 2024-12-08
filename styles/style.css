@@ -407,3 +407,42 @@
         transform: translateX(0);
     }
 }
+
+
+
+/* ------------------------------ Notif seperti windows ------------------------------ */
+/* Container untuk notifikasi */
+.notif-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Gaya untuk notifikasi */
+.notif {
+    background-color: #4caf50; /* Warna hijau untuk keberhasilan */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.5s ease-in-out;
+}
+
+/* Animasi masuk */
+.notif.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Animasi keluar */
+.notif.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
