@@ -202,8 +202,10 @@ function moveHtmlContent(sourceUrl, sourceDivId, targetDivId) {
 
 
 //------------------------------------ Hijri date -------------------------------
-function getHijriDate() {
-    const date = new Date();
+function getHijriDate(inputDate) {
+    // Jika inputDate tidak diberikan, gunakan tanggal saat ini
+    const date = inputDate ? new Date(inputDate) : new Date();
+
     let gDate = date.getDate();
     let gMonth = date.getMonth() + 1; // 1 = Januari, 12 = Desember
     let gYear = date.getFullYear();
@@ -233,11 +235,16 @@ function getHijriDate() {
     // Mengonversi Julian Day ke Hijriyah
     const hijri = jdToHijri(jd);
 
-    // Format tanggal Hijriyah (contoh: 11 Muharram 1446)
-    const hijriDate = `${hijri.day} ${bulanNames[hijri.month]} ${hijri.year}`;
-
+    // Format tanggal Hijriyah dengan hari (contoh: Senin, 11 Muharram 1446)
+    const dayNames = ["Ahad", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+    const dayOfWeek = dayNames[date.getDay()];
+    const hijriDate = `${dayOfWeek}, ${hijri.day} ${bulanNames[hijri.month]} ${hijri.year}`;
+    
     // Menampilkan tanggal Hijriyah di elemen dengan id "Hijriyah"
-    document.getElementById('Hijriyah').textContent = hijriDate;
+    const hijriyahElement = document.getElementById('Hijriyah');
+    if (hijriyahElement) {
+        hijriyahElement.textContent = hijriDate;
+    }
 
     // Memasukkan bulan ke dalam select filterBulan
     const filterBulan = document.getElementById("filterBulan");
@@ -259,6 +266,8 @@ function getHijriDate() {
     if (filterTanggal) {
         filterTanggal.value = hijri.day; // Tetap menggunakan nilai asli tanpa format tambahan
     }
+
+    return hijriDate; // Mengembalikan hasil tanggal Hijriyah
 }
 
 
@@ -293,6 +302,8 @@ function jdToHijri(jd) {
         year: iYear + 1 // Tahun Hijriyah dimulai dari 1
     };
 }
+
+
 
 
 // Fungsi untuk memperbarui Service Worker dan force skipWaiting

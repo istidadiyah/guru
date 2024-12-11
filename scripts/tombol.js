@@ -36,6 +36,7 @@ function AbsensiButton() {
     UbahText("Absensi", "Absensi Per-Jam Murid Isti'dadiyah");
     Sembunyikan("cardIcon");
     Sembunyikan("cardRekap");
+    IsiBulan("filterBulan");
     Sembunyikan("cardKelompok", () => {
         
         TabelSelect2("Santri", JSON.parse(localStorage.getItem('db')).data, "M,1,2");
@@ -46,14 +47,14 @@ function AbsensiButton() {
         Tampilkan("cardFilter");
 
         initializeFilter("K");
-        IsiBulan("filterBulan");
+
         getHijriDate();
-
-        updateStatusTombol();
-
+        updateStatusTombol2();
+    
         fetchDataFromAppScript({
             "Absen": {}
         }, true);
+
         
     });
 

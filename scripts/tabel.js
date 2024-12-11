@@ -715,6 +715,11 @@ function updateStatusTombol2() {
 document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol2);
 document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol2);
 
+document.getElementById('customDateInput')?.addEventListener('change', function () {
+    const inputDate = document.getElementById('customDateInput').value;
+    getHijriDate(inputDate);
+    updateStatusTombol2();
+});
 
 
 //----------------------------------------------------------- Fungsi Absen -----------------------------------
