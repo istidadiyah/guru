@@ -51,6 +51,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="styles/style.css">
     <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/loading.css">
     <link rel="stylesheet" href="styles/tabel.css">
     <link rel="stylesheet" href="styles/splas.css">
 
@@ -169,27 +170,16 @@
                 </div>
                 
                 <div class="grid-item">
-                    <a 
-                        href="javascript:void(0)"
-                        onclick="fetchDataFromAppScript({
-                            'db': { 'Diniyah': 'Isti', 'StatusSantri': 'Mukim' }, // Cache 24 jam
-                            'Absen': {}, // Default cache duration
-                            'Kelompok': {},
-                            'Guru': {},
-                            'Pelajaran': {}
-                        }, true);">
-                        <i class="fas fa-sync fa-2x"></i>
-                        
+                    <a href="javascript:void(0)" onclick="reloadDataWithLoading()">
+                        <i id="syncIcon" class="fas fa-sync fa-2x"></i>
                     </a>
-                    <div>Reload</div>
-                    <div>
-                        <div id="loadingSpinner" class="loading-spinner" style="display: none;">
-                            <div class="spinner-inner">
-                                <img src="logo.png" alt="Logo" class="logo">
-                            </div>
-                        </div>
+                    <!-- Elemen untuk loading, disembunyikan secara default -->
+                    <div id="loadingIndicator" style="display: none;" class="lds-roller">
+                        <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                     </div>
+                    <div>Reload</div>
                 </div>
+                
                 
                 
             </div>

@@ -124,13 +124,67 @@ function generateJSON(keyName) {
     const jsonData = {
         [keyName]: [rowData]
     };
-
-    console.log(jsonData); // Untuk debugging
     sendPostWithGet(jsonData);
 
+    console.log(jsonData); // Untuk debugging
+    $('#cardEdit').modal('hide');
+
     return JSON.stringify(jsonData); // Kembalikan JSON dalam bentuk string
+
 }
 
+function UpdateLocalSemua(storageKey, newData) {
+    try {
+        // Ambil data dari localStorage
+        const rawData = localStorage.getItem(storageKey);
+        if (!rawData) {
+            console.error(`Data dengan key "${storageKey}" tidak ditemukan di localStorage.`);
+            return false;
+        }
+
+        // Parse data menjadi JSON
+        const parsedData = JSON.parse(rawData);
+        const jsonData = parsedData.data || {}; // Gunakan objek kosong jika data tidak ditemukan
+
+        // Pastikan jsonData adalah objek
+        if (typeof jsonData !== "object") {
+            console.error("Data JSON dalam localStorage bukan objek.");
+            return false;
+        }
+
+        // Pastikan newData adalah array dan ambil ID dari elemen pertama
+        if (Array.isArray(newData) && newData.length > 0) {
+            const idKey = newData[0].ID ? "ID" : newData[0].IDS ? "IDS" : null;
+            if (!idKey) {
+                console.error("ID atau IDS tidak ditemukan dalam data baru.");
+                return false;
+            }
+
+            const idValue = newData[0][idKey];
+            if (!jsonData[idValue]) {
+                // Jika ID/IDS belum ada, tambahkan data baru
+                jsonData[idValue] = newData[0];
+                console.log(`Data baru ditambahkan untuk ${idKey}: ${idValue}`);
+            } else {
+                // Jika ID/IDS sudah ada, perbarui data yang ada
+                jsonData[idValue] = { ...jsonData[idValue], ...newData[0] };
+                console.log(`Data berhasil diperbarui untuk ${idKey}: ${idValue}`);
+            }
+
+            // Simpan data yang sudah diperbarui kembali ke localStorage
+            localStorage.setItem(storageKey, JSON.stringify({ data: jsonData, timestamp: parsedData.timestamp }));
+            console.log("Cache diperbarui di localStorage.");
+
+            return true;
+        } else {
+            console.error("Data baru tidak valid atau kosong.");
+            return false;
+        }
+    } catch (error) {
+        console.error("Terjadi kesalahan saat memperbarui data di localStorage:", error);
+        return false;
+    }
+}
 
 
 //------------------------------------ Memindah isi form edit ke halaman utama ---------------------------------------
@@ -506,6 +560,7 @@ function resetTable(tableId) {
     const newTable = document.createElement('table');
     newTable.id = tableId;
     newTable.className = 'table table-hover table-bordered'; // Tambahkan class yang sesuai
+    newTable.style = 'font-size: smaller'
 
     // Cari elemen container #TabelUmum
     const container = document.getElementById('TabelUmum');

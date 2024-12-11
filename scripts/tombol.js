@@ -139,8 +139,35 @@ function RekapButton() {
     });
 }
 
+function SimpanData(storageKey) {
+    const jsonData = generateJSON(storageKey);
+    //UpdateLocalSemua(storageKey, jsonData)
+}
 
 
+function reloadDataWithLoading() {
+    // Sembunyikan ikon dan tampilkan indikator loading
+    document.getElementById("syncIcon").style.display = "none"; // Menyembunyikan ikon
+    document.getElementById("loadingIndicator").style.display = "block"; // Menampilkan loading
+
+    // Panggil fungsi untuk mengambil data, misalnya fetchDataFromAppScript
+    fetchDataFromAppScript({
+        'db': { 'Diniyah': 'Isti', 'StatusSantri': 'Mukim' }, // Cache 24 jam
+        'Absen': {}, // Default cache duration
+        'Kelompok': {},
+        'Guru': {},
+        'Pelajaran': {}
+    }, true).then(() => {
+        // Sembunyikan indikator loading dan tampilkan kembali ikon setelah proses selesai
+        document.getElementById("loadingIndicator").style.display = "none";
+        document.getElementById("syncIcon").style.display = "inline-block"; // Menampilkan kembali ikon
+    }).catch((error) => {
+        console.error("Terjadi kesalahan:", error);
+        // Pastikan indikator loading disembunyikan jika terjadi error dan tampilkan ikon lagi
+        document.getElementById("loadingIndicator").style.display = "none";
+        document.getElementById("syncIcon").style.display = "inline-block";
+    });
+}
 
 
   
