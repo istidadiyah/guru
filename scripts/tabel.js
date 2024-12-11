@@ -633,6 +633,7 @@ document.getElementById('filterJam')?.addEventListener('change', updateStatusTom
 document.getElementById('filterTanggal')?.addEventListener('change', updateStatusTombol);
 document.getElementById('filterBulan')?.addEventListener('change', updateStatusTombol);
 */
+
 function updateStatusTombol2() {
     // Ambil nilai filter
     const filterTanggalValue = document.getElementById('filterTanggal')?.value;
@@ -760,12 +761,16 @@ function updateAntrianJson(data, isGuru = false) {
         updateAntrianDisplay();
     }
 
-    // Kirim data dengan penundaan
-    sendDelayedData();
+    // Kirim data jika sudah terkumpul 20 item
+    if (targetArray.length >= 20) {
+        sendImmediateData();
+    } else {
+        // Kirim data dengan penundaan jika belum mencapai 20 item
+        sendDelayedData();
+    }
 }
 
 // Fungsi untuk mengirim data ke server setelah 3 detik tidak ada perubahan
-
 function sendDelayedData() {
     if (sendTimeout) clearTimeout(sendTimeout);
     sendTimeout = setTimeout(() => {
@@ -777,7 +782,21 @@ function sendDelayedData() {
 
         // Perbarui tampilan antrian
         updateAntrianDisplay();
-    }, 8000); // Tunggu 5 detik sebelum mengirim
+    }, 3000); // Tunggu 3 detik sebelum mengirim
+}
+
+// Fungsi untuk mengirim data ke server secara langsung
+function sendImmediateData() {
+    clearTimeout(sendTimeout); // Batalkan pengiriman tertunda
+
+    sendPostWithGet(JsonAntrian); // Fungsi pengiriman data
+
+    // Reset antrian setelah pengiriman berhasil
+    JsonAntrian.Absen = []; // Kosongkan Absen
+    JsonAntrian.AbsenGuru = []; // Kosongkan AbsenGuru
+
+    // Perbarui tampilan antrian
+    updateAntrianDisplay();
 }
 
 // Fungsi untuk mendapatkan tanggal dan waktu dalam format "DD/MM/YYYY HH:mm:ss"

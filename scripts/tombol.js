@@ -10,7 +10,8 @@ function home() {
 
     Sembunyikan("cardSetting", () => {
         Tampilkan("cardIcon");
-        DataTabelTanpaTombol("Kelompok", JSON.parse(localStorage.getItem('Kelompok')).data, "ID, WaliKelas");
+        DataTabel("Kelompok", JSON.parse(localStorage.getItem('Kelompok')).data, "ID, WaliKelas");
+        moveHtmlContent("halaman/form.html", "FormKelas", "cardEdit");
         Tampilkan("cardKelompok");
         resetTable("Santri")
     });
@@ -66,7 +67,7 @@ function GagalButton() {
     Sembunyikan("cardIcon");
     Sembunyikan("cardKelompok", () => {
 
-        DataTabelSelect("tablePost", JSON.parse(localStorage.getItem('failedData')).data);
+        addToFailedTable(JSON.parse(localStorage.getItem('failedData')).data);
 
         Tampilkan("tombolHome");
         Tampilkan("cardPost");
